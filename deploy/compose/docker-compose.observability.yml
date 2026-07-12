@@ -1,0 +1,94 @@
+# KevinOS — overlay observabilité (optionnel, Phase 0).
+#
+# Surcouche à activer quand la RAM le permet :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.observability.yml --env-file .env up -d
+#
+# Budget mémoire indicatif : ~1 à 1,5 Go. À désactiver si la machine est tendue.
+
+name: kevinos
+
+networks:
+  observability:
+    driver: bridge
+  apps:
+    external: true
+    name: kevinos_apps
+  edge:
+    external: true
+    name: kevinos_edge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  uptimekuma_data:
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    networks:
+      - observability
+      - apps
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
+  loki:
+    image: grafana/loki:3.3.2
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - observability
+    volumes:
+      - loki_data:/loki
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD requis}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    networks:
+      - observability
+      - edge # routé par Traefik
+    depends_on:
+      - prometheus
+      - loki
+    volumes:
+      - grafana_data:/var/lib/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=kevinos_edge
+      - traefik.http.routers.grafana.rule=Host(`grafana.${KEVINOS_DOMAIN:-kevinos.local}`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    networks:
+      - observability
+    volumes:
+      - uptimekuma_data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 192M

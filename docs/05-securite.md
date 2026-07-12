@@ -20,14 +20,14 @@
 
 ## 2. Modèle de menace (synthèse STRIDE)
 
-| Menace | Exemple | Contre-mesure |
-|--------|---------|---------------|
-| **S**poofing (usurpation) | Vol de session/identité | SSO + MFA, cookies sécurisés, courte durée de session |
-| **T**ampering (altération) | Modification de données en transit | TLS partout, intégrité des sauvegardes |
-| **R**epudiation | Action non traçable | Journalisation centralisée (Loki), audit log |
-| **I**nfo disclosure (fuite) | Secrets, données perso exposées | Chiffrement au repos, secrets hors Git, segmentation réseau |
-| **D**oS | Saturation d'un service exposé | Rate-limit proxy, CrowdSec, VPN (surface réduite) |
-| **E**levation (élévation) | Conteneur compromis → hôte | Conteneurs non-root, capabilities réduites, réseaux isolés |
+| Menace                      | Exemple                            | Contre-mesure                                               |
+| --------------------------- | ---------------------------------- | ----------------------------------------------------------- |
+| **S**poofing (usurpation)   | Vol de session/identité            | SSO + MFA, cookies sécurisés, courte durée de session       |
+| **T**ampering (altération)  | Modification de données en transit | TLS partout, intégrité des sauvegardes                      |
+| **R**epudiation             | Action non traçable                | Journalisation centralisée (Loki), audit log                |
+| **I**nfo disclosure (fuite) | Secrets, données perso exposées    | Chiffrement au repos, secrets hors Git, segmentation réseau |
+| **D**oS                     | Saturation d'un service exposé     | Rate-limit proxy, CrowdSec, VPN (surface réduite)           |
+| **E**levation (élévation)   | Conteneur compromis → hôte         | Conteneurs non-root, capabilities réduites, réseaux isolés  |
 
 **Surfaces d'attaque principales** : le point d'entrée internet (proxy/VPN), les
 apps tierces (CVE upstream), les secrets (clés API IA, mots de passe), les
@@ -104,16 +104,16 @@ observability → Prometheus, Loki…     (isolé)
 
 ## 4. Conformité aux exigences du CDC
 
-| Exigence CDC | Couverture |
-|--------------|-----------|
-| ENF-20 HTTPS partout | §3.2 |
-| ENF-21 Reverse proxy unique | §3.2 |
-| ENF-22 VPN par défaut | §3.1 + ADR-0003 |
-| ENF-23 Secrets hors Git | §3.6 |
-| ENF-24 Chiffrement au repos | §3.7 |
-| ENF-25 Journalisation auditable | §3.8 |
-| ENF-26 Moindre privilège / segmentation | §3.4, §3.5 |
-| EF-02/03/04 SSO/MFA/RBAC | §3.3 |
+| Exigence CDC                            | Couverture      |
+| --------------------------------------- | --------------- |
+| ENF-20 HTTPS partout                    | §3.2            |
+| ENF-21 Reverse proxy unique             | §3.2            |
+| ENF-22 VPN par défaut                   | §3.1 + ADR-0003 |
+| ENF-23 Secrets hors Git                 | §3.6            |
+| ENF-24 Chiffrement au repos             | §3.7            |
+| ENF-25 Journalisation auditable         | §3.8            |
+| ENF-26 Moindre privilège / segmentation | §3.4, §3.5      |
+| EF-02/03/04 SSO/MFA/RBAC                | §3.3            |
 
 ## 5. Backlog sécurité (au-delà de la v1)
 

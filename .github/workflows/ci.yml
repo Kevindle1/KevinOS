@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# Annule les runs obsolètes sur une même branche.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Qualité (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Installer les dépendances
+        run: pnpm install --frozen-lockfile
+
+      - name: Format (Prettier)
+        run: pnpm run format:check
+
+      - name: Lint (ESLint)
+        run: pnpm run lint
+
+      - name: Build des paquets
+        run: pnpm run build
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Tests
+        run: pnpm run test
+
+  deploy-config:
+    name: Validation des fichiers Compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Valider la configuration Compose (socle + overlay)
+        working-directory: deploy
+        run: |
+          cp .env.example .env.ci
+          docker compose -f compose/docker-compose.yml --env-file .env.ci config --quiet
+          docker compose -f compose/docker-compose.yml \
+            -f compose/docker-compose.observability.yml \
+            --env-file .env.ci config --quiet
+          rm -f .env.ci

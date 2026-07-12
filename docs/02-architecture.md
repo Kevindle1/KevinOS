@@ -24,15 +24,15 @@ derrière un proxy, avec une base de données unique.
           PostgreSQL
 ```
 
-| ✅ Avantages | ❌ Inconvénients |
-|-------------|-----------------|
-| Simple à démarrer, un seul déploiement | « Modules indépendants et remplaçables » non respecté |
-| Faible surcoût mémoire | Un crash peut tout emporter (pas d'isolation) |
-| Transactions faciles (une seule DB) | Impossible d'intégrer Immich/Jellyfin/HA (ce sont des apps séparées) |
-| | Ne monte pas vers Kubernetes naturellement |
+| ✅ Avantages                           | ❌ Inconvénients                                                     |
+| -------------------------------------- | -------------------------------------------------------------------- |
+| Simple à démarrer, un seul déploiement | « Modules indépendants et remplaçables » non respecté                |
+| Faible surcoût mémoire                 | Un crash peut tout emporter (pas d'isolation)                        |
+| Transactions faciles (une seule DB)    | Impossible d'intégrer Immich/Jellyfin/HA (ce sont des apps séparées) |
+|                                        | Ne monte pas vers Kubernetes naturellement                           |
 
 ➡️ **Rejetée** : incompatible avec l'exigence ENF-01 (modules remplaçables) et
-avec le principe « ne pas réinventer » (on *doit* orchestrer des apps tierces).
+avec le principe « ne pas réinventer » (on _doit_ orchestrer des apps tierces).
 
 ---
 
@@ -41,12 +41,12 @@ avec le principe « ne pas réinventer » (on *doit* orchestrer des apps tierces
 On écrit **soi-même** chaque module (photos, médias, cloud…) comme un
 micro-service maison, orchestré par Docker Compose.
 
-| ✅ Avantages | ❌ Inconvénients |
-|-------------|-----------------|
-| Contrôle total, cohérence maximale | **Des années de travail** pour égaler Immich/Jellyfin/HA |
-| Isolation par conteneur | Réinvention massive → « recherche de la facilité » inversée : sur-effort |
-| | Maintenance colossale pour un seul mainteneur |
-| | Time-to-value catastrophique |
+| ✅ Avantages                       | ❌ Inconvénients                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| Contrôle total, cohérence maximale | **Des années de travail** pour égaler Immich/Jellyfin/HA                 |
+| Isolation par conteneur            | Réinvention massive → « recherche de la facilité » inversée : sur-effort |
+|                                    | Maintenance colossale pour un seul mainteneur                            |
+|                                    | Time-to-value catastrophique                                             |
 
 ➡️ **Rejetée** : viole le bon sens d'ingénierie. Réécrire un moteur de photos IA
 ou une plateforme domotique n'a aucune valeur ajoutée et détruit la longévité du
@@ -58,12 +58,12 @@ projet.
 
 Cluster Kubernetes, chaque module en Deployment, Ingress, autoscaling, etc.
 
-| ✅ Avantages | ❌ Inconvénients |
-|-------------|-----------------|
-| Scalabilité, HA, self-healing, standard cloud | **Sur-dimensionné** pour 1 nœud / 16 Go |
-| Idéal si le projet devient vraiment multi-tenant | Le control-plane consomme déjà une part de la RAM |
-| Écosystème riche (Helm, opérateurs) | Complexité d'exploitation élevée pour 1 mainteneur |
-| | Beaucoup d'apps self-host sont livrées en Compose, pas en Helm |
+| ✅ Avantages                                     | ❌ Inconvénients                                               |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| Scalabilité, HA, self-healing, standard cloud    | **Sur-dimensionné** pour 1 nœud / 16 Go                        |
+| Idéal si le projet devient vraiment multi-tenant | Le control-plane consomme déjà une part de la RAM              |
+| Écosystème riche (Helm, opérateurs)              | Complexité d'exploitation élevée pour 1 mainteneur             |
+|                                                  | Beaucoup d'apps self-host sont livrées en Compose, pas en Helm |
 
 ➡️ **Reportée** : c'est la **cible future**, pas le point de départ. On garde la
 compatibilité (voir décision). Détail dans [ADR-0002](adr/ADR-0002-orchestration.md).
@@ -76,6 +76,7 @@ KevinOS **n'écrit que sa valeur unique** — le **liant** — et **orchestre** 
 applications open-source matures pour les domaines métier.
 
 **Ce que KevinOS construit lui-même (code natif) :**
+
 - **KevinOS Core** : API Gateway, registre de services, config, bus d'événements.
 - **Kevin Dashboard** : l'interface unifiée (React).
 - **Kevin AI** : l'orchestrateur d'intelligence (agents, RAG, mémoire).
@@ -83,6 +84,7 @@ applications open-source matures pour les domaines métier.
 - L'intégration **Auth (SSO/MFA)** transverse.
 
 **Ce que KevinOS intègre (existant, remplaçable) :**
+
 - Immich (photos), Jellyfin (médias), Nextcloud (cloud), Home Assistant
   (domotique), Vaultwarden (mots de passe), Prometheus/Grafana (monitoring), etc.
 
@@ -115,13 +117,13 @@ applications open-source matures pour les domaines métier.
   Observabilité : Prometheus · Grafana · Loki
 ```
 
-| ✅ Avantages | ❌ Inconvénients |
-|-------------|-----------------|
-| **Time-to-value** rapide (briques matures) | Hétérogénéité des apps intégrées (styles d'API variés) |
-| Respecte « modules **remplaçables** » (interface Core) | La couche d'intégration est le vrai défi (mais c'est *la* valeur) |
-| Isolation par conteneur, mode dégradé | Chaque app tierce a sa propre DB/config à gérer |
-| Compatible Compose **aujourd'hui**, K8s **demain** | SSO à câbler sur des apps qui le supportent inégalement |
-| Effort concentré sur ce qui différencie KevinOS (le cerveau) | |
+| ✅ Avantages                                                 | ❌ Inconvénients                                                  |
+| ------------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Time-to-value** rapide (briques matures)                   | Hétérogénéité des apps intégrées (styles d'API variés)            |
+| Respecte « modules **remplaçables** » (interface Core)       | La couche d'intégration est le vrai défi (mais c'est _la_ valeur) |
+| Isolation par conteneur, mode dégradé                        | Chaque app tierce a sa propre DB/config à gérer                   |
+| Compatible Compose **aujourd'hui**, K8s **demain**           | SSO à câbler sur des apps qui le supportent inégalement           |
+| Effort concentré sur ce qui différencie KevinOS (le cerveau) |                                                                   |
 
 ➡️ **RETENUE.** C'est l'architecture d'un CTO senior : maximiser la valeur créée,
 minimiser la dette réinventée, préserver la longévité et la modularité. Voir
@@ -131,13 +133,13 @@ minimiser la dette réinventée, préserver la longévité et la modularité. Vo
 
 ## 2. Décision d'architecture (synthèse)
 
-| Décision | Choix | ADR |
-|----------|-------|-----|
-| Style global | **Cœur natif + intégration best-of-breed** (Option D) | [ADR-0004](adr/ADR-0004-integrer-vs-construire.md) |
-| Orchestration v1 | **Docker Compose**, K8s-ready plus tard | [ADR-0002](adr/ADR-0002-orchestration.md) |
-| Organisation du code | **Monorepo** (pnpm workspaces) | [ADR-0001](adr/ADR-0001-monorepo.md) |
-| Accès distant | **VPN par défaut** (WireGuard) | [ADR-0003](adr/ADR-0003-acces-distant-vpn.md) |
-| Frontière modules | Le **Core** expose une interface stable ; les modules sont derrière | [ADR-0005](adr/ADR-0005-couche-integration-core.md) |
+| Décision             | Choix                                                               | ADR                                                 |
+| -------------------- | ------------------------------------------------------------------- | --------------------------------------------------- |
+| Style global         | **Cœur natif + intégration best-of-breed** (Option D)               | [ADR-0004](adr/ADR-0004-integrer-vs-construire.md)  |
+| Orchestration v1     | **Docker Compose**, K8s-ready plus tard                             | [ADR-0002](adr/ADR-0002-orchestration.md)           |
+| Organisation du code | **Monorepo** (pnpm workspaces)                                      | [ADR-0001](adr/ADR-0001-monorepo.md)                |
+| Accès distant        | **VPN par défaut** (WireGuard)                                      | [ADR-0003](adr/ADR-0003-acces-distant-vpn.md)       |
+| Frontière modules    | Le **Core** expose une interface stable ; les modules sont derrière | [ADR-0005](adr/ADR-0005-couche-integration-core.md) |
 
 ---
 
@@ -167,7 +169,7 @@ Voir le diagramme détaillé : [`diagrammes/conteneurs.md`](diagrammes/conteneur
 5. **Stateless au maximum côté KevinOS natif.** L'état vit dans PostgreSQL/Redis/
    volumes, jamais dans le conteneur → mises à jour et migration K8s facilitées.
 6. **IA pluggable.** Kevin AI parle à un **fournisseur abstrait** (local Ollama
-   *ou* API Cloud), configurable, sans changement de code applicatif.
+   _ou_ API Cloud), configurable, sans changement de code applicatif.
 
 ## 5. Trajectoire vers Kubernetes (longévité)
 

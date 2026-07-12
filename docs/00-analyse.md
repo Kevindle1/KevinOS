@@ -28,7 +28,7 @@ de passe, une box domotique…). Cela crée :
 - une **fragmentation** (aucune vue d'ensemble, aucune corrélation entre les
   domaines) ;
 - un **coût récurrent** (abonnements multiples) ;
-- une **absence d'intelligence transverse** (aucun assistant ne voit *tout*).
+- une **absence d'intelligence transverse** (aucun assistant ne voit _tout_).
 
 KevinOS répond en **rapatriant** ces usages sur du matériel possédé, en les
 **unifiant** derrière une interface et une identité uniques, et en ajoutant une
@@ -36,12 +36,12 @@ KevinOS répond en **rapatriant** ces usages sur du matériel possédé, en les
 
 ## 3. Utilisateurs & personas
 
-| Persona | Rôle | Besoin principal |
-|---------|------|------------------|
-| **Kevin (propriétaire/admin)** | Super-administrateur | Contrôle total, sécurité, évolutivité |
-| **Foyer** (famille) | Utilisateurs | Accès simple aux médias, photos, agenda, domotique |
-| **Invité** | Accès temporaire | Accès restreint et révocable |
-| **Kevin AI** (agent) | Acteur système | Agir *au nom de* l'utilisateur sur les modules |
+| Persona                        | Rôle                 | Besoin principal                                   |
+| ------------------------------ | -------------------- | -------------------------------------------------- |
+| **Kevin (propriétaire/admin)** | Super-administrateur | Contrôle total, sécurité, évolutivité              |
+| **Foyer** (famille)            | Utilisateurs         | Accès simple aux médias, photos, agenda, domotique |
+| **Invité**                     | Accès temporaire     | Accès restreint et révocable                       |
+| **Kevin AI** (agent)           | Acteur système       | Agir _au nom de_ l'utilisateur sur les modules     |
 
 > Bien que le projet soit personnel au départ, l'architecture est conçue
 > **multi-tenant-ready** : notion d'utilisateur, de rôle et d'isolation dès le
@@ -76,18 +76,19 @@ KevinOS répond en **rapatriant** ces usages sur du matériel possédé, en les
 
 C'est **la** contrainte structurante. Budget mémoire réaliste :
 
-| Poste | RAM approx. | Note |
-|-------|-------------|------|
-| OS Linux + Docker | ~1–2 Go | incompressible |
-| Reverse proxy + SSO + DNS | ~0,5 Go | toujours actif |
-| Base de données (PostgreSQL) + Redis | ~1 Go | mutualisée |
-| Monitoring (Prometheus/Grafana/Loki) | ~1–1,5 Go | |
-| Nextcloud / Immich / Jellyfin | ~1–3 Go chacun selon charge | pas tous à fond en même temps |
-| **Ollama + LLM 7B quantisé** | **~5–8 Go** | **très lourd**, CPU only = lent |
-| Frigate (vision caméra) | ~1–2 Go + **exige GPU/Coral** pour être utile | |
+| Poste                                | RAM approx.                                   | Note                            |
+| ------------------------------------ | --------------------------------------------- | ------------------------------- |
+| OS Linux + Docker                    | ~1–2 Go                                       | incompressible                  |
+| Reverse proxy + SSO + DNS            | ~0,5 Go                                       | toujours actif                  |
+| Base de données (PostgreSQL) + Redis | ~1 Go                                         | mutualisée                      |
+| Monitoring (Prometheus/Grafana/Loki) | ~1–1,5 Go                                     |                                 |
+| Nextcloud / Immich / Jellyfin        | ~1–3 Go chacun selon charge                   | pas tous à fond en même temps   |
+| **Ollama + LLM 7B quantisé**         | **~5–8 Go**                                   | **très lourd**, CPU only = lent |
+| Frigate (vision caméra)              | ~1–2 Go + **exige GPU/Coral** pour être utile |                                 |
 
 ➡️ **Conclusion : on ne peut pas tout faire tourner à pleine charge en même
 temps sur 16 Go.** L'architecture doit permettre :
+
 - un **déploiement progressif** (activer un module à la fois) ;
 - des **limites de ressources par conteneur** (`mem_limit`, `cpus`) ;
 - un **profil « allégé »** (LLM distant/API au lieu de local tant que la RAM n'est
@@ -110,16 +111,16 @@ temps sur 16 Go.** L'architecture doit permettre :
 
 ## 6. Risques identifiés
 
-| Risque | Prob. | Impact | Mitigation |
-|--------|-------|--------|-----------|
-| Saturation RAM (tout activer d'un coup) | Élevée | Élevé | Déploiement progressif + limites conteneurs + monitoring alertes |
-| Perte de données (panne disque) | Moyenne | Critique | Sauvegardes 3-2-1, RAID/mirroring données, tests de restauration |
-| Exposition internet mal maîtrisée | Moyenne | Critique | Accès **par VPN par défaut**, SSO/MFA, CrowdSec, pas de port ouvert inutile |
-| CGNAT / IP dynamique | Élevée | Moyen | WireGuard sortant / Tailscale-Headscale, DDNS |
-| Sur-ingénierie (Kubernetes trop tôt) | Moyenne | Moyen | Docker Compose d'abord, K8s seulement quand justifié (ADR-0002) |
-| Dépendance à un module upstream abandonné | Faible | Moyen | Modules **remplaçables** derrière la couche Core (interfaces) |
-| Fuite de secrets (clés API IA, mots de passe) | Moyenne | Élevé | Coffre de secrets, `.env` hors Git, chiffrement au repos |
-| Lenteur IA locale (CPU only) | Élevée | Moyen | Mode hybride (API Cloud optionnelle) + modèles quantisés + upgrade GPU |
+| Risque                                        | Prob.   | Impact   | Mitigation                                                                  |
+| --------------------------------------------- | ------- | -------- | --------------------------------------------------------------------------- |
+| Saturation RAM (tout activer d'un coup)       | Élevée  | Élevé    | Déploiement progressif + limites conteneurs + monitoring alertes            |
+| Perte de données (panne disque)               | Moyenne | Critique | Sauvegardes 3-2-1, RAID/mirroring données, tests de restauration            |
+| Exposition internet mal maîtrisée             | Moyenne | Critique | Accès **par VPN par défaut**, SSO/MFA, CrowdSec, pas de port ouvert inutile |
+| CGNAT / IP dynamique                          | Élevée  | Moyen    | WireGuard sortant / Tailscale-Headscale, DDNS                               |
+| Sur-ingénierie (Kubernetes trop tôt)          | Moyenne | Moyen    | Docker Compose d'abord, K8s seulement quand justifié (ADR-0002)             |
+| Dépendance à un module upstream abandonné     | Faible  | Moyen    | Modules **remplaçables** derrière la couche Core (interfaces)               |
+| Fuite de secrets (clés API IA, mots de passe) | Moyenne | Élevé    | Coffre de secrets, `.env` hors Git, chiffrement au repos                    |
+| Lenteur IA locale (CPU only)                  | Élevée  | Moyen    | Mode hybride (API Cloud optionnelle) + modèles quantisés + upgrade GPU      |
 
 ## 7. Hypothèses & questions ouvertes (à valider — étape 6)
 

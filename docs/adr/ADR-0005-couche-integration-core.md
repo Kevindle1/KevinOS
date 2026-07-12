@@ -1,6 +1,6 @@
 # ADR-0005 — Le Core comme unique couche d'intégration
 
-**Statut** : Acceptée (à valider — étape 6)
+**Statut** : Acceptée — validée le 2026-07-12 (étape 6)
 **Date** : 2026-07-12
 
 ## Contexte
@@ -27,8 +27,8 @@ authentification spécifiques), remplacer un module deviendrait un refactor glob
 
 ## Décision
 
-**Le Core est l'unique couche d'intégration** (pattern *Anti-Corruption Layer* /
-*API Gateway*) :
+**Le Core est l'unique couche d'intégration** (pattern _Anti-Corruption Layer_ /
+_API Gateway_) :
 
 - Le **domaine** définit des **ports** (ex. `PhotoLibrary`, `MediaLibrary`,
   `HomeAutomation`) — des interfaces exprimées dans le langage de KevinOS.

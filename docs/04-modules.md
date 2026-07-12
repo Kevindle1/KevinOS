@@ -12,46 +12,46 @@
 
 ## 1. Modules natifs (le « liant » — cœur de la valeur KevinOS)
 
-| Module | Statut | Description | Phase |
-|--------|--------|-------------|-------|
-| **KevinOS Core** | 🟢 | API Gateway, registre de services, config, bus d'événements | P0 |
-| **Kevin Dashboard** | 🟢 | Interface unifiée React, widgets vivants | P0 |
-| **Kevin AI** | 🟢 | Orchestrateur IA : chat, RAG, mémoire, agents | P1 |
-| **Kevin API** | 🟢 | API publique documentée (OpenAPI) | P1 |
-| **Kevin SDK** | 🟢 | Client TypeScript de l'API | P3 |
-| **Kevin CLI** | 🟢 | Outil d'admin en ligne de commande (`kevin …`) | P2 |
-| **Kevin Voice** | 🟡 | STT (Whisper) + TTS (Piper) branchés sur Kevin AI | P3 |
-| **Kevin Automation** | 🟡 | Règles & scénarios ; s'appuie sur n8n/HA + Core | P2 |
+| Module               | Statut | Description                                                 | Phase |
+| -------------------- | ------ | ----------------------------------------------------------- | ----- |
+| **KevinOS Core**     | 🟢     | API Gateway, registre de services, config, bus d'événements | P0    |
+| **Kevin Dashboard**  | 🟢     | Interface unifiée React, widgets vivants                    | P0    |
+| **Kevin AI**         | 🟢     | Orchestrateur IA : chat, RAG, mémoire, agents               | P1    |
+| **Kevin API**        | 🟢     | API publique documentée (OpenAPI)                           | P1    |
+| **Kevin SDK**        | 🟢     | Client TypeScript de l'API                                  | P3    |
+| **Kevin CLI**        | 🟢     | Outil d'admin en ligne de commande (`kevin …`)              | P2    |
+| **Kevin Voice**      | 🟡     | STT (Whisper) + TTS (Piper) branchés sur Kevin AI           | P3    |
+| **Kevin Automation** | 🟡     | Règles & scénarios ; s'appuie sur n8n/HA + Core             | P2    |
 
 ## 2. Modules intégrés (best-of-breed open-source)
 
-| Module | Statut | Solution retenue | Alternatives | Phase |
-|--------|--------|------------------|--------------|-------|
-| **Kevin Cloud** | 🔵 | Nextcloud | Seafile | P1 |
-| **Kevin Files** | 🔵 | File Browser (ou via Nextcloud) | — | P1 |
-| **Kevin Photos** | 🔵 | Immich | PhotoPrism | P1 |
-| **Kevin Media** | 🔵 | Jellyfin | Plex | P2 |
-| **Kevin Music** | 🔵 | Navidrome | — | P3 |
-| **Kevin Books** | 🔵 | Kavita | Calibre-Web | P3 |
-| **Kevin Backup** | 🔵 | Restic | Kopia, Duplicati | P0 |
-| **Kevin VPN** | 🔵 | WireGuard (+ Headscale) | Tailscale | P0 |
-| **Kevin Home** | 🔵 | Home Assistant | — | P2 |
-| **Kevin Monitor** | 🔵 | Prometheus + Grafana + Uptime Kuma | Netdata | P0 |
-| **Kevin Logs** | 🔵 | Loki + Promtail | — | P0 |
-| **Kevin Security** | 🔵 | CrowdSec + Authelia | fail2ban, Authentik | P0 |
-| **Kevin Network** | 🔵 | Reverse proxy + segmentation Docker | — | P0 |
-| **Kevin DNS** | 🔵 | AdGuard Home + Unbound | Pi-hole | P1 |
-| **Kevin Password** | 🔵 | Vaultwarden | — | P1 |
-| **Kevin Calendar** | 🔵 | Radicale / Nextcloud (CalDAV/CardDAV) | Baïkal | P2 |
-| **Kevin Camera** | 🔵 | Frigate ⚠ (GPU/Coral) | — | P4 |
-| **Kevin Dev** | 🔵 | Gitea + code-server + CI (Woodpecker) | Forgejo | P3 |
-| **Kevin Finance** | 🔵 | Actual | Firefly III | P3 |
-| **Kevin Inventory** | 🔵 | Homebox | Grocy | P4 |
-| **Kevin Downloader** | 🔵 | qBittorrent (+ *arr, cadre légal ⚠) | — | P4 |
-| **Kevin Energy** | 🔵 | Home Assistant (module énergie) | — | P2 |
-| **Kevin Weather** | 🟡 | Intégration API météo (widget Dashboard) | — | P1 |
-| **Kevin Health** | ⚪ | À définir (données santé sensibles) | — | v2 |
-| **Kevin Mail** | ⚪ | **Reporté** — serveur mail = trop lourd/risqué | Mailcow (futur) | v2 |
+| Module               | Statut | Solution retenue                               | Alternatives        | Phase |
+| -------------------- | ------ | ---------------------------------------------- | ------------------- | ----- |
+| **Kevin Cloud**      | 🔵     | Nextcloud                                      | Seafile             | P1    |
+| **Kevin Files**      | 🔵     | File Browser (ou via Nextcloud)                | —                   | P1    |
+| **Kevin Photos**     | 🔵     | Immich                                         | PhotoPrism          | P1    |
+| **Kevin Media**      | 🔵     | Jellyfin                                       | Plex                | P2    |
+| **Kevin Music**      | 🔵     | Navidrome                                      | —                   | P3    |
+| **Kevin Books**      | 🔵     | Kavita                                         | Calibre-Web         | P3    |
+| **Kevin Backup**     | 🔵     | Restic                                         | Kopia, Duplicati    | P0    |
+| **Kevin VPN**        | 🔵     | WireGuard (+ Headscale)                        | Tailscale           | P0    |
+| **Kevin Home**       | 🔵     | Home Assistant                                 | —                   | P2    |
+| **Kevin Monitor**    | 🔵     | Prometheus + Grafana + Uptime Kuma             | Netdata             | P0    |
+| **Kevin Logs**       | 🔵     | Loki + Promtail                                | —                   | P0    |
+| **Kevin Security**   | 🔵     | CrowdSec + Authelia                            | fail2ban, Authentik | P0    |
+| **Kevin Network**    | 🔵     | Reverse proxy + segmentation Docker            | —                   | P0    |
+| **Kevin DNS**        | 🔵     | AdGuard Home + Unbound                         | Pi-hole             | P1    |
+| **Kevin Password**   | 🔵     | Vaultwarden                                    | —                   | P1    |
+| **Kevin Calendar**   | 🔵     | Radicale / Nextcloud (CalDAV/CardDAV)          | Baïkal              | P2    |
+| **Kevin Camera**     | 🔵     | Frigate ⚠ (GPU/Coral)                          | —                   | P4    |
+| **Kevin Dev**        | 🔵     | Gitea + code-server + CI (Woodpecker)          | Forgejo             | P3    |
+| **Kevin Finance**    | 🔵     | Actual                                         | Firefly III         | P3    |
+| **Kevin Inventory**  | 🔵     | Homebox                                        | Grocy               | P4    |
+| **Kevin Downloader** | 🔵     | qBittorrent (+ *arr, cadre légal ⚠)            | —                   | P4    |
+| **Kevin Energy**     | 🔵     | Home Assistant (module énergie)                | —                   | P2    |
+| **Kevin Weather**    | 🟡     | Intégration API météo (widget Dashboard)       | —                   | P1    |
+| **Kevin Health**     | ⚪     | À définir (données santé sensibles)            | —                   | v2    |
+| **Kevin Mail**       | ⚪     | **Reporté** — serveur mail = trop lourd/risqué | Mailcow (futur)     | v2    |
 
 ---
 
@@ -81,7 +81,7 @@ intégré passe par un **contrat** géré par le Core :
 L'ordre suit la valeur et les dépendances, **pas** l'ordre du brief :
 
 1. **P0 — Socle non négociable** : réseau, sécurité, sauvegarde, monitoring, VPN.
-   *(Sans ça, rien d'autre ne doit tourner en confiance.)*
+   _(Sans ça, rien d'autre ne doit tourner en confiance.)_
 2. **P1 — Première valeur visible** : Core, Dashboard, un module de données
    (Cloud/Files ou Photos), Kevin AI de base, DNS, Password.
 3. **P2 — Vie quotidienne** : Médias, Domotique/Énergie, Agenda, Automations, CLI.

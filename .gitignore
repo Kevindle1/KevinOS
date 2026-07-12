@@ -1,0 +1,38 @@
+# Dépendances
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Tests / couverture
+coverage/
+.vitest/
+
+# Secrets & environnement — JAMAIS committer (voir docs/05-securite.md §3.6)
+.env
+.env.*
+!.env.example
+deploy/.env
+deploy/secrets/
+*.key
+*.pem
+!ca-bundle*.crt
+
+# Données & volumes runtime (jamais dans Git — voir docs/diagrammes/donnees.md)
+deploy/data/
+deploy/volumes/
+
+# Logs
+*.log
+logs/
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.recommended.json

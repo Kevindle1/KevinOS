@@ -1,6 +1,6 @@
 # ADR-0004 — Intégrer le best-of-breed plutôt que tout construire
 
-**Statut** : Acceptée (à valider — étape 6)
+**Statut** : Acceptée — validée le 2026-07-12 (étape 6)
 **Date** : 2026-07-12
 
 ## Contexte

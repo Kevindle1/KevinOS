@@ -1,6 +1,6 @@
 # ADR-0003 — Accès distant par VPN (WireGuard) par défaut
 
-**Statut** : Acceptée (à valider — étape 6)
+**Statut** : Acceptée — validée le 2026-07-12 (étape 6)
 **Date** : 2026-07-12
 
 ## Contexte

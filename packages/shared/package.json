@@ -1,0 +1,31 @@
+{
+  "name": "@kevinos/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contrats partagés de KevinOS : config, logger, contrat de module, port AIProvider.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "pino": "^9.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.2"
+  }
+}

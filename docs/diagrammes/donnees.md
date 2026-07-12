@@ -42,14 +42,14 @@ flowchart TB
 
 **Responsabilités de stockage**
 
-| Type | Support | Sauvegarde | Rétention |
-|------|---------|-----------|-----------|
-| OS / Docker | SSD | Config en Git (IaC) | reconstruit |
-| Bases (PostgreSQL) | SSD | **dump + Restic** | longue |
-| Redis | SSD | reconstructible (cache) | courte |
-| Photos / Documents | HDD SATA | **Restic → USB (+ hors-site)** | longue |
-| Médias | HDD SATA/USB | rétention à arbitrer (volume) | à définir |
-| Logs / métriques | SSD | rotation | courte–moyenne |
+| Type               | Support      | Sauvegarde                     | Rétention      |
+| ------------------ | ------------ | ------------------------------ | -------------- |
+| OS / Docker        | SSD          | Config en Git (IaC)            | reconstruit    |
+| Bases (PostgreSQL) | SSD          | **dump + Restic**              | longue         |
+| Redis              | SSD          | reconstructible (cache)        | courte         |
+| Photos / Documents | HDD SATA     | **Restic → USB (+ hors-site)** | longue         |
+| Médias             | HDD SATA/USB | rétention à arbitrer (volume)  | à définir      |
+| Logs / métriques   | SSD          | rotation                       | courte–moyenne |
 
 **Règles**
 

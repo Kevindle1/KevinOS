@@ -39,7 +39,7 @@ flowchart TB
 
 **Points clés**
 
-- **Provider pluggable** : le *routeur de modèle* choisit local (Ollama) ou Cloud
+- **Provider pluggable** : le _routeur de modèle_ choisit local (Ollama) ou Cloud
   selon la sensibilité, la complexité et le mode autorisé — sans changer le code.
 - **RAG** ancre les réponses dans les données réelles du propriétaire (pgvector,
   pas de base vectorielle séparée → économie de RAM).

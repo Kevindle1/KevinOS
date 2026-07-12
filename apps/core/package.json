@@ -1,0 +1,28 @@
+{
+  "name": "@kevinos/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KevinOS Core — passerelle API, registre de services et bus d'événements. Le point d'intégration unique (ADR-0005).",
+  "type": "module",
+  "main": "./dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kevinos/shared": "workspace:*",
+    "express": "^4.21.2",
+    "pino-http": "^10.4.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.7",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.2"
+  }
+}
