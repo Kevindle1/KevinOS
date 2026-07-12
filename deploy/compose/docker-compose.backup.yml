@@ -1,0 +1,62 @@
+# KevinOS — overlay sauvegardes (Restic). Phase 1.
+#
+# À combiner avec le socle :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.backup.yml --env-file .env up -d
+#
+# Test de restauration (à faire régulièrement — ENF-30) :
+#   docker compose -f compose/docker-compose.yml -f compose/docker-compose.backup.yml \
+#     --env-file .env run --rm --entrypoint /usr/local/bin/restore-test.sh backup
+#
+# ⚠️ En production, RELOCALISER le dépôt `restic_repo` sur le DISQUE DE SAUVEGARDE
+#    (HDD SATA/USB) via un bind mount, pour respecter la règle 3-2-1.
+
+name: kevinos
+
+networks:
+  data:
+    external: true
+    name: kevinos_data
+
+volumes:
+  # Par défaut un volume nommé (fonctionne d'emblée). À remplacer par un bind
+  # mount vers le disque de sauvegarde dédié en production.
+  restic_repo:
+  # Volume de données d'Authelia, créé par le socle — sauvegardé en lecture seule.
+  authelia_data:
+    external: true
+    name: kevinos_authelia_data
+
+secrets:
+  restic_password:
+    file: ../secrets/restic_password
+  postgres_password:
+    file: ../secrets/postgres_password
+
+services:
+  backup:
+    build:
+      context: ../backup
+    image: kevinos/backup:0.1.0
+    restart: unless-stopped
+    environment:
+      RESTIC_REPOSITORY: /repo
+      RUN_ON_STARTUP: 'true'
+      BACKUP_INTERVAL_HOURS: '24'
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-kevinos}
+      POSTGRES_DB: ${POSTGRES_DB:-kevinos}
+      BACKUP_PATHS: /sources
+      RESTIC_KEEP: --keep-daily 7 --keep-weekly 4 --keep-monthly 6
+    networks:
+      - data # pour joindre PostgreSQL (pg_dump)
+    volumes:
+      - restic_repo:/repo
+      - authelia_data:/sources/authelia:ro
+    secrets:
+      - restic_password
+      - postgres_password
+    deploy:
+      resources:
+        limits:
+          memory: 256M

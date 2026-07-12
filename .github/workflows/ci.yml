@@ -48,12 +48,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Valider la configuration Compose (socle + overlay)
+      - name: Valider la configuration Compose (socle + overlays)
         working-directory: deploy
         run: |
           cp .env.example .env.ci
-          docker compose -f compose/docker-compose.yml --env-file .env.ci config --quiet
-          docker compose -f compose/docker-compose.yml \
+          # Secrets factices depuis les gabarits (jamais de vrais secrets en CI).
+          for f in secrets/*.example; do cp "$f" "${f%.example}"; done
+          BASE="-f compose/docker-compose.yml"
+          docker compose $BASE --env-file .env.ci config --quiet
+          docker compose $BASE -f compose/docker-compose.backup.yml --env-file .env.ci config --quiet
+          docker compose $BASE -f compose/docker-compose.observability.yml --env-file .env.ci config --quiet
+          docker compose $BASE \
+            -f compose/docker-compose.backup.yml \
             -f compose/docker-compose.observability.yml \
             --env-file .env.ci config --quiet
-          rm -f .env.ci
+          rm -f .env.ci secrets/authelia_* secrets/postgres_password secrets/redis_password secrets/restic_password secrets/grafana_admin_password

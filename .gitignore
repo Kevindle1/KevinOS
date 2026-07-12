@@ -16,7 +16,13 @@ coverage/
 .env.*
 !.env.example
 deploy/.env
-deploy/secrets/
+# Secrets : on ignore tout le contenu SAUF les gabarits et le mode d'emploi.
+deploy/secrets/*
+!deploy/secrets/*.example
+!deploy/secrets/README.md
+!deploy/secrets/.gitkeep
+# Base d'utilisateurs Authelia réelle (le gabarit .example est tracké).
+deploy/authelia/users_database.yml
 *.key
 *.pem
 !ca-bundle*.crt

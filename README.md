@@ -4,8 +4,18 @@
 > KevinOS n'est ni un NAS, ni un simple HomeLab : c'est un écosystème complet
 > pensé pour évoluer pendant des années.
 
-**Version : 0.1 — Phase 0 (fondations) ✅ → Phase 1 (socle sécurité) à venir**
-**Statut : 🏗️ Socle : monorepo + Core + infra + versioning livrés ; suite = Authelia/Restic/sécurité**
+**Version : 0.1 — Phase 0 (fondations) ✅ → Phase 1 (socle sécurité) en cours**
+**Statut : 🏗️ Socle livré (monorepo + Core + infra + versioning) ; Phase 1 = Authelia / Restic / secrets / monitoring**
+
+---
+
+## 🧭 Commencer par le « pourquoi »
+
+- **[`PRODUCT_VISION.md`](PRODUCT_VISION.md)** — la **boussole** : pourquoi KevinOS
+  existe, pour qui, et ce qu'il ne doit jamais devenir. _(À lire en premier.)_
+- **[`docs/REGLES-ARCHITECTURE.md`](docs/REGLES-ARCHITECTURE.md)** — les **7 règles
+  permanentes** (produit, offline-first, API-first, UX-first, KAI, interface
+  unique, documentation), opposables à toute décision.
 
 ---
 
@@ -20,9 +30,8 @@ sans dépendance obligatoire au Cloud.
 
 ## 📚 Documentation d'architecture
 
-Ce dépôt est actuellement en **phase de conception**. Aucune ligne de code
-applicatif n'est écrite tant que l'architecture n'est pas validée (étape 6 de la
-méthode projet). Toute la réflexion est documentée ici :
+L'architecture est **validée** ; le développement du socle est en cours. Toute la
+réflexion est documentée ici :
 
 | #   | Document                                            | Contenu                                                 |
 | --- | --------------------------------------------------- | ------------------------------------------------------- |
@@ -83,7 +92,7 @@ L'IA locale performante et la vision (caméras) nécessiteront à terme un
 - [x] **Étape 4** — Choix techniques
 - [x] **Étape 5** — Diagrammes
 - [x] **Étape 6** — Validation par le propriétaire (2026-07-12)
-- [~] **Étape 7** — Développement — **Phase 0 : socle & fondations** ← _nous sommes ici_
+- [~] **Étape 7** — Développement — Phase 0 ✅, **Phase 1 : socle sécurité (SSO/MFA, secrets, sauvegardes, monitoring)** ← _nous sommes ici_
 - [ ] **Étape 8** — Tests
 - [ ] **Étape 9** — Documentation utilisateur
 - [ ] **Étape 10** — Livraison

@@ -1,0 +1,17 @@
+# Base d'utilisateurs Authelia (gabarit).
+#
+# Copier en `users_database.yml` (ignoré par Git) puis remplacer le hash.
+# Générer un hash argon2id d'un mot de passe :
+#   docker run --rm authelia/authelia:4.38 \
+#     authelia crypto hash generate argon2 --password 'VOTRE-MOT-DE-PASSE'
+#
+# Rôles : `admins` = administrateur KevinOS ; `members` = foyer ; `guests` = invités.
+
+users:
+  kevin:
+    disabled: false
+    displayname: 'Kevin'
+    password: '$argon2id$v=19$m=65536,t=3,p=4$REMPLACER-PAR-UN-VRAI-HASH'
+    email: kevin@kevinos.local
+    groups:
+      - admins

@@ -5,6 +5,34 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — Gouvernance du projet
+
+- **`PRODUCT_VISION.md`** : la boussole (pourquoi KevinOS existe, pour qui, ce
+  qu'il ne doit jamais devenir).
+- **`docs/REGLES-ARCHITECTURE.md`** : 7 règles permanentes (produit, offline-first,
+  API-first, UX-first, KAI, interface unique, documentation), opposables à toute
+  décision future.
+
+### Ajouté — Phase 1 : socle sécurité & sauvegardes
+
+- **Authelia (SSO + MFA)** ([ADR-0009](docs/adr/ADR-0009-authelia-sso-mfa.md)) :
+  portail d'auth offline-first (base utilisateurs fichier, notifier fichier,
+  sessions Redis), intégré à Traefik en **ForwardAuth** ; protège le Core et
+  Grafana. Config + gabarit `users_database`.
+- **Gestion des secrets** ([ADR-0010](docs/adr/ADR-0010-gestion-secrets.md)) :
+  secrets **par fichier** (convention `*_FILE`, mécanisme `secrets:` de Compose,
+  moindre privilège) ; l'`.env` ne contient plus aucun secret. Structure
+  `deploy/secrets/` (gabarits versionnés, secrets réels ignorés par Git).
+- **Sauvegardes Restic** ([ADR-0011](docs/adr/ADR-0011-sauvegardes-restic.md)) :
+  image dédiée transparente (Restic + `pg_dump`), chiffrées, dédupliquées,
+  rétention 3-2-1, ordonnancement autonome, **script de test de restauration**.
+  Overlay `docker-compose.backup.yml`.
+- **Monitoring finalisé** : node-exporter (hôte), cAdvisor (conteneurs), promtail
+  (logs → Loki), **règles d'alerte** Prometheus (RAM > 90 %, disque < 10 %,
+  service down, CPU soutenu). Grafana derrière le SSO.
+- Runbook de déploiement complet (secrets, SSO, sauvegardes, restauration,
+  monitoring) ; CI valide toutes les combinaisons Compose.
+
 ### Ajouté — Système de versioning & compatibilité des modules (ADR-0008)
 
 - **`@kevinos/shared` → `versioning.ts`** : `KEVINOS_VERSIONS`

@@ -1,0 +1,68 @@
+# Configuration Authelia — SSO + MFA de KevinOS (ADR-0009).
+#
+# Offline-first (Règle 2) : le notifier écrit dans un fichier local, aucun SMTP
+# requis. Les secrets ne sont PAS ici : ils sont injectés via des fichiers montés
+# et la convention AUTHELIA_*_FILE (voir docker-compose.yml + deploy/secrets).
+#
+# Valider avant démarrage :
+#   docker run --rm -v "$PWD/authelia:/config" authelia/authelia:4.38 \
+#     authelia validate-config --config /config/configuration.yml
+
+theme: dark
+
+server:
+  address: 'tcp://0.0.0.0:9091'
+
+log:
+  level: info
+  format: json # agrégé par Loki
+
+# TOTP (application d'authentification type Aegis / Google Authenticator).
+totp:
+  issuer: kevinos.local
+  period: 30
+
+# Base d'utilisateurs locale (fichier) — 100 % hors-ligne.
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2id
+
+# Politique d'accès : tout est refusé par défaut ; le domaine KevinOS exige 2FA.
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'auth.kevinos.local'
+      policy: bypass # le portail lui-même doit rester joignable
+    - domain: '*.kevinos.local'
+      policy: two_factor
+
+# Sessions stockées dans Redis (déjà présent dans le socle).
+session:
+  name: authelia_session
+  expiration: 1h
+  inactivity: 15m
+  cookies:
+    - domain: kevinos.local
+      authelia_url: https://auth.kevinos.local
+  redis:
+    host: redis
+    port: 6379
+    # mot de passe injecté via AUTHELIA_SESSION_REDIS_PASSWORD_FILE
+
+# Anti-bruteforce (Règle 1 / sécurité).
+regulation:
+  max_retries: 3
+  find_time: 2m
+  ban_time: 5m
+
+# Stockage chiffré (clé via AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE).
+storage:
+  local:
+    path: /data/db.sqlite3
+
+# Notifier hors-ligne : écrit les liens (reset MFA, etc.) dans un fichier local.
+notifier:
+  filesystem:
+    filename: /data/notification.txt

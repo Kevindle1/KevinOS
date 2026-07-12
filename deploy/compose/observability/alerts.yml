@@ -1,0 +1,46 @@
+# Règles d'alerte KevinOS — RAM, disque, disponibilité des services.
+# Visibles dans Prometheus/Grafana ; le routage des notifications (push/email)
+# se fait via l'alerting Grafana (Alertmanager optionnel plus tard).
+
+groups:
+  - name: kevinos-disponibilite
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Service {{ $labels.job }} injoignable'
+          description: 'La cible {{ $labels.instance }} ne répond plus depuis 2 minutes.'
+
+  - name: kevinos-ressources
+    rules:
+      - alert: MemoireElevee
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'RAM > 90 % sur 16 Go'
+          description: 'Mémoire utilisée au-dessus de 90 % depuis 5 min — risque de saturation (voir budget mémoire).'
+
+      - alert: DisquePresquePlein
+        expr: >
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"}
+           / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) < 0.10
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Espace disque < 10 %'
+          description: "Le point de montage {{ $labels.mountpoint }} a moins de 10 % d'espace libre."
+
+      - alert: ChargeCpuElevee
+        expr: (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) > 0.90
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'CPU > 90 % soutenu'
+          description: 'Charge CPU au-dessus de 90 % depuis 15 min.'

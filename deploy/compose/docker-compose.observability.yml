@@ -24,6 +24,10 @@ volumes:
   loki_data:
   uptimekuma_data:
 
+secrets:
+  grafana_admin_password:
+    file: ../secrets/grafana_admin_password
+
 services:
   prometheus:
     image: prom/prometheus:v3.1.0
@@ -36,6 +40,7 @@ services:
       - apps
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/alerts.yml:/etc/prometheus/alerts.yml:ro
       - prometheus_data:/prometheus
     deploy:
       resources:
@@ -59,7 +64,7 @@ services:
     image: grafana/grafana:11.4.0
     restart: unless-stopped
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD requis}
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
       GF_USERS_ALLOW_SIGN_UP: 'false'
     networks:
       - observability
@@ -69,12 +74,16 @@ services:
       - loki
     volumes:
       - grafana_data:/var/lib/grafana
+    secrets:
+      - grafana_admin_password
     labels:
       - traefik.enable=true
       - traefik.docker.network=kevinos_edge
       - traefik.http.routers.grafana.rule=Host(`grafana.${KEVINOS_DOMAIN:-kevinos.local}`)
       - traefik.http.routers.grafana.entrypoints=websecure
       - traefik.http.routers.grafana.tls=true
+      # Grafana derrière le SSO/MFA (le middleware est défini par le service auth).
+      - traefik.http.routers.grafana.middlewares=authelia@docker
       - traefik.http.services.grafana.loadbalancer.server.port=3000
     deploy:
       resources:
@@ -92,3 +101,53 @@ services:
       resources:
         limits:
           memory: 192M
+
+  # Métriques de l'hôte (CPU, RAM, disque) — alimente les alertes.
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    restart: unless-stopped
+    command:
+      - --path.rootfs=/host
+    pid: host
+    networks:
+      - observability
+    volumes:
+      - /:/host:ro,rslave
+    deploy:
+      resources:
+        limits:
+          memory: 96M
+
+  # Métriques par conteneur.
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    restart: unless-stopped
+    networks:
+      - observability
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  # Collecte des logs des conteneurs KevinOS vers Loki.
+  promtail:
+    image: grafana/promtail:3.3.2
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - observability
+    volumes:
+      - ./observability/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    deploy:
+      resources:
+        limits:
+          memory: 128M

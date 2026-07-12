@@ -1,10 +1,12 @@
-# Configuration Prometheus — socle Phase 0.
-# On démarre minimal : Prometheus se surveille lui-même et scrute le Core.
-# Les cibles (modules) seront ajoutées au fil des phases.
+# Configuration Prometheus — socle d'observabilité (Phase 1).
 
 global:
   scrape_interval: 30s
   evaluation_interval: 30s
+
+# Règles d'alerte (RAM, disque, service down) — voir alerts.yml.
+rule_files:
+  - /etc/prometheus/alerts.yml
 
 scrape_configs:
   - job_name: prometheus
@@ -15,3 +17,13 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['core:8080']
+
+  # Métriques de l'hôte (CPU, RAM, disque) via node-exporter.
+  - job_name: node
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Métriques par conteneur via cAdvisor.
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']

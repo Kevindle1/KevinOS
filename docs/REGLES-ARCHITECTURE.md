@@ -1,0 +1,123 @@
+# Règles d'architecture permanentes
+
+> Ces règles sont des **invariants** du projet, validés par le propriétaire le
+> 2026-07-12. Elles sont **opposables à toute décision future** : une proposition
+> qui viole une de ces règles est rejetée par défaut, quels que soient ses autres
+> mérites.
+>
+> Le « pourquoi » profond vit dans [`PRODUCT_VISION.md`](../PRODUCT_VISION.md) ;
+> ce document en est la traduction **opérationnelle** pour les développeurs.
+
+---
+
+## Règle 1 — KevinOS est un **produit**
+
+KevinOS n'est **jamais** traité comme un simple homelab. Chaque décision est prise
+comme si le projet devait un jour servir **des milliers d'utilisateurs**.
+
+- La **qualité de l'architecture** prime sur la **rapidité** de développement.
+- On préfère avancer plus lentement avec des fondations exemplaires.
+
+**En pratique** : tests, CI, ADR, versioning, documentation ne sont pas
+optionnels. Pas de raccourci « parce que c'est juste pour moi ».
+
+## Règle 2 — **Offline-First**
+
+Toute fonctionnalité doit fonctionner **sans Internet**.
+
+- Les services Cloud sont **toujours optionnels**.
+- Le fonctionnement **local** est la priorité absolue.
+
+**En pratique** : aucune dépendance réseau sortante pour une fonction essentielle.
+L'IA est locale ([ADR-0006](adr/ADR-0006-kai-ia-locale.md)). Les notifications, la
+recherche, l'auth, les sauvegardes fonctionnent hors ligne. Un adaptateur Cloud
+est toujours _en plus_, jamais _à la place_.
+
+## Règle 3 — **API-First**
+
+Aucun module n'est **directement lié à l'interface**.
+
+- Chaque module expose **uniquement un contrat** (au Core).
+- Le Dashboard, KAI, une future app mobile ou une API publique utilisent
+  **exactement les mêmes interfaces**.
+
+**En pratique** : la logique vit derrière l'API du Core
+([ADR-0005](adr/ADR-0005-couche-integration-core.md)). Une UI ne contient **jamais**
+de logique métier ni d'appel direct à un module (Immich, Jellyfin…). Si le
+Dashboard peut le faire, l'app mobile et l'API publique le peuvent aussi, via le
+même contrat.
+
+## Règle 4 — **UX-First**
+
+L'expérience utilisateur doit être **exceptionnelle**.
+
+Avant tout nouveau module, on réfléchit **autant** à :
+
+- son expérience utilisateur,
+- son ergonomie,
+- sa simplicité,
+- sa cohérence avec le reste de KevinOS.
+
+**Règle d'or** : mieux vaut **supprimer** une fonctionnalité que **compliquer**
+l'interface. La complexité vit sous le capot, jamais devant l'utilisateur.
+
+## Règle 5 — **KAI**
+
+KAI n'est **pas un chatbot**. KAI est le **système d'exploitation intelligent** de
+KevinOS.
+
+- Il **orchestre** tous les modules.
+- Il ne connaît **jamais** leur implémentation.
+- Il ne dialogue qu'avec leurs **contrats**.
+- Il **évolue indépendamment** des modules.
+
+**En pratique** : KAI parle au Core via des ports/outils standardisés
+([Vision KAI](07-vision-kai.md)). Remplacer Immich par autre chose ne change rien
+pour KAI. Faire évoluer KAI ne touche aucun module.
+
+## Règle 6 — **Interface unique**
+
+À terme, KevinOS a **une seule interface**. Depuis elle, on doit pouvoir : piloter
+la maison, retrouver une photo, regarder un film, gérer ses fichiers, surveiller
+le serveur, administrer Docker, lancer une sauvegarde, développer, parler à KAI.
+
+- On ne doit **jamais** avoir à ouvrir directement Immich, Jellyfin, Home
+  Assistant, etc. — **sauf** pour des fonctions **avancées d'administration**.
+- KevinOS est leur **point d'entrée unique**.
+
+**En pratique** : chaque module intégré est projeté dans l'interface unique via
+son contrat. L'accès direct à l'outil sous-jacent est une **exception**
+d'administration, documentée, pas le mode d'usage normal.
+
+## Règle 7 — **Documentation**
+
+Chaque décision d'architecture est **documentée**. Chaque ADR explique :
+
+- **pourquoi** cette décision a été prise ;
+- **quelles alternatives** ont été rejetées (et pourquoi) ;
+- **quelles conséquences** dans **plusieurs années**.
+
+**Objectif** : la documentation doit suffire à un **nouveau développeur** pour
+comprendre KevinOS **sans explication supplémentaire**.
+
+**En pratique** : pas de décision structurante sans ADR. Le format
+Contexte → Options → Décision → Conséquences (dont une projection à long terme)
+est obligatoire. La doc est mise à jour **dans le même commit** que le changement.
+
+---
+
+## Comment appliquer ces règles
+
+Toute Pull Request, tout nouveau module, toute techno passe ce **filtre** :
+
+| #   | Question de contrôle                                                 |
+| --- | -------------------------------------------------------------------- |
+| 1   | Est-ce pensé comme un **produit** durable (tests, doc, versioning) ? |
+| 2   | Est-ce que ça marche **hors ligne** ?                                |
+| 3   | Est-ce derrière un **contrat** (pas lié à l'UI) ?                    |
+| 4   | Est-ce que ça rend l'expérience **plus simple** ?                    |
+| 5   | KAI reste-t-il **découplé** de l'implémentation ?                    |
+| 6   | Est-ce accessible depuis l'**interface unique** ?                    |
+| 7   | Est-ce **documenté** (ADR si structurant) ?                          |
+
+Une seule réponse « non » = on reconçoit avant d'avancer.
