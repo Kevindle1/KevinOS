@@ -33,6 +33,29 @@
 
 ---
 
+## ✅ Repriorisation validée (2026-07-12, mise à jour)
+
+Le propriétaire confirme la règle : **aucune donnée métier stockée tant que le
+socle sécurité + sauvegardes n'est pas terminé et validé.** Le plan immédiat :
+
+|          Phase | Objectif                                             | Contenu                                                                                                                                |
+| -------------: | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 0** ✅ | Infrastructure KevinOS                               | Monorepo, Core, `docker-compose` du socle, versioning — **fait**                                                                       |
+| **Phase 1** 🔜 | **Finaliser le socle**                               | **Authelia** (SSO+MFA), **Restic** (sauvegardes auto), **gestion des secrets**, **monitoring**, **validation complète de la sécurité** |
+|    **Phase 2** | **Module Fichiers**                                  | Connecteur KevinOS de **stockage** (disques, sauvegardes, futurs fournisseurs de fichiers) — **pas** un clone de Nextcloud             |
+|           Puis | Photos → Média → Dashboard → KAI → Domotique → reste | selon l'ordre validé                                                                                                                   |
+
+> **Phase 2 — cadrage explicite** : l'objectif n'est pas de recréer Nextcloud,
+> mais un **connecteur** exposant au Core un **contrat standard** pour gérer le
+> stockage, les disques, les sauvegardes et de futurs fournisseurs de fichiers
+> (voir [contrat de module](adr/ADR-0005-couche-integration-core.md) +
+> [versioning](08-versioning.md)).
+
+**Priorité absolue rappelée** : durer plusieurs années. On avance **plus
+lentement avec une architecture exemplaire** plutôt que vite avec de la dette.
+
+---
+
 ## Vue d'ensemble
 
 | Phase  | Thème            | Objectif                                  | RAM cumulée approx.   |

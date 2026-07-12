@@ -5,6 +5,27 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — Système de versioning & compatibilité des modules (ADR-0008)
+
+- **`@kevinos/shared` → `versioning.ts`** : `KEVINOS_VERSIONS`
+  (`core` / `api` / `pluginInterface`), `checkCompatibility` (SemVer via `semver`),
+  `defaultPluginApiRange`. Règle « peerDependency » : un module est compatible si
+  le `pluginInterface` de l'hôte satisfait sa plage `compat.pluginApi`.
+- **Contrat de module enrichi** : champs `version` (SemVer du module) et
+  `compat.pluginApi` (plage supportée), validés par SemVer.
+- **`ModuleRegistry` (Core)** : garde de compatibilité à l'enregistrement — un
+  module incompatible est **refusé** (raison journalisée), jamais monté
+  silencieusement. Routes `GET /versions` et `GET /modules`.
+- Doc [08-versioning](docs/08-versioning.md) + [ADR-0008](docs/adr/ADR-0008-versioning-compatibilite.md).
+- Tests : 29 au total (20 shared, 9 core), tous verts.
+
+### Modifié — Repriorisation validée (2026-07-12)
+
+- **Phase 1** = finaliser le socle (Authelia SSO/MFA, Restic sauvegardes, gestion
+  des secrets, monitoring, validation sécurité) **avant toute donnée métier**.
+- **Phase 2** = module **Fichiers** en tant que **connecteur** de stockage (et non
+  clone de Nextcloud). Roadmap et vision KAI (tout est plugin) mises à jour.
+
 ### Ajouté — Étape 6 (validation) & Phase 0 (fondations du socle)
 
 **Décisions validées par le propriétaire (2026-07-12)**

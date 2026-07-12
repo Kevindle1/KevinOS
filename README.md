@@ -4,8 +4,8 @@
 > KevinOS n'est ni un NAS, ni un simple HomeLab : c'est un écosystème complet
 > pensé pour évoluer pendant des années.
 
-**Version : 0.1 — Architecture validée ✅ → Phase 0 (fondations) en cours**
-**Statut : 🏗️ Développement du socle (étape 6 validée le 2026-07-12)**
+**Version : 0.1 — Phase 0 (fondations) ✅ → Phase 1 (socle sécurité) à venir**
+**Statut : 🏗️ Socle : monorepo + Core + infra + versioning livrés ; suite = Authelia/Restic/sécurité**
 
 ---
 
@@ -34,6 +34,7 @@ méthode projet). Toute la réflexion est documentée ici :
 | 05  | [Sécurité](docs/05-securite.md)                     | Modèle de menace, défense en profondeur                 |
 | 06  | [Roadmap](docs/06-roadmap.md)                       | Feuille de route par phases                             |
 | 07  | [Vision KAI](docs/07-vision-kai.md)                 | Le cerveau unique : « tout passe par KAI »              |
+| 08  | [Versioning](docs/08-versioning.md)                 | SemVer & compatibilité des modules/plugins              |
 | —   | [Diagrammes](docs/diagrammes/)                      | Schémas Mermaid (contexte, conteneurs, réseau, données) |
 | —   | [Décisions (ADR)](docs/adr/)                        | Journal des décisions d'architecture                    |
 

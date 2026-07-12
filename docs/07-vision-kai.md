@@ -70,6 +70,21 @@ Utilisateur ──(langage naturel)──▶ KAI
   exactement comme KAI. Ainsi les deux surfaces restent cohérentes et les modules
   restent remplaçables.
 
+## 3bis. Tout est plugin (rien ne modifie le cœur)
+
+Renforcement validé par le propriétaire : **KAI n'est pas un chatbot, c'est le
+cerveau de KevinOS.** Conséquence architecturale directe :
+
+- Chaque module (Immich, Jellyfin, Home Assistant, Nextcloud…) expose au Core un
+  **contrat standard** (le _Plugin Interface_, [versioning](08-versioning.md)).
+- **Toute nouvelle fonctionnalité s'ajoute comme un plugin, sans modifier le cœur
+  du système.** Le Core découvre, valide (compatibilité) et orchestre ; il n'est
+  jamais réécrit pour accueillir un module.
+- KAI orchestre ces plugins ; l'utilisateur ne connaît jamais le logiciel derrière.
+
+C'est la condition pour tenir « plusieurs années » avec 20-30 modules sans
+accumuler de dette : le cœur reste stable, les modules vont et viennent.
+
 ## 4. Souveraineté & local-first (ADR-0006)
 
 - KAI tourne **100 % en local** (Ollama, modèle léger), **hors-ligne**, **gratuit**.

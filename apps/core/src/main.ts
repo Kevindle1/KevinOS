@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
-import { loadConfig, createLogger } from '@kevinos/shared';
+import { loadConfig, createLogger, KEVINOS_VERSIONS } from '@kevinos/shared';
 import { HealthService } from './application/health-service.js';
+import { ModuleRegistry } from './application/module-registry.js';
 import { createApp } from './interfaces/http/app.js';
 
 /** Version applicative (alignée sur le package). */
@@ -25,12 +26,23 @@ function main(): void {
     checks: [],
   });
 
-  const app = createApp({ logger, healthService });
+  // Registre de modules. En Phase 0, aucun module n'est encore monté : les
+  // manifestes (deploy/modules/) seront chargés ici au fil des phases, chacun
+  // passant par la garde de compatibilité (ADR-0008).
+  const moduleRegistry = new ModuleRegistry();
+
+  const app = createApp({ logger, healthService, moduleRegistry });
   const server = createServer(app);
 
   server.listen(config.port, config.host, () => {
     logger.info(
-      { host: config.host, port: config.port, env: config.nodeEnv, ai: config.aiProvider },
+      {
+        host: config.host,
+        port: config.port,
+        env: config.nodeEnv,
+        ai: config.aiProvider,
+        versions: KEVINOS_VERSIONS,
+      },
       'KevinOS Core démarré',
     );
   });

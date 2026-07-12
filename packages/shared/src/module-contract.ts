@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isSemver, isSemverRange, defaultPluginApiRange } from './versioning.js';
 
 /**
  * Contrat de module KevinOS (ADR-0005).
@@ -27,6 +28,23 @@ export type ModuleCapability = z.infer<typeof moduleCapabilitySchema>;
 export const accessLevelSchema = z.enum(['public', 'member', 'admin']);
 export type AccessLevel = z.infer<typeof accessLevelSchema>;
 
+/** Chaîne SemVer (ex. `1.0.0`). */
+export const semverSchema = z
+  .string()
+  .refine(isSemver, 'version SemVer invalide (attendu ex. « 1.0.0 »)');
+
+/** Plage SemVer (ex. `^1.0.0`, `>=1.0.0 <2.0.0`). */
+export const semverRangeSchema = z
+  .string()
+  .refine(isSemverRange, 'plage SemVer invalide (attendu ex. « ^1.0.0 »)');
+
+/** Exigences de compatibilité d'un module vis-à-vis de l'hôte (ADR-0008). */
+export const moduleCompatSchema = z.object({
+  /** Plage de `pluginInterface` de l'hôte supportée (défaut : même MAJEUR courant). */
+  pluginApi: semverRangeSchema.default(() => defaultPluginApiRange()),
+});
+export type ModuleCompatManifest = z.infer<typeof moduleCompatSchema>;
+
 /** Manifeste déclaratif d'un module (fichier `deploy/modules/<nom>/module.yaml`). */
 export const moduleManifestSchema = z.object({
   /** Identifiant stable, ex. `kevin-photos`. */
@@ -37,6 +55,12 @@ export const moduleManifestSchema = z.object({
 
   /** Nom lisible, ex. « Kevin Photos ». */
   name: z.string().min(1),
+
+  /** Version SemVer propre du module, ex. « Module Files v1 » → `1.0.0` (ADR-0008). */
+  version: semverSchema,
+
+  /** Exigences de compatibilité avec l'hôte (Plugin Interface). */
+  compat: moduleCompatSchema.default({}),
 
   /** Application concrète qui implémente actuellement le module, ex. `immich`. */
   implementation: z.string().min(1),

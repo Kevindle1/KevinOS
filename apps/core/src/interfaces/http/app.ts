@@ -2,18 +2,21 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import { pinoHttp } from 'pino-http';
 import type { Logger } from '@kevinos/shared';
 import type { HealthService } from '../../application/health-service.js';
+import type { ModuleRegistry } from '../../application/module-registry.js';
 import { healthRoutes } from './routes/health.routes.js';
+import { modulesRoutes } from './routes/modules.routes.js';
 
 export interface AppDependencies {
   logger: Logger;
   healthService: HealthService;
+  moduleRegistry: ModuleRegistry;
 }
 
 /**
  * Construit l'application Express du Core à partir de ses dépendances
  * (injection explicite — testable sans démarrer de serveur ni de réseau).
  */
-export function createApp({ logger, healthService }: AppDependencies): Express {
+export function createApp({ logger, healthService, moduleRegistry }: AppDependencies): Express {
   const app = express();
 
   // Journalisation structurée de chaque requête (corrélée dans Loki).
@@ -22,6 +25,9 @@ export function createApp({ logger, healthService }: AppDependencies): Express {
 
   // Sondes de santé (non authentifiées : nécessaires au monitoring).
   app.use(healthRoutes(healthService));
+
+  // Registre de modules & versions de contrat.
+  app.use(modulesRoutes(moduleRegistry));
 
   // Racine : identité du service (utile au diagnostic).
   app.get('/', (_req, res) => {
