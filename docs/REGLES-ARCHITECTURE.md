@@ -127,20 +127,41 @@ comprendre KevinOS **sans explication supplémentaire**.
 Contexte → Options → Décision → Conséquences (dont une projection à long terme)
 est obligatoire. La doc est mise à jour **dans le même commit** que le changement.
 
+## Règle 8 — Ne jamais réimplémenter un problème déjà résolu ⭐
+
+**Le mantra vaut aussi pour notre code.** On ne réécrit **jamais** une brique
+complexe, mature et déjà parfaitement résolue — **sauf** si le faire apporte une
+**valeur directe au produit**. On réserve notre temps à ce qui rend KevinOS
+**unique**.
+
+- ❌ **On ne réécrit pas** : moteur de positionnement (Floating UI), moteur
+  Markdown, SQLite, chiffrement, OAuth, WebSocket, moteur vidéo, moteur photo, ORM…
+- ✅ **On construit** : KAI, KOS Vision / Media / Drive, l'**expérience**,
+  l'orchestration, les plugins, le Design Lab, les composants KOS, les workflows,
+  les automatisations.
+
+**En pratique** : une dépendance externe n'est qu'un **moteur**. On garde le
+**contrôle total** des composants, du design, des tokens, des animations, des
+interactions, de l'accessibilité et des **API publiques**. Exemple : Floating UI
+**calcule la position** ; le Tooltip/Popover **reste un composant KevinOS**
+([ADR-0018](adr/ADR-0018-ne-pas-reinventer.md)). C'est le mantra appliqué à
+l'ingénierie : _KevinOS ne remplace pas les meilleurs outils, il les orchestre._
+
 ---
 
 ## Comment appliquer ces règles
 
 Toute Pull Request, tout nouveau module, toute techno passe ce **filtre** :
 
-| #   | Question de contrôle                                                 |
-| --- | -------------------------------------------------------------------- |
-| 1   | Est-ce pensé comme un **produit** durable (tests, doc, versioning) ? |
-| 2   | Est-ce que ça marche **hors ligne** ?                                |
-| 3   | Est-ce derrière un **contrat** (pas lié à l'UI) ?                    |
-| 4   | Est-ce que ça rend l'expérience **plus simple** ?                    |
-| 5   | KAI reste-t-il **découplé** de l'implémentation ?                    |
-| 6   | Est-ce accessible depuis l'**interface unique** ?                    |
-| 7   | Est-ce **documenté** (ADR si structurant) ?                          |
+| #   | Question de contrôle                                                           |
+| --- | ------------------------------------------------------------------------------ |
+| 1   | Est-ce pensé comme un **produit** durable (tests, doc, versioning) ?           |
+| 2   | Est-ce que ça marche **hors ligne** ?                                          |
+| 3   | Est-ce derrière un **contrat** (pas lié à l'UI) ?                              |
+| 4   | Est-ce que ça rend l'expérience **plus simple** ?                              |
+| 5   | KAI reste-t-il **découplé** de l'implémentation ?                              |
+| 6   | Est-ce accessible depuis l'**interface unique** ?                              |
+| 7   | Est-ce **documenté** (ADR si structurant) ?                                    |
+| 8   | Est-ce un problème **déjà résolu** ? (si oui, on orchestre, on ne réécrit pas) |
 
 Une seule réponse « non » = on reconçoit avant d'avancer.

@@ -5,6 +5,19 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — Règle 8 & Vague 2 (sous-lot 2) : surfaces & primitives
+
+- **Règle 8** (RÈGLES) + **ADR-0018** : « ne jamais réimplémenter un problème déjà
+  résolu, sauf valeur produit directe ». Le mantra appliqué au code.
+- **Tooltip** et **Popover** : positionnement délégué à **Floating UI** (moteur),
+  mais composant/design/API/animations/a11y **100 % KevinOS** (Floating UI n'est
+  jamais exposé dans l'API publique). Popover : `role=dialog`, focus piégé,
+  fermeture clic-extérieur/Échap.
+- **Avatar** (initiales/image), **IconButton** (`aria-label` requis, cible ≥ 44px),
+  **Divider** (h/v + label), **ScrollArea** (barre discrète).
+- Stories ajoutées au Design Lab (groupe « Surfaces »). Tests UI : **35** (7
+  nouveaux). **Vague 2 (Foundation) complète.**
+
 ### Ajouté — Vague 2 (sous-lot 1) : fondation formulaire de `@kevinos/ui`
 
 - **ADR-0017** : principes de conception permanents (calme, simplicité, fluidité,

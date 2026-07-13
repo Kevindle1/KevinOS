@@ -25,6 +25,7 @@ Format : Contexte → Options → Décision → Conséquences.
 | [0015](ADR-0015-kos-design-lab.md)                  | KOS Design Lab, module officiel & environnement de dev             | ✅ Acceptée |
 | [0016](ADR-0016-plateforme-experience.md)           | KevinOS, plateforme d'expérience (KAI comme point d'entrée)        | ✅ Acceptée |
 | [0017](ADR-0017-principes-conception-composants.md) | Principes de conception + API formulaires + « Home »               | ✅ Acceptée |
+| [0018](ADR-0018-ne-pas-reinventer.md)               | Ne pas réinventer un problème résolu (Floating UI positionnement)  | ✅ Acceptée |
 
 > Statuts possibles : Proposée · Acceptée · Remplacée · Dépréciée.
 > **Toutes les ADR ci-dessus ont été validées par le propriétaire.**

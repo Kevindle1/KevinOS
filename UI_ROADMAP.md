@@ -36,7 +36,7 @@
 
 ---
 
-## Vague 2 — Foundation 🟡 (sous-lot 1 livré)
+## Vague 2 — Foundation ✅ (livrée)
 
 > Les composants fondamentaux utilisés **partout**. Base de toute l'interface.
 > Fondation formulaire commune : **contrôlé/non-contrôlé**, **validation/erreur/
@@ -55,16 +55,19 @@
 | Radio       |   ✅   | Choix exclusif (`RadioGroup`)                                 | Réglages                        |  ✅   | ✅  | ✅  | stable   |
 | ButtonGroup |   ✅   | Segmenté à choix unique                                       | tous                            |  ✅   | ✅  | ✅  | stable   |
 
-**Sous-lot 2 — surfaces & primitives** ⬜ (à venir)
+**Sous-lot 2 — surfaces & primitives** ✅ (livré, testé, dans le Design Lab)
 
-| Composant  | Statut | Description                    | Modules                | Maturité |
-| ---------- | :----: | ------------------------------ | ---------------------- | -------- |
-| Tooltip    |   ⬜   | Aide au survol/focus           | tous                   | idée     |
-| Popover    |   ⬜   | Panneau flottant ancré         | tous                   | idée     |
-| Avatar     |   ⬜   | Identité (initiales/image)     | Dashboard, KAI, Vision | idée     |
-| IconButton |   ⬜   | Action compacte (cible ≥ 44px) | tous                   | idée     |
-| Divider    |   ⬜   | Séparateur                     | tous                   | idée     |
-| ScrollArea |   ⬜   | Zone défilable stylée          | tous                   | idée     |
+| Composant  | Statut | Description                                       | Modules           | Tests | Doc | Lab | Maturité |
+| ---------- | :----: | ------------------------------------------------- | ----------------- | :---: | :-: | :-: | -------- |
+| Tooltip    |   ✅   | Aide au survol/focus (**moteur Floating UI**)     | tous              |  ✅   | ✅  | ✅  | stable   |
+| Popover    |   ✅   | Panneau flottant ancré (Floating UI, focus piégé) | tous              |  ✅   | ✅  | ✅  | stable   |
+| Avatar     |   ✅   | Identité (initiales/image)                        | Home, KAI, Vision |  ✅   | ✅  | ✅  | stable   |
+| IconButton |   ✅   | Action compacte (cible ≥ 44px)                    | tous              |  ✅   | ✅  | ✅  | stable   |
+| Divider    |   ✅   | Séparateur (h/v, label)                           | tous              |  ✅   | ✅  | ✅  | stable   |
+| ScrollArea |   ✅   | Zone défilable discrète                           | tous              |  ✅   | ✅  | ✅  | stable   |
+
+> Positionnement délégué à **Floating UI** (Règle 8 / [ADR-0018](docs/adr/ADR-0018-ne-pas-reinventer.md)) —
+> le composant reste 100 % KevinOS (design, API, a11y).
 
 **Résultat concret** : formulaires, recherche et réglages sont désormais **possibles
 par simple assemblage**.

@@ -17,6 +17,12 @@ import {
   Switch,
   Select,
   ButtonGroup,
+  Tooltip,
+  Popover,
+  Avatar,
+  IconButton,
+  Divider,
+  ScrollArea,
 } from '@kevinos/ui';
 
 export interface Story {
@@ -305,5 +311,97 @@ export const stories: Story[] = [
     name: 'Checkbox · Switch · Radio · ButtonGroup',
     group: 'Foundation',
     render: () => <ChoiceDemo />,
+  },
+
+  {
+    id: 'tooltip',
+    name: 'Tooltip',
+    group: 'Surfaces',
+    render: () => (
+      <Row>
+        <Tooltip content="Infobulle discrète (survol ou focus)">
+          <Button variant="secondary">Survole-moi</Button>
+        </Tooltip>
+        <Tooltip content="À droite" placement="right">
+          <Button variant="ghost">Placement</Button>
+        </Tooltip>
+      </Row>
+    ),
+  },
+  {
+    id: 'popover',
+    name: 'Popover',
+    group: 'Surfaces',
+    render: () => (
+      <Popover
+        content={
+          <div className="p-1">
+            <p className="px-2 py-1 text-sm text-text-secondary">Panneau ancré (focus piégé).</p>
+            <Button size="sm" className="w-full">
+              Action
+            </Button>
+          </div>
+        }
+      >
+        <Button>Ouvrir le panneau</Button>
+      </Popover>
+    ),
+  },
+  {
+    id: 'avatar',
+    name: 'Avatar',
+    group: 'Surfaces',
+    render: () => (
+      <Row>
+        <Avatar name="Kevin Dolié" size="sm" />
+        <Avatar name="Kevin Dolié" size="md" />
+        <Avatar name="Kevin Dolié" size="lg" />
+        <Avatar name="Léa" />
+      </Row>
+    ),
+  },
+  {
+    id: 'iconbutton',
+    name: 'IconButton',
+    group: 'Surfaces',
+    render: () => (
+      <Row>
+        <IconButton aria-label="Rechercher" icon={<span>🔍</span>} />
+        <IconButton aria-label="Paramètres" variant="secondary" icon={<span>⚙️</span>} />
+        <IconButton aria-label="Ajouter" variant="primary" icon={<span>＋</span>} />
+        <IconButton aria-label="Supprimer" variant="danger" icon={<span>🗑️</span>} />
+      </Row>
+    ),
+  },
+  {
+    id: 'divider',
+    name: 'Divider',
+    group: 'Surfaces',
+    render: () => (
+      <Stack>
+        <div>Au-dessus</div>
+        <Divider />
+        <Divider label="ou" />
+        <div className="flex h-10 items-center gap-3">
+          <span>Gauche</span>
+          <Divider orientation="vertical" />
+          <span>Droite</span>
+        </div>
+      </Stack>
+    ),
+  },
+  {
+    id: 'scrollarea',
+    name: 'ScrollArea',
+    group: 'Surfaces',
+    render: () => (
+      <ScrollArea maxHeight={160} className="max-w-sm rounded-lg border border-border p-3">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div key={i} className="py-1.5 text-sm text-text-secondary">
+            Élément {i + 1}
+          </div>
+        ))}
+      </ScrollArea>
+    ),
   },
 ];

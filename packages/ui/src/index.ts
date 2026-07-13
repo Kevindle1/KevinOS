@@ -44,3 +44,16 @@ export {
   type ButtonGroupProps,
   type SegmentOption,
 } from './components/form/ButtonGroup.js';
+
+// Vague 2 — Foundation : surfaces & primitives
+export { Tooltip, type TooltipProps } from './components/overlay/Tooltip.js';
+export { Popover, type PopoverProps } from './components/overlay/Popover.js';
+export { Avatar, type AvatarProps, type AvatarSize } from './components/Avatar.js';
+export {
+  IconButton,
+  type IconButtonProps,
+  type IconButtonVariant,
+  type IconButtonSize,
+} from './components/IconButton.js';
+export { Divider, type DividerProps } from './components/Divider.js';
+export { ScrollArea, type ScrollAreaProps } from './components/ScrollArea.js';
