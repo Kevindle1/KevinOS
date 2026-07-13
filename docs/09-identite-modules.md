@@ -10,11 +10,19 @@
 ## Le principe
 
 ```
-Produit         : KevinOS
-Cerveau         : KAI  (identité de module : 🧠 KOS Brain)
-Famille modules : KOS <Nom> + emoji
+Produit         : KevinOS      (la plateforme / l'expérience)
+Cerveau         : KAI          (l'intelligence, le point d'entrée)
+Compétences     : KOS <Nom>    (ce que KevinOS sait faire)
+Moteurs tiers   : invisibles   (Immich, Jellyfin… — plugins interchangeables)
 L'utilisateur voit « KOS Vision », jamais « Immich ».
 ```
+
+> Depuis le virage « plateforme d'expérience »
+> ([ADR-0016](adr/ADR-0016-plateforme-experience.md)), les **modules KOS** sont
+> présentés comme des **compétences de KAI**. L'identité `KOS <Nom>` reste le
+> **contrat de marque stable** qui survit au remplacement du moteur.
+> _Mantra : KevinOS ne remplace pas les meilleurs outils. Il les orchestre pour
+> offrir une seule expérience._
 
 ## Catalogue d'identité
 

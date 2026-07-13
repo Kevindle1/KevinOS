@@ -5,6 +5,24 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Changé — 🔄 Virage stratégique : KevinOS, plateforme d'expérience
+
+- **Mantra** adopté (README, PRODUCT_VISION, RÈGLES, identité, roadmap) :
+  _« KevinOS ne remplace pas les meilleurs outils. Il les orchestre pour offrir
+  une seule expérience. »_
+- **ADR-0016** : nouvelle direction officielle — le **produit, c'est
+  l'expérience** ; **KAI est le point d'entrée** (le Dashboard devient un
+  assistant, plus un tableau de cartes) ; moteurs tiers **invisibles** ; on
+  développe l'UI **par expériences** et on **alterne** UI ↔ module.
+- **Identité** précisée : KevinOS = plateforme · KAI = intelligence · **KOS =
+  compétences** · logiciels tiers = plugins interchangeables invisibles.
+- **`UI_ROADMAP.md`** : nouvelle roadmap UI par expériences (Foundation →
+  Dashboard → KAI → Vision → Media → Home), avec statut/description/modules/
+  tests/doc/maturité par composant. L'ancien `component-catalog.md` redirige (pas
+  de doc dupliquée).
+- **RÈGLES** : ajout de la **Règle 0 — l'expérience est le produit**. PRODUCT_VISION
+  et roadmap mis à jour.
+
 ### Ajouté — KOS Design Lab (module officiel)
 
 - **ADR-0015** : le Design Lab devient l'**environnement de développement officiel**

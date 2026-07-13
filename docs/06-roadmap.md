@@ -5,6 +5,28 @@
 
 ---
 
+## 🔄 Virage stratégique (2026-07-12) — plateforme d'expérience
+
+Nouvelle direction officielle ([ADR-0016](adr/ADR-0016-plateforme-experience.md)) :
+
+- **Le produit, c'est l'expérience.** On construit désormais des **expériences**,
+  pas des briques techniques ; on **alterne** enrichissement `@kevinos/ui` ↔ module
+  fonctionnel (le produit reste vivant).
+- **KAI est le point d'entrée.** Le Dashboard n'est plus un tableau de cartes : on
+  arrive dans un **assistant** (« Bonjour Kevin 👋 »), puis viennent activité,
+  photos, médias, état… Les **modules = compétences de KAI**.
+- **Moteurs invisibles.** Immich/Jellyfin/Home Assistant/Grafana… ne sont **jamais**
+  vus par l'utilisateur.
+- **UI par expériences** : voir **[UI_ROADMAP.md](../UI_ROADMAP.md)** (Foundation →
+  Dashboard → KAI → Vision → Media → Home).
+
+> _Mantra : KevinOS ne remplace pas les meilleurs outils. Il les orchestre pour
+> offrir une seule expérience._ Les phases ci-dessous (socle, sécurité, données)
+> restent valides comme **fondations** ; la priorité produit passe désormais par
+> l'expérience.
+
+---
+
 ## ✅ Décisions du propriétaire (étape 6 — validée le 2026-07-12)
 
 1. **IA — 100 % local & gratuit** (Ollama + modèle léger : Gemma/Qwen/Phi), hors-ligne,

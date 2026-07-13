@@ -7,8 +7,31 @@
 >
 > Le « pourquoi » profond vit dans [`PRODUCT_VISION.md`](../PRODUCT_VISION.md) ;
 > ce document en est la traduction **opérationnelle** pour les développeurs.
+>
+> **Mantra :** _KevinOS ne remplace pas les meilleurs outils. Il les orchestre
+> pour offrir une seule expérience._
 
 ---
+
+## Règle 0 — L'**expérience** est le produit ⭐
+
+Virage stratégique validé le 2026-07-12 : **le produit prime sur la technique.**
+
+- Avant tout développement, se demander **« quelle expérience veut-on offrir ? »**
+  **avant** « quel composant / quel moteur ? ».
+- Les logiciels tiers (Immich, Jellyfin, Home Assistant, Grafana, Docker,
+  Nextcloud…) sont des **moteurs interchangeables** et **jamais visibles**.
+- **KAI est le point d'entrée** : l'utilisateur arrive dans un **assistant**, pas
+  dans un tableau de bord. Les modules sont des **compétences de KAI**.
+- On développe `@kevinos/ui` **par expériences utilisateur**, pas par catégories
+  techniques : chaque vague doit permettre de construire **immédiatement un
+  morceau concret de KevinOS**.
+- On **alterne** systématiquement : enrichir `@kevinos/ui` ↔ livrer un module
+  fonctionnel. Le produit reste **vivant** ; on n'attend pas la fin du Design
+  System pour voir apparaître KevinOS.
+
+_Identité :_ **KevinOS** = la plateforme · **KAI** = l'intelligence · **KOS** =
+les compétences · logiciels tiers = plugins interchangeables invisibles.
 
 ## Règle 1 — KevinOS est un **produit**
 

@@ -1,8 +1,14 @@
 # KevinOS
 
-> **Un cerveau numérique personnel.** Auto-hébergé, modulaire, souverain.
-> KevinOS n'est ni un NAS, ni un simple HomeLab : c'est un écosystème complet
-> pensé pour évoluer pendant des années.
+> ### KevinOS ne remplace pas les meilleurs outils. Il les orchestre pour offrir une seule expérience.
+
+> **Une plateforme intelligente pour la vie numérique.** Auto-hébergée, souveraine,
+> offline-first. KevinOS n'est ni un NAS ni un HomeLab : c'est un **assistant
+> personnel** (KAI) qui orchestre les meilleurs moteurs open-source derrière **une
+> seule interface, une seule intelligence, une seule expérience**.
+>
+> **KevinOS** = la plateforme · **KAI** = l'intelligence · **KOS** = les compétences ·
+> logiciels tiers = moteurs interchangeables **invisibles**.
 
 **Version : 0.1 — Phase 0 (fondations) ✅ → Phase 1 (socle sécurité) en cours**
 **Statut : 🏗️ Socle livré (monorepo + Core + infra + versioning) ; Phase 1 = Authelia / Restic / secrets / monitoring**
@@ -13,9 +19,12 @@
 
 - **[`PRODUCT_VISION.md`](PRODUCT_VISION.md)** — la **boussole** : pourquoi KevinOS
   existe, pour qui, et ce qu'il ne doit jamais devenir. _(À lire en premier.)_
-- **[`docs/REGLES-ARCHITECTURE.md`](docs/REGLES-ARCHITECTURE.md)** — les **7 règles
-  permanentes** (produit, offline-first, API-first, UX-first, KAI, interface
-  unique, documentation), opposables à toute décision.
+- **[`docs/REGLES-ARCHITECTURE.md`](docs/REGLES-ARCHITECTURE.md)** — les **règles
+  permanentes** (Règle 0 : **l'expérience est le produit** ; offline-first,
+  API-first, UX-first, KAI, interface unique, documentation), opposables à toute
+  décision.
+- **[`UI_ROADMAP.md`](UI_ROADMAP.md)** — la plateforme UI par **expériences**
+  (Foundation → Dashboard → KAI → Vision → Media → Home).
 
 ---
 

@@ -1,11 +1,16 @@
 # Pourquoi KevinOS existe
 
+> ### 🧭 Le mantra
+>
+> **KevinOS ne remplace pas les meilleurs outils. Il les orchestre pour offrir une
+> seule expérience.**
+
 > Ce document n'est pas technique. C'est la **boussole** du projet.
 > Quand une décision est difficile — ajouter une fonctionnalité, choisir une
 > techno, faire un compromis — on revient ici. Si l'idée s'éloigne de ce texte,
 > c'est probablement une mauvaise idée, même si elle est séduisante.
 >
-> _Dernière relecture : 2026-07-12._
+> _Dernière relecture : 2026-07-12 (virage « plateforme d'expérience »)._
 
 ---
 
@@ -30,13 +35,28 @@ une seule porte, et lui donner un cerveau.**
 
 ## Ce qu'est KevinOS
 
-KevinOS est le **système d'exploitation numérique d'un foyer** : un cerveau
-personnel, auto-hébergé, qui centralise, comprend et pilote tout ce qui compte —
-maison, médias, photos, fichiers, serveurs, sauvegardes — derrière **une seule
-interface** et **une seule intelligence : KAI**.
+KevinOS est une **plateforme intelligente** pour la vie numérique d'un foyer.
+**Le produit, c'est l'expérience** — pas les logiciels. KevinOS n'a pas vocation à
+remplacer Immich, Jellyfin, Home Assistant, Nextcloud ou Grafana : il les
+**orchestre**, comme des **moteurs spécialisés interchangeables**, derrière **une
+seule interface**, **une seule intelligence (KAI)** et **une seule expérience
+cohérente**.
 
-Ce n'est pas un NAS. Ce n'est pas un tableau de bord. C'est un **produit** : pensé,
-cohérent, durable, comme s'il devait un jour servir des milliers de foyers.
+Ce n'est pas un NAS. Ce n'est pas un HomeLab. Ce n'est même pas « un tableau de
+bord ». C'est un **assistant personnel** qui donne accès à toute la vie numérique
+par la conversation et une orchestration intelligente.
+
+### La nouvelle identité
+
+| Terme           | Rôle                                                                      |
+| --------------- | ------------------------------------------------------------------------- |
+| **KevinOS**     | la **plateforme** (l'expérience unique)                                   |
+| **KAI**         | l'**intelligence** (le point d'entrée, le cerveau)                        |
+| **KOS**         | les **compétences** (ce que KevinOS sait faire : photos, médias, maison…) |
+| Logiciels tiers | des **moteurs / plugins interchangeables**, **jamais visibles**           |
+
+L'utilisateur ne doit **jamais** avoir besoin de connaître les logiciels utilisés
+en arrière-plan. On dit « montre-moi les photos de cet été », pas « ouvre Immich ».
 
 ## Pour qui
 
@@ -51,6 +71,9 @@ moi ce soir, et ça tiendrait pour mille personnes dans trois ans.
 
 ## Nos principes (non négociables)
 
+0. **L'expérience est le produit.** On se demande d'abord _« quelle expérience
+   veut-on offrir ? »_, ensuite _« quel composant / quel moteur ? »_. Le produit
+   prime toujours sur la technique.
 1. **Souveraineté.** Les données appartiennent à leur propriétaire. Elles vivent
    chez lui. Personne d'autre n'y accède sans sa décision explicite.
 2. **Offline-first.** Tout fonctionne **sans Internet**. Le Cloud est toujours une
