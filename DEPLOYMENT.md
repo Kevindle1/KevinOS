@@ -76,6 +76,22 @@ Choix retenu : **Vercel** (parmi Vercel / Netlify / GitHub Pages).
 > C'est la voie choisie pour démarrer vite (§5.1). Le durcissement par GitHub
 > Actions (déploiement conditionné aux tests) est prêt mais **désactivé** (§5.2).
 
+### Stratégie de branches (validée le 2026-07-13)
+
+| Branche    | Environnement               | Règle                                                                                           |
+| ---------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
+| `main`     | **Production stable**       | Ne reçoit **que des versions stables**. **Aucune fusion** tant que KevinOS n'est pas assez mûr. |
+| `develop`  | **Préproduction / Staging** | Validations intermédiaires (créée le moment venu).                                              |
+| `claude/*` | **Développement**           | **Preview Vercel automatique** à chaque push — c'est ici qu'on itère.                           |
+
+- On **n'automatise jamais** de fusion vers `main` : elle est **manuelle et
+  délibérée**, quand une version est jugée stable.
+- Tant que `main` ne contient pas encore Home, l'URL de **production**
+  (`…vercel.app`) peut afficher un **404** : c'est normal (rien de stable publié).
+  On travaille sur l'**URL de Preview de la branche** `claude/*`.
+- `develop` sera créée après validation du rendu iPhone, pour servir de palier
+  entre le développement (`claude/*`) et la production (`main`).
+
 ---
 
 ## 4. Qui fait quoi : Vercel déploie, GitHub Actions vérifie

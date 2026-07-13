@@ -89,12 +89,15 @@ utilise l'**intégration Git de Vercel** (solution officielle V1) :
    GitHub**.
 2. **Add New… → Project → Import** ce dépôt. Vercel lit `vercel.json` : **rien à
    configurer**, cliquer **Deploy**.
-3. C'est tout. Désormais **chaque branche** obtient automatiquement sa **propre URL
-   de Preview** (données simulées), et `main` alimente la production.
+3. C'est tout. Désormais **chaque branche** (`claude/*`, `develop`…) obtient
+   automatiquement sa **propre URL de Preview** (données simulées).
 
-> Le lien de Preview de chaque branche apparaît dans l'onglet **Deployments** du
-> projet Vercel (et directement dans les Pull Requests). Détails, environnements et
-> durcissement CI/CD : **[`DEPLOYMENT.md`](DEPLOYMENT.md)**.
+> **Stratégie de branches** : `main` = **production stable** (ne reçoit que des
+> versions stables, aucune fusion automatique) · `develop` = **staging** · `claude/*`
+> = **développement avec Preview**. Tant que rien de stable n'est publié, l'URL de
+> production peut afficher un 404 — on utilise l'**URL de Preview de la branche**
+> (onglet **Deployments** du projet Vercel, ou lien posté dans la Pull Request).
+> Détails : **[`DEPLOYMENT.md`](DEPLOYMENT.md)**.
 
 ---
 
