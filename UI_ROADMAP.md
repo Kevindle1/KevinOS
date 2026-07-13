@@ -36,36 +36,46 @@
 
 ---
 
-## Vague 2 — Foundation ⬜ (à venir — **prochaine**)
+## Vague 2 — Foundation 🟡 (sous-lot 1 livré)
 
 > Les composants fondamentaux utilisés **partout**. Base de toute l'interface.
+> Fondation formulaire commune : **contrôlé/non-contrôlé**, **validation/erreur/
+> aide/a11y** intégrées ([ADR-0017](docs/adr/ADR-0017-principes-conception-composants.md)).
 
-| Composant   | Statut | Description                                | Modules                | Maturité |
-| ----------- | :----: | ------------------------------------------ | ---------------------- | -------- |
-| Input       |   ⬜   | Champ texte (contrôlé/non-contrôlé, états) | tous                   | idée     |
-| SearchInput |   ⬜   | Champ de recherche (icône, effacement)     | Dashboard, Vision, KAI | idée     |
-| Textarea    |   ⬜   | Saisie multiligne (auto-grow)              | KAI, Drive             | idée     |
-| ButtonGroup |   ⬜   | Groupe de boutons / segments               | tous                   | idée     |
-| Select      |   ⬜   | Liste déroulante accessible                | tous                   | idée     |
-| Checkbox    |   ⬜   | Case à cocher                              | Réglages, Drive        | idée     |
-| Switch      |   ⬜   | Bascule booléenne                          | Réglages, Home         | idée     |
-| Radio       |   ⬜   | Choix exclusif                             | Réglages               | idée     |
-| Tooltip     |   ⬜   | Aide au survol/focus                       | tous                   | idée     |
-| Popover     |   ⬜   | Panneau flottant ancré                     | tous                   | idée     |
-| Avatar      |   ⬜   | Identité (initiales/image)                 | Dashboard, KAI, Vision | idée     |
-| IconButton  |   ⬜   | Action compacte (cible ≥ 44px)             | tous                   | idée     |
-| Divider     |   ⬜   | Séparateur                                 | tous                   | idée     |
-| ScrollArea  |   ⬜   | Zone défilable stylée                      | tous                   | idée     |
-| _(Badge)_   |   ✅   | _déjà livré (vague 1)_                     | tous                   | stable   |
+**Sous-lot 1 — champs & saisie** ✅ (livré, testé, dans le Design Lab)
 
-**Résultat concret** : formulaires, recherche et réglages deviennent possibles.
+| Composant   | Statut | Description                                                   | Modules                         | Tests | Doc | Lab | Maturité |
+| ----------- | :----: | ------------------------------------------------------------- | ------------------------------- | :---: | :-: | :-: | -------- |
+| Input       |   ✅   | Champ texte (contrôlé/non-contrôlé, ornements, états)         | tous                            |  ✅   | ✅  | ✅  | stable   |
+| SearchInput |   ✅   | **Recherche stratégique** (effacement, Entrée/Échap, loading) | KAI, Vision, Media, Drive, Home |  ✅   | ✅  | ✅  | stable   |
+| Textarea    |   ✅   | Saisie multiligne (auto-grow)                                 | KAI, Drive                      |  ✅   | ✅  | ✅  | stable   |
+| Select      |   ✅   | Liste déroulante (native, a11y/mobile)                        | tous                            |  ✅   | ✅  | ✅  | stable   |
+| Checkbox    |   ✅   | Case à cocher (indéterminé)                                   | Réglages, Drive                 |  ✅   | ✅  | ✅  | stable   |
+| Switch      |   ✅   | Bascule (`role=switch`)                                       | Réglages, Home                  |  ✅   | ✅  | ✅  | stable   |
+| Radio       |   ✅   | Choix exclusif (`RadioGroup`)                                 | Réglages                        |  ✅   | ✅  | ✅  | stable   |
+| ButtonGroup |   ✅   | Segmenté à choix unique                                       | tous                            |  ✅   | ✅  | ✅  | stable   |
+
+**Sous-lot 2 — surfaces & primitives** ⬜ (à venir)
+
+| Composant  | Statut | Description                    | Modules                | Maturité |
+| ---------- | :----: | ------------------------------ | ---------------------- | -------- |
+| Tooltip    |   ⬜   | Aide au survol/focus           | tous                   | idée     |
+| Popover    |   ⬜   | Panneau flottant ancré         | tous                   | idée     |
+| Avatar     |   ⬜   | Identité (initiales/image)     | Dashboard, KAI, Vision | idée     |
+| IconButton |   ⬜   | Action compacte (cible ≥ 44px) | tous                   | idée     |
+| Divider    |   ⬜   | Séparateur                     | tous                   | idée     |
+| ScrollArea |   ⬜   | Zone défilable stylée          | tous                   | idée     |
+
+**Résultat concret** : formulaires, recherche et réglages sont désormais **possibles
+par simple assemblage**.
 
 ---
 
-## Vague 3 — Dashboard ⬜
+## Vague 3 — Home (l'accueil KAI-first) ⬜
 
-> Une fois cette vague finie, le Dashboard se construit **uniquement par
-> assemblage**.
+> On arrête de penser « Dashboard » : le premier écran est **Home**, centré sur
+> KAI ([ADR-0017](docs/adr/ADR-0017-principes-conception-composants.md)). Une fois
+> cette vague finie, **Home** se construit **uniquement par assemblage**.
 
 | Composant           | Statut | Description                                         | Modules            |
 | ------------------- | :----: | --------------------------------------------------- | ------------------ |

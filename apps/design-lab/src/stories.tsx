@@ -9,6 +9,14 @@ import {
   Skeleton,
   Progress,
   Banner,
+  Input,
+  SearchInput,
+  Textarea,
+  Checkbox,
+  RadioGroup,
+  Switch,
+  Select,
+  ButtonGroup,
 } from '@kevinos/ui';
 
 export interface Story {
@@ -62,6 +70,51 @@ function BannerDemo() {
           Réafficher le bandeau
         </Button>
       )}
+    </Stack>
+  );
+}
+
+function SearchDemo() {
+  const [v, setV] = useState('');
+  const [last, setLast] = useState('');
+  return (
+    <Stack>
+      <SearchInput value={v} onValueChange={setV} onSearch={setLast} placeholder="Rechercher…" />
+      <SearchInput defaultValue="" loading placeholder="Chargement…" />
+      <p className="text-sm text-text-muted">Dernière recherche (Entrée) : {last || '—'}</p>
+    </Stack>
+  );
+}
+
+function ChoiceDemo() {
+  const [theme, setTheme] = useState('dark');
+  const [view, setView] = useState('grid');
+  return (
+    <Stack>
+      <Checkbox label="Se souvenir de moi" defaultChecked />
+      <Checkbox label="État indéterminé" indeterminate />
+      <Switch label="Notifications" defaultChecked />
+      <RadioGroup
+        label="Thème"
+        orientation="horizontal"
+        value={theme}
+        onValueChange={setTheme}
+        options={[
+          { value: 'light', label: 'Clair' },
+          { value: 'dark', label: 'Sombre' },
+          { value: 'system', label: 'Auto' },
+        ]}
+      />
+      <ButtonGroup
+        ariaLabel="Vue"
+        value={view}
+        onValueChange={setView}
+        options={[
+          { value: 'grid', label: 'Grille' },
+          { value: 'list', label: 'Liste' },
+          { value: 'map', label: 'Carte' },
+        ]}
+      />
     </Stack>
   );
 }
@@ -202,4 +255,55 @@ export const stories: Story[] = [
     ),
   },
   { id: 'banner', name: 'Banner', group: 'Primitives & feedback', render: () => <BannerDemo /> },
+
+  {
+    id: 'input',
+    name: 'Input',
+    group: 'Foundation',
+    render: () => (
+      <Stack>
+        <Input label="Nom" placeholder="Kevin" defaultValue="" help="Votre prénom." />
+        <Input label="Recherche" leading={<span>🔍</span>} placeholder="Filtrer…" />
+        <Input label="Chargement" loading defaultValue="Synchronisation" />
+        <Input label="Email" error="Adresse invalide" defaultValue="kevin@" />
+        <Input label="Désactivé" disabled defaultValue="Verrouillé" />
+      </Stack>
+    ),
+  },
+  { id: 'search', name: 'SearchInput', group: 'Foundation', render: () => <SearchDemo /> },
+  {
+    id: 'textarea',
+    name: 'Textarea',
+    group: 'Foundation',
+    render: () => (
+      <Stack>
+        <Textarea label="Note" placeholder="Écrire…" autoGrow help="La hauteur s'adapte." />
+        <Textarea label="Avec erreur" error="Trop court" defaultValue="…" />
+      </Stack>
+    ),
+  },
+  {
+    id: 'select',
+    name: 'Select',
+    group: 'Foundation',
+    render: () => (
+      <Stack>
+        <Select
+          label="Trier par"
+          placeholder="Choisir…"
+          options={[
+            { value: 'date', label: 'Date' },
+            { value: 'name', label: 'Nom' },
+            { value: 'size', label: 'Taille' },
+          ]}
+        />
+      </Stack>
+    ),
+  },
+  {
+    id: 'choices',
+    name: 'Checkbox · Switch · Radio · ButtonGroup',
+    group: 'Foundation',
+    render: () => <ChoiceDemo />,
+  },
 ];

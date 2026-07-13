@@ -5,6 +5,22 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — Vague 2 (sous-lot 1) : fondation formulaire de `@kevinos/ui`
+
+- **ADR-0017** : principes de conception permanents (calme, simplicité, fluidité,
+  **silence**, lisibilité, performance) ; **API formulaire commune** (contrôlé/
+  non-contrôlé + validation/erreur/aide/loading/a11y mutualisées) ;
+  **SearchInput** stratégique ; **le premier écran s'appelle « Home »** (plus
+  « Dashboard »).
+- **Fondation formulaire** : `useControllableState`, `useFieldIds`, `Field`
+  (label/aide/erreur/a11y mutualisés — les modules ne les réimplémentent jamais).
+- **Composants** (contrôlés/non-contrôlés, a11y, states) : `Input`, `SearchInput`
+  (effacement, Entrée/Échap, loading), `Textarea` (auto-grow), `Select` (natif),
+  `Checkbox` (indéterminé), `Switch` (`role=switch`), `RadioGroup`, `ButtonGroup`.
+- Éléments **natifs** privilégiés (a11y + performance mobile). Stories ajoutées au
+  Design Lab. Tests UI : **28** (10 nouveaux formulaires).
+- UI_ROADMAP : sous-lot 1 ✅ ; Vague 3 renommée **« Home »**.
+
 ### Changé — 🔄 Virage stratégique : KevinOS, plateforme d'expérience
 
 - **Mantra** adopté (README, PRODUCT_VISION, RÈGLES, identité, roadmap) :

@@ -20,3 +20,27 @@ export { Spinner, type SpinnerProps, type SpinnerSize } from './components/Spinn
 export { Skeleton, type SkeletonProps } from './components/Skeleton.js';
 export { Progress, type ProgressProps } from './components/Progress.js';
 export { Banner, type BannerProps, type BannerTone } from './components/Banner.js';
+
+// Hooks
+export { useControllableState, useFieldIds, useConst } from './hooks.js';
+
+// Vague 2 — Foundation : formulaires (champs & saisie)
+export {
+  Field,
+  fieldDescribedBy,
+  controlBase,
+  controlBorder,
+  type FieldProps,
+} from './components/form/Field.js';
+export { Input, type InputProps, type InputSize } from './components/form/Input.js';
+export { SearchInput, type SearchInputProps } from './components/form/SearchInput.js';
+export { Textarea, type TextareaProps } from './components/form/Textarea.js';
+export { Checkbox, type CheckboxProps } from './components/form/Checkbox.js';
+export { RadioGroup, type RadioGroupProps, type RadioOption } from './components/form/Radio.js';
+export { Switch, type SwitchProps } from './components/form/Switch.js';
+export { Select, type SelectProps, type SelectOption } from './components/form/Select.js';
+export {
+  ButtonGroup,
+  type ButtonGroupProps,
+  type SegmentOption,
+} from './components/form/ButtonGroup.js';
