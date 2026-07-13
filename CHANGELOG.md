@@ -5,6 +5,26 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 🚀 Environnement de Preview (Vercel) + mode Preview
+
+- **Chaîne de déploiement** : chaque push construit une **version consultable par
+  URL** (iPhone compris), sans rien lancer localement. Le produit déployé est
+  `apps/home` (statique, sans dépendance serveur).
+- **Trois environnements** : **Preview** (toute branche, URL par déploiement),
+  **Staging** (`develop`, URL fixe via alias), **Production** (`main`).
+- **Pipeline CI/CD** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) :
+  install → format → lint → build → typecheck → tests, puis **déploiement Vercel
+  conditionné aux tests verts** (`needs: quality`). No-op tant que les secrets
+  Vercel ne sont pas configurés.
+- **Mode Preview** dans `apps/home` : données **simulées**, aucune dépendance
+  serveur (Docker/PostgreSQL/Redis/Immich/Jellyfin), clairement identifié par un
+  **badge** et un **écran d'accueil de la Preview** (version · branche · dernier
+  déploiement · 🆕 nouveautés · « Entrer dans KevinOS »). Infos de build injectées
+  au build (`__KOS_BUILD__` via `vite.config.ts`).
+- **`vercel.json`** (build monorepo + réécritures SPA) et **`DEPLOYMENT.md`**
+  (architecture, environnements, pipeline, procédure, gestion des previews,
+  limitations, alternative « intégration Git »).
+
 ### Documenté — 🧭 HOME_EXPERIENCE.md : la boussole émotionnelle de Home
 
 - **`HOME_EXPERIENCE.md`** (réflexion produit, **sans code**) : l'émotion que Home

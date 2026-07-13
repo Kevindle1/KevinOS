@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { IconButton, applyTheme, getStoredTheme, type ThemeSetting } from '@kevinos/ui';
+import { Badge, IconButton, applyTheme, getStoredTheme, type ThemeSetting } from '@kevinos/ui';
 import { KaiConversation } from './kai/KaiConversation.js';
+import { getBuildInfo, channelLabel } from './build-info.js';
 
 /** Icônes du sélecteur de thème (décoratives — le sens vient de l'aria-label). */
 const THEME_ICON: Record<ThemeSetting, string> = {
@@ -26,6 +27,7 @@ const NEXT: Record<ThemeSetting, ThemeSetting> = {
  */
 export function App() {
   const [theme, setTheme] = useState<ThemeSetting>(() => getStoredTheme());
+  const build = getBuildInfo();
 
   function cycleTheme() {
     const next = NEXT[theme];
@@ -41,6 +43,11 @@ export function App() {
             ✦
           </span>
           KevinOS
+          {build.preview ? (
+            <Badge tone="accent">
+              {channelLabel(build.channel === 'local' ? 'preview' : build.channel)}
+            </Badge>
+          ) : null}
         </span>
         <IconButton
           aria-label={`${THEME_LABEL[theme]} — changer`}

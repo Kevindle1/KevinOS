@@ -63,3 +63,111 @@ jobs:
             -f compose/docker-compose.observability.yml \
             --env-file .env.ci config --quiet
           rm -f .env.ci secrets/authelia_* secrets/postgres_password secrets/redis_password secrets/restic_password secrets/grafana_admin_password
+
+  deploy:
+    name: Déploiement (Vercel)
+    needs: [quality]
+    # Uniquement sur push (jamais sur PR de fork) et une fois la qualité verte.
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Sans secrets Vercel, le déploiement est un no-op (voir DEPLOYMENT.md).
+      - name: Détecter la configuration Vercel
+        id: guard
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice title=Déploiement Vercel ignoré::Secrets Vercel absents. Voir DEPLOYMENT.md pour connecter le projet."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # main → production · develop → staging · autres branches → preview.
+      - name: Déterminer l'environnement
+        id: target
+        if: steps.guard.outputs.enabled == 'true'
+        run: |
+          case "${{ github.ref }}" in
+            refs/heads/main)
+              echo "name=production" >> "$GITHUB_OUTPUT"
+              echo "prod=--prod"     >> "$GITHUB_OUTPUT"
+              echo "venv=production" >> "$GITHUB_OUTPUT"
+              echo "preview=0"       >> "$GITHUB_OUTPUT" ;;
+            refs/heads/develop)
+              echo "name=staging" >> "$GITHUB_OUTPUT"
+              echo "prod="        >> "$GITHUB_OUTPUT"
+              echo "venv=preview" >> "$GITHUB_OUTPUT"
+              echo "preview=1"    >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "name=preview" >> "$GITHUB_OUTPUT"
+              echo "prod="        >> "$GITHUB_OUTPUT"
+              echo "venv=preview" >> "$GITHUB_OUTPUT"
+              echo "preview=1"    >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.enabled == 'true'
+        with:
+          node-version: 22
+
+      - name: Installer Vercel CLI
+        if: steps.guard.outputs.enabled == 'true'
+        run: npm i -g vercel@latest
+
+      - name: Récupérer la configuration du projet (vercel pull)
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=${{ steps.target.outputs.venv }} --token="$VERCEL_TOKEN"
+
+      - name: Construire (vercel build)
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          # Informations de build injectées dans l'app (écran de Preview, badge).
+          KOS_BRANCH: ${{ github.ref_name }}
+          KOS_SHA: ${{ github.sha }}
+          KOS_PREVIEW: ${{ steps.target.outputs.preview }}
+          KOS_CHANNEL: ${{ steps.target.outputs.name }}
+        run: vercel build ${{ steps.target.outputs.prod }} --token="$VERCEL_TOKEN"
+
+      - name: Déployer (vercel deploy)
+        id: deploy
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          url=$(vercel deploy --prebuilt ${{ steps.target.outputs.prod }} --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      # Staging : alias stable pour toujours retrouver la même URL.
+      - name: Alias staging
+        if: steps.guard.outputs.enabled == 'true' && steps.target.outputs.name == 'staging'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel alias set "${{ steps.deploy.outputs.url }}" \
+            "${{ vars.STAGING_ALIAS || 'kevinos-staging.vercel.app' }}" --token="$VERCEL_TOKEN"
+
+      - name: Résumé du déploiement
+        if: steps.guard.outputs.enabled == 'true'
+        run: |
+          {
+            echo "### 🌐 Déploiement — ${{ steps.target.outputs.name }}"
+            echo ""
+            echo "- **URL** : ${{ steps.deploy.outputs.url }}"
+            echo "- **Branche** : \`${{ github.ref_name }}\`"
+            echo "- **Commit** : \`${{ github.sha }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

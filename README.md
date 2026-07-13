@@ -25,6 +25,10 @@
   décision.
 - **[`UI_ROADMAP.md`](UI_ROADMAP.md)** — la plateforme UI par **expériences**
   (Foundation → Dashboard → KAI → Vision → Media → Home).
+- **[`HOME_EXPERIENCE.md`](HOME_EXPERIENCE.md)** — la **boussole émotionnelle** de
+  Home (l'émotion visée, le salut vivant de KAI, les principes psychologiques).
+- **[`DEPLOYMENT.md`](DEPLOYMENT.md)** — la **Preview** : suivre KevinOS par une
+  simple URL (iPhone), pipeline CI/CD, mode simulé, trois environnements.
 
 ---
 
