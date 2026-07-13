@@ -5,6 +5,25 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — Fondation design (à valider avant de coder l'interface)
+
+- **KOS Design System (KDS)** propriétaire sur Tailwind, token-first, offline
+  ([ADR-0013](docs/adr/ADR-0013-design-system-proprietaire.md),
+  [docs/design/design-system.md](docs/design/design-system.md)) : palette
+  clair/sombre, accents par module, typographie, espacements, rayons, profondeur,
+  motion, iconographie (Lucide), inventaire de composants, accessibilité, tokens CSS.
+- **Charte UX/UI** ([docs/design/ux-ui-charter.md](docs/design/ux-ui-charter.md)) :
+  philosophie (vide, hiérarchie, mouvement discret), navigation (rail + command
+  palette `⌘K` + KAI omniprésent), interaction, responsive, accessibilité.
+- **Wireframes** de toutes les vues principales
+  ([docs/design/wireframes.md](docs/design/wireframes.md)) : Accueil (OS), recherche
+  globale, KOS Vision, KAI, notifications, réglages, mobile.
+- **Aperçu visuel** (Artifact HTML autonome, thème clair/sombre) pour ressentir la
+  direction avant tout code — non-production.
+
+> Aucune ligne d'interface n'est écrite dans `apps/dashboard` tant que cette
+> fondation n'est pas validée par le propriétaire.
+
 ### Ajouté — 📷 KOS Vision, premier module (backend de référence)
 
 - **Identité de marque `KOS <Nom>`** ([ADR-0012](docs/adr/ADR-0012-identite-modules-kos.md),

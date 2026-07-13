@@ -46,6 +46,7 @@ réflexion est documentée ici :
 | 08  | [Versioning](docs/08-versioning.md)                 | SemVer & compatibilité des modules/plugins              |
 | 09  | [Identité modules](docs/09-identite-modules.md)     | Convention `KOS <Nom>` (KOS Vision, Media, Drive…)      |
 | 10  | [Module de référence](docs/10-module-reference.md)  | 📷 KOS Vision, le patron de tout module                 |
+| —   | [Fondation design](docs/design/)                    | Charte UX/UI, KOS Design System, wireframes             |
 | —   | [Diagrammes](docs/diagrammes/)                      | Schémas Mermaid (contexte, conteneurs, réseau, données) |
 | —   | [Décisions (ADR)](docs/adr/)                        | Journal des décisions d'architecture                    |
 
