@@ -18,6 +18,8 @@ export interface InsightCardProps extends Omit<
   meta?: ReactNode;
   /** Teinte d'accent du pictogramme. */
   accent?: InsightAccent;
+  /** Met la carte en avant (priorité haute) : contour accentué. */
+  emphasis?: boolean;
   /** Rend la carte actionnable (bouton) — ex. demander à KAI. */
   onActivate?: () => void;
 }
@@ -35,12 +37,13 @@ const accentText: Record<InsightAccent, string> = {
 
 /**
  * Carte **glanceable** : une information vive, lisible d'un coup d'œil. Brique de
- * l'accueil « vivant » de KevinOS (Règle 9) — état serveur, dernières photos,
- * média à reprendre, sauvegarde… Composée par les expériences, jamais par la lib.
+ * l'accueil « vivant » de KevinOS (Règle 9) — mais l'accueil n'en montre que
+ * **quelques-unes**, choisies par KAI (jamais un mur). Composée par les
+ * expériences, jamais par la lib.
  *
  * Actionnable (`onActivate`) → rendue comme **bouton** (cible tactile, focus,
- * `active:scale`). Sinon, simple surface. Le pictogramme est décoratif ; le sens
- * vit dans `label`/`value`.
+ * `active:scale`). `emphasis` marque une carte prioritaire (contour accentué).
+ * Le pictogramme est décoratif ; le sens vit dans `label`/`value`.
  */
 export function InsightCard({
   icon,
@@ -48,6 +51,7 @@ export function InsightCard({
   value,
   meta,
   accent = 'accent',
+  emphasis = false,
   onActivate,
   className,
   ...rest
@@ -75,7 +79,10 @@ export function InsightCard({
     </>
   );
 
-  const base = 'flex items-center gap-3.5 rounded-lg border border-border bg-surface p-4 text-left';
+  const base = cx(
+    'flex items-center gap-3.5 rounded-lg border bg-surface p-4 text-left',
+    emphasis ? 'border-accent' : 'border-border',
+  );
 
   if (interactive) {
     return (
@@ -84,8 +91,8 @@ export function InsightCard({
         onClick={onActivate}
         className={cx(
           base,
-          'w-full transition duration-base ease-out',
-          'hover:bg-hover hover:border-border-strong active:scale-[.99]',
+          'w-full transition duration-base ease-out active:scale-[.99]',
+          emphasis ? 'hover:bg-hover' : 'hover:bg-hover hover:border-border-strong',
           'focus-visible:outline-none focus-visible:shadow-focus',
           className,
         )}

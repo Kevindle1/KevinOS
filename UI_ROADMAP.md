@@ -95,9 +95,15 @@ simulées (photos, média, sauvegarde, serveur, météo, stockage, maison), sugg
 intelligentes, apparition **progressive**, réponses de KAI **écrites**. Composants
 créés à la demande : **primitives de mouvement**, **`InsightCard`**, **`TypingText`**.
 
-Itérations suivantes (au fil du besoin) : affiner l'expérience « présence »,
-activité récente, notifications, accès rapide aux modules — chacune n'ajoutant à
-`@kevinos/ui` que le strict nécessaire.
+**Itération 3 — la curation ✅** (Règle 9, [HOME_EXPERIENCE](HOME_EXPERIENCE.md)
+P8–P10) : KAI ne montre que **l'essentiel maintenant** (≤ 3 cartes, jamais un mur),
+classé par **importance**, **évoluant** selon le moment ; **respiration** (calme →
+KevinOS « prend la parole ») ; **mémoire** (continuité). Moteur `curateHome` **testé** ;
+`InsightCard` gagne `emphasis`.
+
+Itérations suivantes (au fil du besoin) : affiner la curation et la « prise de
+parole » (vrais événements), mémoire persistante, accès rapide aux modules —
+chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
 
 | Composant           | Statut | Description                                         | Modules            |
 | ------------------- | :----: | --------------------------------------------------- | ------------------ |

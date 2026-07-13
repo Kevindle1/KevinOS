@@ -5,6 +5,23 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Changé — 🎯 Home itération 3 : la curation (« l'essentiel, maintenant »)
+
+- **Minimalisme radical** : KAI ne montre plus tout. Il **choisit** — **au plus
+  3 cartes**, jamais un mur. La question devient « quelle est l'information la plus
+  utile à Kevin **maintenant** ? » et non « que puis-je afficher ? ».
+- **Moteur de curation** (`curateHome`, testé) : cartes classées par **importance**
+  (haute / normale / info), **évoluant selon le moment** (matin / après-midi / soir
+  / nuit). Une **alerte** haute priorité remonte et **remplace** une carte. La nuit,
+  KevinOS **respire** (≤ 1 carte).
+- **Respiration** : très calme par défaut, puis KevinOS « **prend la parole** » —
+  un rappel discret et différé apparaît (effaçable).
+- **Mémoire / continuité** : KAI se souvient (« hier tu avais commencé… », « 3
+  jours sans sauvegarde de tes photos… ») — ce qui lui donne une personnalité.
+- `@kevinos/ui` : `InsightCard` gagne `emphasis` (carte prioritaire, contour
+  accentué). Tests : **UI 46**, **Home 6** (curation).
+- Doctrine : **HOME_EXPERIENCE** enrichi (P8 curation, P9 respiration, P10 mémoire).
+
 ### Ajouté — ✨ Home itération 2 : KevinOS vivant (présence) + Règle 9
 
 - **Règle 9** (RÈGLES) : « KevinOS doit donner l'impression d'être **vivant** » —

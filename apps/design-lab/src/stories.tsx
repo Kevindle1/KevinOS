@@ -476,7 +476,15 @@ export const stories: Story[] = [
           onActivate={() => {}}
         />
         <InsightCard icon="🖥️" label="Serveur" value="Actif depuis 17 jours" accent="monitor" />
-        <InsightCard icon="💽" label="Stockage" value="1,2 To libres" accent="drive" />
+        <InsightCard
+          icon="⚠️"
+          label="Stockage"
+          value="Disque bientôt plein"
+          meta="92 % — priorité haute"
+          accent="drive"
+          emphasis
+          onActivate={() => {}}
+        />
       </div>
     ),
   },

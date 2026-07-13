@@ -88,7 +88,7 @@ soit Home devient un réflexe **agréable**, soit un réflexe **vide**.
 
 ## 3. Les principes psychologiques
 
-Sept principes durables. Ils priment sur toute fonctionnalité particulière.
+Dix principes durables. Ils priment sur toute fonctionnalité particulière.
 
 ### P1 — Une seule chose à la fois (charge cognitive minimale)
 
@@ -144,6 +144,37 @@ d'engagement. Home ne cherche pas à **retenir** Kevin (pas de mécaniques
 d'addiction, pas de « encore une chose »). Sa réussite se mesure à la **tranquillité**
 qu'il procure, pas au temps passé devant lui. C'est un serviteur, pas un capteur
 d'attention.
+
+### P8 — La **curation** : la bonne information, _maintenant_ ⭐
+
+C'est le principe le plus exigeant. KevinOS ne se demande **jamais** « quelles
+informations puis-je afficher ? » mais « **quelle est la seule chose la plus utile
+à Kevin, maintenant ?** ». Cette différence est fondamentale.
+
+- **3 informations parfaites valent mieux que 12 moyennes.** On affiche **peu**
+  (au plus quelques cartes), jamais un mur. Apple, visionOS, Nothing ne montrent
+  jamais tout — seulement ce qui compte.
+- Chaque information porte une **importance** (haute / normale / info). **KAI
+  choisit** ce qui mérite l'attention ; l'utilisateur n'a **pas besoin de tout
+  voir**. Une **alerte** (haute) remonte et **remplace** une carte moins utile.
+- Le contenu **évolue** : le matin (agenda, météo, sauvegarde de la nuit) diffère
+  du soir (film à reprendre, photos du jour). Les cartes sont **temporaires**.
+
+### P9 — La **respiration**
+
+Quand il ne se passe rien, Home est **extrêmement calme** : la présence de KAI,
+une phrase, très peu d'informations. Puis, lorsqu'un événement survient, KevinOS
+**prend la parole** — l'interface change **légèrement**, une carte apparaît, un
+rappel discret. C'est le rythme d'un être vivant : du silence, puis un mot juste.
+Jamais l'inverse (jamais saturé par défaut).
+
+### P10 — La **mémoire** (continuité)
+
+Un compagnon se **souvient**. KAI peut dire : _« Hier, tu avais commencé ce
+film. »_, _« Cela fait trois jours que tu n'as pas sauvegardé tes photos. »_,
+_« Tu m'avais demandé de te rappeler ce document. »_ Cette continuité, d'un jour à
+l'autre, est ce qui donne à KevinOS une **personnalité** — et transforme un outil
+en présence familière.
 
 ---
 

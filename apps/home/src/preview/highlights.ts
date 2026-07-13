@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Itération 2 — KevinOS vivant',
+  label: 'Itération 3 — l’essentiel, maintenant',
   items: [
-    'Un accueil qui semble t’attendre — KAI présent, la journée racontée',
-    'Cartes d’aperçu : photos, média à reprendre, sauvegarde, serveur, maison…',
-    'Suggestions intelligentes, contextuelles',
-    'Micro-interactions : halo, respiration, apparition progressive, réponses écrites',
-    'KAI répond en connaissant ton environnement (simulé)',
+    'KAI ne montre que ce qui compte maintenant — au plus 3 cartes, jamais un mur',
+    'L’accueil évolue selon le moment (matin, après-midi, soir, nuit)',
+    'Système d’importance : une alerte remonte et remplace une carte',
+    'Respiration : très calme, puis KevinOS « prend la parole »',
+    'Mémoire : KAI se souvient (« hier tu avais commencé… »)',
   ],
 };
