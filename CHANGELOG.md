@@ -5,6 +5,20 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — `@kevinos/ui` : implémentation du KOS Design System
+
+- **Tokens** (`src/tokens.css`) : source unique de vérité (couleurs clair/sombre,
+  accents modules, rayons, ombres, motion, typo) ; thème via `prefers-color-scheme`
+  **et** `data-theme` (bascule utilisateur prioritaire) ; `prefers-reduced-motion`.
+- **Preset Tailwind** (`@kevinos/ui/preset`) : Tailwind ne fait que **référencer**
+  les tokens (pas de palette par défaut).
+- **Helpers de thème** sans dépendance (`initTheme`/`applyTheme`/`resolveTheme`).
+- **Composants** `Button` (variants/tailles/loading, a11y) et `Card`, sur tokens.
+- Tests jsdom + Testing Library (7). Total workspace : 48 tests verts.
+
+> Première brique d'implémentation après validation de la fondation design.
+> Prochaine étape : compléter les composants puis assembler `apps/dashboard`.
+
 ### Ajouté — Fondation design (à valider avant de coder l'interface)
 
 - **KOS Design System (KDS)** propriétaire sur Tailwind, token-first, offline

@@ -1,0 +1,181 @@
+/*
+ * KOS Design System — tokens (ADR-0013).
+ * Source unique de vérité. Thème clair par défaut ; sombre via
+ * prefers-color-scheme ET data-theme (la bascule utilisateur gagne toujours).
+ * Aucun composant ne connaît « clair/sombre » : uniquement ces tokens.
+ */
+
+:root {
+  /* Neutres — thème clair (biais légèrement froid vers l'accent) */
+  --kos-bg: #f4f6f7;
+  --kos-surface: #ffffff;
+  --kos-elevated: #ffffff;
+  --kos-hover: #eef1f2;
+  --kos-border: rgba(12, 20, 22, 0.09);
+  --kos-border-strong: rgba(12, 20, 22, 0.16);
+  --kos-text: #101416;
+  --kos-text-secondary: #495257;
+  --kos-text-muted: #838d92;
+
+  /* Accent signature + statuts (thème clair : versions assombries pour le contraste) */
+  --kos-accent: #159c92;
+  --kos-accent-hover: #1fb3a7;
+  --kos-accent-subtle: rgba(21, 156, 146, 0.12);
+  --kos-on-accent: #ffffff;
+  --kos-success: #1a9d4d;
+  --kos-warning: #b8790a;
+  --kos-danger: #d23b30;
+  --kos-info: #2f6fe0;
+
+  /* Accents par module (badging / graphes — jamais le chrome) */
+  --kos-vision: #d99618;
+  --kos-media: #7c6cf0;
+  --kos-drive: #2f6fe0;
+  --kos-home: #1f9e73;
+  --kos-brain: #159c92;
+  --kos-monitor: #e0722f;
+  --kos-network: #2f95d0;
+  --kos-vault: #6a76e6;
+  --kos-backup: #6b7683;
+
+  /* Rayons */
+  --kos-radius-sm: 8px;
+  --kos-radius-md: 12px;
+  --kos-radius-lg: 16px;
+  --kos-radius-xl: 20px;
+  --kos-radius-2xl: 28px;
+  --kos-radius-full: 9999px;
+
+  /* Profondeur */
+  --kos-shadow-1: 0 1px 2px rgba(10, 15, 20, 0.06);
+  --kos-shadow-2: 0 8px 28px rgba(10, 15, 20, 0.1);
+  --kos-shadow-3: 0 20px 56px rgba(10, 15, 20, 0.16);
+  --kos-focus-ring: 0 0 0 3px var(--kos-accent-subtle), 0 0 0 1px var(--kos-accent);
+
+  /* Motion */
+  --kos-dur-instant: 80ms;
+  --kos-dur-fast: 140ms;
+  --kos-dur-base: 200ms;
+  --kos-dur-slow: 320ms;
+  --kos-ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --kos-ease-emph: cubic-bezier(0.3, 0, 0, 1);
+
+  /* Typographie */
+  --kos-font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --kos-font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+/* Thème sombre — appliqué selon la préférence système… */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --kos-bg: #0a0b0d;
+    --kos-surface: #121317;
+    --kos-elevated: #1a1c22;
+    --kos-hover: #202329;
+    --kos-border: rgba(255, 255, 255, 0.08);
+    --kos-border-strong: rgba(255, 255, 255, 0.16);
+    --kos-text: #f5f6f7;
+    --kos-text-secondary: #a8adb7;
+    --kos-text-muted: #6b7280;
+
+    --kos-accent: #2fbeb4;
+    --kos-accent-hover: #3acfc4;
+    --kos-accent-subtle: rgba(47, 190, 180, 0.16);
+    --kos-on-accent: #04211f;
+    --kos-success: #34c759;
+    --kos-warning: #ffb020;
+    --kos-danger: #f04438;
+    --kos-info: #4c8dff;
+
+    --kos-vision: #f4b740;
+    --kos-media: #8b7cf6;
+    --kos-drive: #4c8dff;
+    --kos-home: #43c59e;
+    --kos-brain: #2fbeb4;
+    --kos-monitor: #f58a45;
+    --kos-network: #56b6e9;
+    --kos-vault: #7c89f6;
+    --kos-backup: #94a3b8;
+
+    --kos-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --kos-shadow-2: 0 6px 20px rgba(0, 0, 0, 0.35);
+    --kos-shadow-3: 0 16px 48px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* …et forcé par la bascule utilisateur (prioritaire dans les deux sens). */
+:root[data-theme='dark'] {
+  --kos-bg: #0a0b0d;
+  --kos-surface: #121317;
+  --kos-elevated: #1a1c22;
+  --kos-hover: #202329;
+  --kos-border: rgba(255, 255, 255, 0.08);
+  --kos-border-strong: rgba(255, 255, 255, 0.16);
+  --kos-text: #f5f6f7;
+  --kos-text-secondary: #a8adb7;
+  --kos-text-muted: #6b7280;
+
+  --kos-accent: #2fbeb4;
+  --kos-accent-hover: #3acfc4;
+  --kos-accent-subtle: rgba(47, 190, 180, 0.16);
+  --kos-on-accent: #04211f;
+  --kos-success: #34c759;
+  --kos-warning: #ffb020;
+  --kos-danger: #f04438;
+  --kos-info: #4c8dff;
+
+  --kos-vision: #f4b740;
+  --kos-media: #8b7cf6;
+  --kos-drive: #4c8dff;
+  --kos-home: #43c59e;
+  --kos-brain: #2fbeb4;
+  --kos-monitor: #f58a45;
+  --kos-network: #56b6e9;
+  --kos-vault: #7c89f6;
+  --kos-backup: #94a3b8;
+
+  --kos-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --kos-shadow-2: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --kos-shadow-3: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme='light'] {
+  --kos-bg: #f4f6f7;
+  --kos-surface: #ffffff;
+  --kos-elevated: #ffffff;
+  --kos-hover: #eef1f2;
+  --kos-border: rgba(12, 20, 22, 0.09);
+  --kos-border-strong: rgba(12, 20, 22, 0.16);
+  --kos-text: #101416;
+  --kos-text-secondary: #495257;
+  --kos-text-muted: #838d92;
+
+  --kos-accent: #159c92;
+  --kos-accent-hover: #1fb3a7;
+  --kos-accent-subtle: rgba(21, 156, 146, 0.12);
+  --kos-on-accent: #ffffff;
+  --kos-success: #1a9d4d;
+  --kos-warning: #b8790a;
+  --kos-danger: #d23b30;
+  --kos-info: #2f6fe0;
+
+  --kos-vision: #d99618;
+  --kos-media: #7c6cf0;
+  --kos-drive: #2f6fe0;
+  --kos-home: #1f9e73;
+  --kos-brain: #159c92;
+  --kos-monitor: #e0722f;
+  --kos-network: #2f95d0;
+  --kos-vault: #6a76e6;
+  --kos-backup: #6b7683;
+}
+
+/* Respect du confort de mouvement. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --kos-dur-instant: 0ms;
+    --kos-dur-fast: 0ms;
+    --kos-dur-base: 0ms;
+    --kos-dur-slow: 0ms;
+  }
+}
