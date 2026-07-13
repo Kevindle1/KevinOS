@@ -35,6 +35,7 @@ export {
 export { Input, type InputProps, type InputSize } from './components/form/Input.js';
 export { SearchInput, type SearchInputProps } from './components/form/SearchInput.js';
 export { Textarea, type TextareaProps } from './components/form/Textarea.js';
+export { PromptInput, type PromptInputProps } from './components/form/PromptInput.js';
 export { Checkbox, type CheckboxProps } from './components/form/Checkbox.js';
 export { RadioGroup, type RadioGroupProps, type RadioOption } from './components/form/Radio.js';
 export { Switch, type SwitchProps } from './components/form/Switch.js';

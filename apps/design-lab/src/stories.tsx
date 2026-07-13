@@ -12,6 +12,7 @@ import {
   Input,
   SearchInput,
   Textarea,
+  PromptInput,
   Checkbox,
   RadioGroup,
   Switch,
@@ -88,6 +89,22 @@ function SearchDemo() {
       <SearchInput value={v} onValueChange={setV} onSearch={setLast} placeholder="Rechercher…" />
       <SearchInput defaultValue="" loading placeholder="Chargement…" />
       <p className="text-sm text-text-muted">Dernière recherche (Entrée) : {last || '—'}</p>
+    </Stack>
+  );
+}
+
+function PromptInputDemo() {
+  const [log, setLog] = useState<string[]>([]);
+  return (
+    <Stack>
+      <PromptInput
+        onSubmit={(v) => setLog((l) => [...l, v])}
+        placeholder="Écris à KAI… (Entrée pour envoyer, Maj+Entrée = saut de ligne)"
+      />
+      <PromptInput value="KAI réfléchit…" busy onSubmit={() => {}} />
+      <p className="text-sm text-text-muted">
+        Messages envoyés : {log.length ? log.join(' · ') : '—'}
+      </p>
     </Stack>
   );
 }
@@ -287,6 +304,12 @@ export const stories: Story[] = [
         <Textarea label="Avec erreur" error="Trop court" defaultValue="…" />
       </Stack>
     ),
+  },
+  {
+    id: 'prompt-input',
+    name: 'PromptInput',
+    group: 'Foundation',
+    render: () => <PromptInputDemo />,
   },
   {
     id: 'select',

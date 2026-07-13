@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--kos-bg);
+  color: var(--kos-text);
+  font-family: var(--kos-font-ui);
+  -webkit-font-smoothing: antialiased;
+}

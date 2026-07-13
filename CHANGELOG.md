@@ -5,6 +5,21 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 🏠 Home, la première expérience de KevinOS (itération 1)
+
+- **`apps/home`** : la **coque du produit** (Vite + React + `@kevinos/ui`). On
+  passe de « faire grandir la bibliothèque » à **« construire KevinOS »**.
+- **Accueil centré sur KAI** (ADR-0017 / Règle 0) : « Bonjour Kevin 👋 / Comment
+  puis-je t'aider aujourd'hui ? », zone de conversation, suggestions. Pas une
+  grille de widgets — une page **vivante**. KAI est **simulé** (itération 1) ; le
+  vrai KAI (Vague 4) se branchera au même `onSubmit`, sans toucher à Home.
+- **Nouvelle cadence** (Règle 0) : `@kevinos/ui` évolue **quand Home en a besoin**,
+  au fil des itérations — plus de vague complète en amont. **Home pilote l'UI.**
+- **`PromptInput`** créé dans `@kevinos/ui` (1ᵉ besoin piloté par Home) :
+  composant **stratégique** KAI-first, contrôlé/non-contrôlé, `Entrée` envoie /
+  `Maj+Entrée` saut de ligne, auto-grow, état `busy`, a11y. Doc, **6 tests**,
+  story Design Lab. Tests UI : **41**.
+
 ### Ajouté — Règle 8 & Vague 2 (sous-lot 2) : surfaces & primitives
 
 - **Règle 8** (RÈGLES) + **ADR-0018** : « ne jamais réimplémenter un problème déjà

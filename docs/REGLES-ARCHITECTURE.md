@@ -29,6 +29,11 @@ Virage stratégique validé le 2026-07-12 : **le produit prime sur la technique.
 - On **alterne** systématiquement : enrichir `@kevinos/ui` ↔ livrer un module
   fonctionnel. Le produit reste **vivant** ; on n'attend pas la fin du Design
   System pour voir apparaître KevinOS.
+- **Le produit pilote la bibliothèque** (précision 2026-07-13) : depuis que la
+  Foundation est mûre, on **construit Home par itérations** ; on n'enrichit
+  `@kevinos/ui` **que lorsqu'une itération de Home l'exige** (composant manquant →
+  créé avec doc/tests/Design Lab/a11y → retour immédiat à Home). Les évolutions de
+  l'UI **accompagnent** Home, elles ne le précèdent plus.
 
 _Identité :_ **KevinOS** = la plateforme · **KAI** = l'intelligence · **KOS** =
 les compétences · logiciels tiers = plugins interchangeables invisibles.

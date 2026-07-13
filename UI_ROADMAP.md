@@ -74,11 +74,24 @@ par simple assemblage**.
 
 ---
 
-## Vague 3 — Home (l'accueil KAI-first) ⬜
+## Vague 3 — Home (l'accueil KAI-first) 🟡 (en construction, par itérations)
 
 > On arrête de penser « Dashboard » : le premier écran est **Home**, centré sur
-> KAI ([ADR-0017](docs/adr/ADR-0017-principes-conception-composants.md)). Une fois
-> cette vague finie, **Home** se construit **uniquement par assemblage**.
+> KAI ([ADR-0017](docs/adr/ADR-0017-principes-conception-composants.md)).
+>
+> **Nouvelle cadence (2026-07-13, Règle 0)** : la Foundation est mûre, on
+> **construit désormais le produit**. Home est développé **par itérations** —
+> chaque itération produit un **écran réellement utilisable**. On n'enrichit
+> `@kevinos/ui` **que lorsqu'une itération l'exige** (composant manquant → créé
+> avec doc/tests/Design Lab/a11y → retour immédiat à Home). **Home pilote l'UI.**
+
+**Itération 1 — l'accueil KAI-first ✅** (`apps/home`) : « Bonjour Kevin 👋 /
+Comment puis-je t'aider aujourd'hui ? », zone de conversation (KAI **simulé**),
+suggestions, thème clair/sombre. Composant créé à la demande : **`PromptInput`**.
+
+Itérations suivantes (au fil du besoin) : activité récente, dernières photos,
+reprendre un média, état du système, suggestions, notifications, accès rapide aux
+modules — chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
 
 | Composant           | Statut | Description                                         | Modules            |
 | ------------------- | :----: | --------------------------------------------------- | ------------------ |
@@ -101,16 +114,16 @@ par simple assemblage**.
 
 > À la fin, on peut développer l'interface de **KAI** (le point d'entrée).
 
-| Composant         | Statut | Description                                 | Modules        |
-| ----------------- | :----: | ------------------------------------------- | -------------- |
-| Conversation      |   ⬜   | Fil de conversation (scroll, groupes)       | KAI            |
-| ChatBubble        |   ⬜   | Bulle utilisateur / assistant               | KAI            |
-| PromptInput       |   ⬜   | Saisie (texte/voix), envoi, raccourcis      | KAI            |
-| SuggestionCard    |   ⬜   | Suggestion proposée par KAI                 | KAI, Dashboard |
-| ThinkingIndicator |   ⬜   | KAI réfléchit (discret)                     | KAI            |
-| AIResponse        |   ⬜   | Réponse riche (texte + cartes actionnables) | KAI            |
-| Citation          |   ⬜   | Source d'une réponse (traçabilité)          | KAI            |
-| ActionSuggestion  |   ⬜   | Action exécutable proposée par KAI          | KAI            |
+| Composant         | Statut | Description                                    | Modules        |
+| ----------------- | :----: | ---------------------------------------------- | -------------- |
+| Conversation      |   ⬜   | Fil de conversation (scroll, groupes)          | KAI            |
+| ChatBubble        |   ⬜   | Bulle utilisateur / assistant                  | KAI            |
+| PromptInput       |   ✅   | Saisie, envoi, raccourcis (_livré tôt — Home_) | KAI, Home      |
+| SuggestionCard    |   ⬜   | Suggestion proposée par KAI                    | KAI, Dashboard |
+| ThinkingIndicator |   ⬜   | KAI réfléchit (discret)                        | KAI            |
+| AIResponse        |   ⬜   | Réponse riche (texte + cartes actionnables)    | KAI            |
+| Citation          |   ⬜   | Source d'une réponse (traçabilité)             | KAI            |
+| ActionSuggestion  |   ⬜   | Action exécutable proposée par KAI             | KAI            |
 
 **Résultat concret** : l'écran d'accueil **KAI-first**.
 
@@ -161,7 +174,10 @@ par simple assemblage**.
 
 ## Cadence de développement
 
-On **alterne** (Règle 0) : enrichir `@kevinos/ui` ↔ livrer un **module fonctionnel**
-utilisable. Après la Vague 2 (Foundation) et la Vague 3 (Dashboard), on assemble le
-**premier Accueil** ; après la Vague 4, l'**expérience KAI** ; après la Vague 5,
-**KOS Vision**. Le produit reste vivant à chaque étape.
+On **alterne** (Règle 0) : enrichir `@kevinos/ui` ↔ livrer un **module fonctionnel**.
+La Foundation (Vagues 1–2) étant mûre, la cadence change : **le produit pilote la
+bibliothèque**. On construit **Home par itérations** (chacune = un écran utilisable),
+et on n'ajoute à `@kevinos/ui` que ce que l'itération courante exige. Les vagues 4–7
+ci-dessus deviennent des **réservoirs de composants** dans lesquels Home pioche à la
+demande — elles ne sont plus des étapes séquentielles. Le produit reste vivant à
+chaque itération.
