@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @kevinos/home build",
+  "buildCommand": "pnpm --filter @kevinos/ui build && pnpm --filter @kevinos/home build",
   "outputDirectory": "apps/home/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "cleanUrls": true,
