@@ -64,19 +64,16 @@ On ne crée pas les composants au fil des besoins : on suit un plan de vagues (v
 catalogue). Ordre par dépendances : primitives → formulaires → layout → navigation
 → données → dialogues → médias → états → KAI → monitoring → maison.
 
-## Question ouverte (à trancher par le propriétaire)
+## Décision — environnement de démo (tranchée le 2026-07-12)
 
-**Environnement de démo : Storybook vs galerie maison.**
+**Galerie maison** retenue (choix du propriétaire) : une petite app Vite
+**`apps/ui-gallery`** qui présente chaque composant en isolation (états, doc,
+a11y), avec bascule de thème. Motifs : **offline-first** (Règle 2), **contrôle
+total**, légèreté, cohérence avec le reste du projet. On y définit une « story »
+par composant (même notion que Storybook, sans la dépendance). Storybook est
+écarté (lourdeur, moins offline-first).
 
-- **Storybook** : standard de l'écosystème (ce qu'utilisent MUI & co.), addons doc
-  / interactions / a11y intégrés. ➖ Lourd (nombreuses dépendances), un peu « boîte
-  noire », plus long à faire tourner hors-ligne.
-- **Galerie maison** (petite app Vite `apps/ui-gallery`) : ➕ légère, 100 % sous
-  notre contrôle, offline par nature, cohérente avec nos règles ; ➖ on écrit
-  nous-mêmes le shell de la galerie (mais c'est du simple assemblage).
-
-_Recommandation : galerie maison_ (offline-first, contrôle total), avec la même
-notion de « story » par composant. Décision consignée en addendum.
+La galerie devient la **source des captures/rendus** et la référence vivante.
 
 ## Conséquences
 

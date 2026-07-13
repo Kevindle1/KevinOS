@@ -5,6 +5,23 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — KOS Design Lab (module officiel)
+
+- **ADR-0015** : le Design Lab devient l'**environnement de développement officiel**
+  et permanent de KevinOS. Règles : produit maintenable, **architecture modulaire**
+  (modes indépendants via registre), **source unique de vérité** (importe
+  `@kevinos/ui`, aucune copie), **doc vivante**, **Sandbox**, **Inspect**,
+  évolutivité, et **architecture prête pour un futur assistant KAI**.
+- **App `apps/design-lab`** (`@kevinos/design-lab`, Vite + React + Tailwind sur le
+  preset `@kevinos/ui`), organisée en **modes** :
+  - ✅ **Component Explorer** (composant seul, tous ses états),
+  - ✅ **Theme Studio** (Light/Dark/Auto + accents de module en direct, par tokens),
+  - ✅ **Accessibility** (vérificateur de **contrastes WCAG** en direct selon le
+    thème, focus/clavier, état `prefers-reduced-motion`),
+  - 🟡 Inspect, Playground, Sandbox, Screen Builder, Dashboard Preview, Motion Lab,
+    Documentation, Tests, Settings (cadrés, à venir progressivement).
+- Renomme l'ex-`ui-gallery` → `design-lab`. Build de production vérifié.
+
 ### Ajouté — `@kevinos/ui` en **plateforme UI** (Vague 1)
 
 - **ADR-0014** : `@kevinos/ui` devient une plateforme UI (façon Material UI) —
