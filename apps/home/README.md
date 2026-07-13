@@ -28,6 +28,12 @@ Pas une grille de widgets : une **page vivante**.
   utilisable**, même incomplet.
 - **KAI d'abord.** Tout est pensé autour de KAI, même avant qu'il existe.
 
+La **boussole émotionnelle** de Home vit dans
+[`HOME_EXPERIENCE.md`](../../HOME_EXPERIENCE.md) (réflexion produit, sans code) :
+l'émotion visée, le ressenti à 5 s / 30 s / plusieurs jours, les principes
+psychologiques, et le **salut vivant** de KAI. On la relit **avant chaque
+itération**, avec le filtre produit (valeur · cohérence · pertinence · simplicité).
+
 ## État — itération 1
 
 - Accueil KAI-first : salutation, **zone de conversation**, suggestions.

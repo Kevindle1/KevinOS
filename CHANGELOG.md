@@ -5,6 +5,17 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Documenté — 🧭 HOME_EXPERIENCE.md : la boussole émotionnelle de Home
+
+- **`HOME_EXPERIENCE.md`** (réflexion produit, **sans code**) : l'émotion que Home
+  doit provoquer, le ressenti à **5 s / 30 s / plusieurs jours**, **7 principes
+  psychologiques** (charge cognitive, assistant vivant, silence, confiance, être
+  attendu, révélation progressive, respect) et le **filtre produit** (valeur ·
+  cohérence · pertinence · simplicité) à appliquer avant chaque itération.
+- **Le salut vivant de KAI** adopté comme principe fondateur : KAI ne salue jamais
+  Kevin deux fois de la même façon (moment + état réel + variation), toujours
+  honnête, sobre et calme — la présence plutôt que l'écran figé.
+
 ### Ajouté — 🏠 Home, la première expérience de KevinOS (itération 1)
 
 - **`apps/home`** : la **coque du produit** (Vite + React + `@kevinos/ui`). On
