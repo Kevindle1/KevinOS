@@ -67,8 +67,11 @@ jobs:
   deploy:
     name: Déploiement (Vercel)
     needs: [quality]
-    # Uniquement sur push (jamais sur PR de fork) et une fois la qualité verte.
-    if: github.event_name == 'push'
+    # V1 : le déploiement est assuré par l'**intégration Git de Vercel** (solution
+    # officielle). Ce job reste **désactivé par défaut** pour éviter tout
+    # double-déploiement — on l'active plus tard en posant la variable de dépôt
+    # ENABLE_ACTIONS_DEPLOY=true (+ secrets Vercel). Voir DEPLOYMENT.md.
+    if: github.event_name == 'push' && vars.ENABLE_ACTIONS_DEPLOY == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

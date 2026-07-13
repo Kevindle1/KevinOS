@@ -11,11 +11,15 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
   URL** (iPhone compris), sans rien lancer localement. Le produit déployé est
   `apps/home` (statique, sans dépendance serveur).
 - **Trois environnements** : **Preview** (toute branche, URL par déploiement),
-  **Staging** (`develop`, URL fixe via alias), **Production** (`main`).
-- **Pipeline CI/CD** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) :
-  install → format → lint → build → typecheck → tests, puis **déploiement Vercel
-  conditionné aux tests verts** (`needs: quality`). No-op tant que les secrets
-  Vercel ne sont pas configurés.
+  **Staging** (`develop`), **Production** (`main`).
+- **V1 officielle : intégration Git de Vercel** — Vercel déploie automatiquement
+  chaque branche (Preview) et `main` (production), **sans secret**. Mise en place
+  en ~3 minutes (README → « Développement »).
+- **Garde-fou qualité** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) :
+  install → format → lint → build → typecheck → tests sur chaque push/PR. Un job
+  `deploy` (Vercel CLI, déploiement **conditionné aux tests**) est prêt mais
+  **désactivé par défaut** (`vars.ENABLE_ACTIONS_DEPLOY`) pour éviter tout
+  double-déploiement — durcissement futur.
 - **Mode Preview** dans `apps/home` : données **simulées**, aucune dépendance
   serveur (Docker/PostgreSQL/Redis/Immich/Jellyfin), clairement identifié par un
   **badge** et un **écran d'accueil de la Preview** (version · branche · dernier

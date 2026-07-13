@@ -65,96 +65,92 @@ Choix retenu : **Vercel** (parmi Vercel / Netlify / GitHub Pages).
 
 - **Preview** : URL **unique par déploiement** (et par branche). Éphémère, parfaite
   pour un retour rapide.
-- **Staging** : même build, mais **aliasé** sur une URL stable
-  (`kevinos-staging.vercel.app` par défaut, réglable via la variable de dépôt
-  `STAGING_ALIAS`).
-- **Production** : `main` uniquement, déploiement `--prod`. Le chrome « Preview »
-  (écran d'accueil + badge) **disparaît**.
+- **Staging** : `develop` obtient, comme toute branche, sa **propre URL de preview
+  stable** (`…-git-develop-…vercel.app`). Un **alias dédié** (`kevinos-staging…`)
+  viendra plus tard (voir §5.2).
+- **Production** : `main` uniquement, déploiement de production. Le chrome
+  « Preview » (écran d'accueil + badge) **disparaît**.
+
+> **V1 (officielle) — intégration Git de Vercel.** Vercel écoute le dépôt et
+> déploie **tout seul** : chaque branche → une Preview, `main` → la production.
+> C'est la voie choisie pour démarrer vite (§5.1). Le durcissement par GitHub
+> Actions (déploiement conditionné aux tests) est prêt mais **désactivé** (§5.2).
 
 ---
 
-## 4. Le pipeline CI/CD
+## 4. Qui fait quoi : Vercel déploie, GitHub Actions vérifie
 
-Un seul pipeline, dans [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
-**Le déploiement ne part que si la qualité est verte** (`needs: [quality]`).
+En **V1**, les deux se répartissent le travail **sans se marcher dessus** :
 
 ```
 push / pull_request
         │
-        ▼
-┌─────────────────────────────────────────────┐
-│  quality                                     │
-│  1. pnpm install --frozen-lockfile           │
-│  2. format:check (Prettier)                  │
-│  3. lint (ESLint)                            │
-│  4. build (pnpm -r run build)                │
-│  5. typecheck (tsc)                          │
-│  6. test (Vitest)                            │
-└─────────────────────────────────────────────┘
-        │ (vert, et seulement sur push)
-        ▼
-┌─────────────────────────────────────────────┐
-│  deploy (Vercel)                             │
-│  • main    → production  (vercel --prod)     │
-│  • develop → staging     (+ alias stable)    │
-│  • autres  → preview     (URL par déploiement)│
-└─────────────────────────────────────────────┘
+        ├────────────────────────────┬───────────────────────────────┐
+        ▼                            ▼                                 │
+┌─────────────────────────┐   ┌──────────────────────────────┐        │
+│ GitHub Actions          │   │ Vercel (intégration Git)     │        │
+│ job « quality »         │   │ — SOLUTION OFFICIELLE V1     │        │
+│ install → format → lint │   │ • chaque branche → Preview   │        │
+│ → build → typecheck →   │   │ • main → Production          │        │
+│ tests                   │   │ • VERCEL_* injectées au build│        │
+└─────────────────────────┘   └──────────────────────────────┘        │
+        │                                                              │
+        ▼                                                              │
+┌───────────────────────────────────────────────────────────┐        │
+│ GitHub Actions — job « deploy » (Vercel CLI)              │◄───────┘
+│ DÉSACTIVÉ par défaut (vars.ENABLE_ACTIONS_DEPLOY != true) │
+│ Durcissement futur : déployer seulement si tests verts    │
+└───────────────────────────────────────────────────────────┘
 ```
 
-- **`quality`** tourne sur **tous** les push et toutes les PR.
-- **`deploy`** ne tourne **que sur push** (jamais sur une PR de fork) et **après**
-  `quality`. Sans secrets Vercel configurés, il se met en **no-op** (message
-  d'information, build vert) — le projet reste fonctionnel avant même la connexion
-  à Vercel.
-- Les **informations de build** (version, branche, commit, canal) sont injectées à
-  la construction via les variables `KOS_BRANCH`, `KOS_SHA`, `KOS_PREVIEW`,
-  `KOS_CHANNEL` → lues par [`apps/home/vite.config.ts`](apps/home/vite.config.ts).
+- **`quality`** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) tourne sur
+  **tous** les push et toutes les PR : c'est le **garde-fou qualité**.
+- **Vercel** déploie **de son côté**, automatiquement (intégration Git). Il renseigne
+  `VERCEL_ENV`, `VERCEL_GIT_COMMIT_REF`, `VERCEL_GIT_COMMIT_SHA` → lus par
+  [`apps/home/vite.config.ts`](apps/home/vite.config.ts) pour l'écran de Preview.
+- Le job **`deploy`** existe déjà mais reste **désactivé** (`ENABLE_ACTIONS_DEPLOY`
+  non posé) : **aucun risque de double-déploiement**. On l'activera si l'on veut
+  **conditionner** le déploiement aux tests (§5.2).
 
 ---
 
-## 5. Procédure de mise en place (une seule fois)
+## 5. Procédure de mise en place
 
-Il faut connecter le dépôt à un projet Vercel, puis donner 3 secrets à GitHub.
+### 5.1 V1 — Intégration Git de Vercel (officielle, ~3 minutes)
 
-1. **Créer un compte Vercel** (gratuit, offre Hobby) sur <https://vercel.com>.
-2. **Lier le projet** depuis la racine du dépôt :
-   ```bash
-   npm i -g vercel
-   vercel login
-   vercel link           # crée .vercel/project.json (orgId + projectId)
-   ```
-   > `vercel.json` (racine) fournit déjà `buildCommand`, `outputDirectory` et les
-   > réécritures SPA — rien à configurer dans l'interface.
-3. **Créer un token** : Vercel → _Account Settings → Tokens_ → _Create_.
-4. **Récupérer les identifiants** : dans `.vercel/project.json` (`orgId`,
-   `projectId`) — ou dans les réglages du projet.
-5. **Ajouter les secrets GitHub** : dépôt → _Settings → Secrets and variables →
-   Actions_ :
+**Aucun secret, aucune ligne de commande.**
 
-   | Secret              | Valeur                                |
-   | ------------------- | ------------------------------------- |
-   | `VERCEL_TOKEN`      | le token créé à l'étape 3             |
-   | `VERCEL_ORG_ID`     | `orgId` de `.vercel/project.json`     |
-   | `VERCEL_PROJECT_ID` | `projectId` de `.vercel/project.json` |
+1. Créer un compte gratuit sur <https://vercel.com> (offre Hobby) — se connecter
+   **avec GitHub**.
+2. **Add New… → Project → Import** le dépôt `Kevindle1/KevinOS`.
+3. Vercel lit **`vercel.json`** (racine) : rien à configurer (build, dossier de
+   sortie et réécritures SPA sont déjà fournis). Cliquer **Deploy**.
+4. C'est fait. Vercel déploie désormais **tout seul** :
+   - **chaque branche** (`claude/*`, `feature/*`, `develop`…) → une **URL de
+     Preview** ;
+   - **`main`** → l'URL de **production**.
 
-   _(Optionnel)_ variable de dépôt `STAGING_ALIAS` pour choisir l'URL de staging.
+> Pour ouvrir la Preview d'une branche : Vercel → projet → onglet **Deployments**
+> (chaque déploiement a son lien), ou l'URL stable
+> `kevinos-git-<branche>-<compte>.vercel.app`. Vercel poste aussi automatiquement
+> le lien de Preview **dans chaque Pull Request**.
 
-À partir du prochain push, chaque branche obtient sa Preview automatiquement. ✅
+### 5.2 Plus tard — durcir avec GitHub Actions (optionnel)
+
+Quand on voudra **ne déployer que si les tests passent** :
+
+1. `npm i -g vercel && vercel login && vercel link` (crée `.vercel/project.json`).
+2. Ajouter les **secrets** GitHub (_Settings → Secrets and variables → Actions_) :
+   `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+3. Poser la **variable** de dépôt `ENABLE_ACTIONS_DEPLOY = true` (et _désactiver_
+   l'auto-déploiement Vercel côté projet, pour éviter les doublons).
+4. _(Optionnel)_ variable `STAGING_ALIAS` pour l'URL de staging.
+
+Le job `deploy` prend alors le relais : `main` → production, `develop` → staging
+(alias), autres → preview.
 
 > ⚠️ Ne **jamais** committer `VERCEL_TOKEN` ni le dossier `.vercel/` (déjà ignoré).
-> Le token vit **uniquement** dans les secrets GitHub.
-
-### Alternative encore plus simple — l'intégration Git de Vercel
-
-Sur le tableau de bord Vercel : _Add New → Project → Import_ le dépôt GitHub. Vercel
-déploie alors **tout seul** chaque branche (preview) et `main` (production), sans
-aucun secret dans GitHub. `vite.config.ts` lit aussi les variables `VERCEL_*`, donc
-l'écran de Preview fonctionne à l'identique.
-
-> **Choisir _une_ voie**, pas les deux : soit le pipeline GitHub Actions ci-dessus
-> (déploiement **conditionné** aux tests verts — recommandé pour la qualité), soit
-> l'intégration Git de Vercel (**zéro secret**, plus simple). Les deux actives =
-> doubles déploiements.
+> **Une seule voie active à la fois** : intégration Git **ou** job Actions.
 
 ---
 

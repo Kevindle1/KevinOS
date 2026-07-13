@@ -21,8 +21,9 @@ const build = {
   // Chrome « Preview » (écran d'accueil + badge) : actif hors production.
   preview:
     env.KOS_PREVIEW === '1' || env.VERCEL_ENV === 'preview' || env.VERCEL_ENV === 'development',
-  // production · staging · preview · local
-  channel: env.KOS_CHANNEL || (env.VERCEL_ENV === 'production' ? 'production' : 'local'),
+  // production · staging · preview · local — renseigné par l'intégration Git de
+  // Vercel (VERCEL_ENV) ou explicitement par le pipeline (KOS_CHANNEL).
+  channel: env.KOS_CHANNEL || env.VERCEL_ENV || 'local',
 };
 
 export default defineConfig({

@@ -67,6 +67,37 @@ réflexion est documentée ici :
 
 ---
 
+## 🛠️ Développement
+
+**Prérequis** : Node 22 et pnpm 10 (`corepack enable`).
+
+```bash
+pnpm install                          # installe tout le monorepo
+
+pnpm --filter @kevinos/home dev       # Home (le produit)        → http://localhost:5175
+pnpm --filter @kevinos/design-lab dev # KOS Design Lab (l'atelier) → http://localhost:5174
+
+pnpm run check                        # format + lint + typecheck + tests (avant chaque commit)
+```
+
+### Obtenir une Preview en ligne (Vercel) — ~3 minutes
+
+Pour tester KevinOS depuis un simple lien (iPhone compris), sans rien lancer, on
+utilise l'**intégration Git de Vercel** (solution officielle V1) :
+
+1. Créer un compte gratuit sur [vercel.com](https://vercel.com) — se connecter **avec
+   GitHub**.
+2. **Add New… → Project → Import** ce dépôt. Vercel lit `vercel.json` : **rien à
+   configurer**, cliquer **Deploy**.
+3. C'est tout. Désormais **chaque branche** obtient automatiquement sa **propre URL
+   de Preview** (données simulées), et `main` alimente la production.
+
+> Le lien de Preview de chaque branche apparaît dans l'onglet **Deployments** du
+> projet Vercel (et directement dans les Pull Requests). Détails, environnements et
+> durcissement CI/CD : **[`DEPLOYMENT.md`](DEPLOYMENT.md)**.
+
+---
+
 ## 🧭 Principe directeur
 
 ```
