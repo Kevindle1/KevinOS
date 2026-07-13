@@ -27,6 +27,13 @@
   --kos-danger: #d23b30;
   --kos-info: #2f6fe0;
 
+  /* Fonds « subtils » de statut — dérivés des couleurs de statut via color-mix,
+   * donc automatiquement adaptés au thème (pas besoin de les redéfinir). */
+  --kos-success-subtle: color-mix(in srgb, var(--kos-success) 14%, transparent);
+  --kos-warning-subtle: color-mix(in srgb, var(--kos-warning) 16%, transparent);
+  --kos-danger-subtle: color-mix(in srgb, var(--kos-danger) 14%, transparent);
+  --kos-info-subtle: color-mix(in srgb, var(--kos-info) 14%, transparent);
+
   /* Accents par module (badging / graphes — jamais le chrome) */
   --kos-vision: #d99618;
   --kos-media: #7c6cf0;

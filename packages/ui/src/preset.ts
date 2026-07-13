@@ -32,6 +32,10 @@ const preset = {
       warning: 'var(--kos-warning)',
       danger: 'var(--kos-danger)',
       info: 'var(--kos-info)',
+      'success-subtle': 'var(--kos-success-subtle)',
+      'warning-subtle': 'var(--kos-warning-subtle)',
+      'danger-subtle': 'var(--kos-danger-subtle)',
+      'info-subtle': 'var(--kos-info-subtle)',
       // Accents modules
       vision: 'var(--kos-vision)',
       media: 'var(--kos-media)',

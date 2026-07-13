@@ -5,6 +5,20 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — `@kevinos/ui` en **plateforme UI** (Vague 1)
+
+- **ADR-0014** : `@kevinos/ui` devient une plateforme UI (façon Material UI) —
+  standard qualité **par composant** (doc, exemples, états, a11y, tests, rendu),
+  conventions d'API, construction par **vagues**. Le Dashboard sera un pur
+  assemblage, construit **après** maturité de la bibliothèque.
+- **Catalogue** des ~60 composants en 11 vagues avec suivi
+  ([docs/design/component-catalog.md](docs/design/component-catalog.md)).
+- **Vague 1 — primitives & feedback** (livrée) : `Badge`, `Tag`,
+  `StatusIndicator`, `Spinner`, `Skeleton`, `Progress`, `Banner` (+ `Button`,
+  `Card`). Tokens uniquement, a11y intégrée, 18 tests UI (59 au total).
+- Tokens « subtle » de statut dérivés via `color-mix` (auto-adaptés au thème) ;
+  `Spinner` branché dans `Button`.
+
 ### Ajouté — `@kevinos/ui` : implémentation du KOS Design System
 
 - **Tokens** (`src/tokens.css`) : source unique de vérité (couleurs clair/sombre,

@@ -1,5 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cx } from '../cx.js';
+import { Spinner } from './Spinner.js';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -46,7 +47,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       aria-busy={loading || undefined}
       {...rest}
     >
-      {loading ? <span className="kos-spinner" aria-hidden="true" /> : null}
+      {loading ? <Spinner size="sm" label="" aria-hidden="true" /> : null}
       {children}
     </button>
   );
