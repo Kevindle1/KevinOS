@@ -103,6 +103,11 @@ Un être vivant ne se répète pas à l'identique. Home doit **respirer** : peti
 variations de salut, de contenu, de ton selon le moment. Ce n'est pas un gadget —
 c'est ce qui transforme un **écran** en une **présence**. (Développé en §4.)
 
+> Ce principe est désormais un **invariant** du projet :
+> [**Règle 9**](docs/REGLES-ARCHITECTURE.md) — _« KevinOS doit donner l'impression
+> d'être vivant »_. L'utilisateur ne doit jamais avoir l'impression d'ouvrir un
+> écran vide ; une intelligence est déjà là, même sans interaction.
+
 ### P3 — Le silence est une fonctionnalité
 
 Ne rien dire est une information précieuse : **tout va bien**. Home ne remplit pas

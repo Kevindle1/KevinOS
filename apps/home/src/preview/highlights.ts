@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Itération 1 — l’accueil KAI-first',
+  label: 'Itération 2 — KevinOS vivant',
   items: [
-    'Home — le premier écran de KevinOS, centré sur KAI',
-    'Zone de conversation (KAI simulé) avec suggestions',
-    'Nouveau composant PromptInput (@kevinos/ui)',
-    'Thème clair / sombre / système',
-    'Environnement de Preview déployé automatiquement',
+    'Un accueil qui semble t’attendre — KAI présent, la journée racontée',
+    'Cartes d’aperçu : photos, média à reprendre, sauvegarde, serveur, maison…',
+    'Suggestions intelligentes, contextuelles',
+    'Micro-interactions : halo, respiration, apparition progressive, réponses écrites',
+    'KAI répond en connaissant ton environnement (simulé)',
   ],
 };

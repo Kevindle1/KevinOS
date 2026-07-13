@@ -81,6 +81,34 @@ const preset = {
         '4.5': '18px',
         '18': '72px',
       },
+      // Micro-interactions « vivantes » (Règle 9). Discrètes, jamais brutales.
+      // Neutralisées automatiquement en `prefers-reduced-motion` (tokens.css).
+      keyframes: {
+        'kos-breathe': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
+        'kos-halo': {
+          '0%, 100%': { opacity: '0.35', transform: 'scale(1)' },
+          '50%': { opacity: '0.6', transform: 'scale(1.25)' },
+        },
+        'kos-rise': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'kos-fade': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        // Ambiances (boucle) — présence discrète.
+        breathe: 'kos-breathe 5s var(--kos-ease-emph) infinite',
+        halo: 'kos-halo 4.5s var(--kos-ease-emph) infinite',
+        // Entrées (une fois) — apparition progressive. `both` = état final conservé.
+        rise: 'kos-rise 0.5s var(--kos-ease-out) both',
+        fade: 'kos-fade 0.45s var(--kos-ease-out) both',
+      },
     },
   },
 } as const;

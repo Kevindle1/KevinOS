@@ -24,6 +24,8 @@ import {
   IconButton,
   Divider,
   ScrollArea,
+  InsightCard,
+  TypingText,
 } from '@kevinos/ui';
 
 export interface Story {
@@ -104,6 +106,29 @@ function PromptInputDemo() {
       <PromptInput value="KAI réfléchit…" busy onSubmit={() => {}} />
       <p className="text-sm text-text-muted">
         Messages envoyés : {log.length ? log.join(' · ') : '—'}
+      </p>
+    </Stack>
+  );
+}
+
+function TypingDemo() {
+  const [n, setN] = useState(0);
+  return (
+    <Stack>
+      <p className="text-lg text-text">
+        <TypingText
+          key={n}
+          text="Bonsoir Kevin 👋 J’ai remarqué trois éléments qui pourraient t’intéresser."
+          cps={38}
+        />
+      </p>
+      <div>
+        <Button variant="secondary" size="sm" onClick={() => setN((v) => v + 1)}>
+          Rejouer
+        </Button>
+      </div>
+      <p className="text-sm text-text-muted">
+        (S’affiche instantanément si « réduire les animations » est activé.)
       </p>
     </Stack>
   );
@@ -426,5 +451,39 @@ export const stories: Story[] = [
         ))}
       </ScrollArea>
     ),
+  },
+
+  {
+    id: 'insightcard',
+    name: 'InsightCard',
+    group: 'Home (vivant)',
+    render: () => (
+      <div className="grid max-w-lg gap-3 sm:grid-cols-2">
+        <InsightCard
+          icon="📷"
+          label="Photos"
+          value="148 nouvelles"
+          meta="ajoutées aujourd’hui"
+          accent="vision"
+          onActivate={() => {}}
+        />
+        <InsightCard
+          icon="🎬"
+          label="À reprendre"
+          value="The Last of Us"
+          meta="23 min restantes"
+          accent="media"
+          onActivate={() => {}}
+        />
+        <InsightCard icon="🖥️" label="Serveur" value="Actif depuis 17 jours" accent="monitor" />
+        <InsightCard icon="💽" label="Stockage" value="1,2 To libres" accent="drive" />
+      </div>
+    ),
+  },
+  {
+    id: 'typingtext',
+    name: 'TypingText',
+    group: 'Home (vivant)',
+    render: () => <TypingDemo />,
   },
 ];

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Badge, IconButton, applyTheme, getStoredTheme, type ThemeSetting } from '@kevinos/ui';
-import { KaiConversation } from './kai/KaiConversation.js';
+import { Home } from './kai/Home.js';
 import { getBuildInfo, channelLabel } from './build-info.js';
 
 /** Icônes du sélecteur de thème (décoratives — le sens vient de l'aria-label). */
@@ -39,7 +39,7 @@ export function App() {
     <div className="flex h-full flex-col">
       <header className="flex h-16 shrink-0 items-center justify-between px-5 sm:px-8">
         <span className="flex items-center gap-2 font-semibold tracking-tight text-text">
-          <span aria-hidden="true" className="text-accent">
+          <span aria-hidden="true" className="animate-breathe text-accent">
             ✦
           </span>
           KevinOS
@@ -57,7 +57,7 @@ export function App() {
       </header>
 
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 pb-6 sm:px-8">
-        <KaiConversation />
+        <Home />
       </main>
     </div>
   );

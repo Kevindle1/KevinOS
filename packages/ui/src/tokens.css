@@ -185,4 +185,15 @@
     --kos-dur-base: 0ms;
     --kos-dur-slow: 0ms;
   }
+
+  /* Neutralise les animations « vivantes » (respiration, halo, apparitions,
+     spinner…) : elles se figent sur leur état final, sans mouvement. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

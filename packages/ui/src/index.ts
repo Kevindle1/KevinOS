@@ -58,3 +58,11 @@ export {
 } from './components/IconButton.js';
 export { Divider, type DividerProps } from './components/Divider.js';
 export { ScrollArea, type ScrollAreaProps } from './components/ScrollArea.js';
+
+// Vague 3 — Home (l'accueil vivant, Règle 9)
+export {
+  InsightCard,
+  type InsightCardProps,
+  type InsightAccent,
+} from './components/InsightCard.js';
+export { TypingText, type TypingTextProps } from './components/TypingText.js';

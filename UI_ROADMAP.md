@@ -89,20 +89,26 @@ par simple assemblage**.
 Comment puis-je t'aider aujourd'hui ? », zone de conversation (KAI **simulé**),
 suggestions, thème clair/sombre. Composant créé à la demande : **`PromptInput`**.
 
-Itérations suivantes (au fil du besoin) : activité récente, dernières photos,
-reprendre un média, état du système, suggestions, notifications, accès rapide aux
-modules — chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
+**Itération 2 — KevinOS vivant ✅** (Règle 9) : présence de KAI (orbe qui respire,
+halo discret), **salut contextuel** qui **raconte** la journée, **cartes d'aperçu**
+simulées (photos, média, sauvegarde, serveur, météo, stockage, maison), suggestions
+intelligentes, apparition **progressive**, réponses de KAI **écrites**. Composants
+créés à la demande : **primitives de mouvement**, **`InsightCard`**, **`TypingText`**.
+
+Itérations suivantes (au fil du besoin) : affiner l'expérience « présence »,
+activité récente, notifications, accès rapide aux modules — chacune n'ajoutant à
+`@kevinos/ui` que le strict nécessaire.
 
 | Composant           | Statut | Description                                         | Modules            |
 | ------------------- | :----: | --------------------------------------------------- | ------------------ |
-| ModuleCard          |   ⬜   | Carte d'une compétence KOS (emoji, état, info vive) | Dashboard          |
+| InsightCard         |   ✅   | Carte glanceable actionnable (icône, valeur, méta)  | Home, tous         |
+| TypingText          |   ✅   | Écriture progressive (voix de KAI)                  | Home, KAI          |
+| _Motion primitives_ |   ✅   | `animate-breathe/halo/rise/fade` (+ reduced-motion) | tous               |
 | StatTile            |   ⬜   | Chiffre glanceable (mono, delta)                    | Dashboard, Monitor |
 | MetricCard          |   ⬜   | Métrique + mini-graphe                              | Dashboard, Monitor |
 | ActivityCard        |   ⬜   | Élément d'activité récente                          | Dashboard          |
 | NotificationCard    |   ⬜   | Notification actionnable                            | Dashboard          |
-| ServiceCard         |   ⬜   | État d'un service                                   | Dashboard, Monitor |
 | QuickAction         |   ⬜   | Raccourci d'action                                  | Dashboard, KAI     |
-| SearchBar           |   ⬜   | Barre de recherche globale (déclenche ⌘K)           | Dashboard          |
 | CommandPalette      |   ⬜   | Recherche + actions (⌘K), clavier                   | Dashboard, KAI     |
 | _(StatusIndicator)_ |   ✅   | _déjà livré (vague 1)_                              | Dashboard          |
 

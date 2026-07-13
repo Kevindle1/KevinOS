@@ -5,6 +5,24 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — ✨ Home itération 2 : KevinOS vivant (présence) + Règle 9
+
+- **Règle 9** (RÈGLES) : « KevinOS doit donner l'impression d'être **vivant** » —
+  une **présence**, jamais un écran vide ; KAI **compagnon** (connaît, anticipe,
+  propose) ; le premier écran **raconte une histoire** ; micro-interactions
+  **signature** (Apple / visionOS / Nothing OS), toujours `prefers-reduced-motion`.
+- **Home refondu** (`apps/home`) : accueil **vivant** — présence de KAI (orbe qui
+  respire + halo), **salut contextuel** (heure de la journée) qui **raconte** la
+  journée, **cartes d'aperçu** (photos, média à reprendre, sauvegarde, serveur,
+  météo, stockage, maison — simulées), **suggestions intelligentes**, apparition
+  **progressive**. KAI **répond en contexte** (il « connaît » l'environnement) et
+  ses réponses **s'écrivent** progressivement.
+- **`@kevinos/ui`** (créés à la demande de Home, doc + tests + Design Lab + a11y) :
+  **primitives de mouvement** (`animate-breathe/halo/rise/fade` + garde-fou
+  `prefers-reduced-motion` global), **`InsightCard`** (carte glanceable
+  actionnable), **`TypingText`** (écriture progressive, texte complet exposé à
+  l'a11y). Tests UI : **46**.
+
 ### Ajouté — 🚀 Environnement de Preview (Vercel) + mode Preview
 
 - **Chaîne de déploiement** : chaque push construit une **version consultable par

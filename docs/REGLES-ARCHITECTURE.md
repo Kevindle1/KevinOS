@@ -152,6 +152,32 @@ interactions, de l'accessibilité et des **API publiques**. Exemple : Floating U
 ([ADR-0018](adr/ADR-0018-ne-pas-reinventer.md)). C'est le mantra appliqué à
 l'ingénierie : _KevinOS ne remplace pas les meilleurs outils, il les orchestre._
 
+## Règle 9 — KevinOS doit donner l'impression d'être **vivant** ⭐
+
+Validée le 2026-07-13. **On n'ouvre pas une application ; on retrouve une
+présence.** Chaque écran doit donner le sentiment qu'une **intelligence est déjà
+là**, même **sans interaction**.
+
+- L'utilisateur ne doit **jamais** avoir l'impression d'ouvrir un écran **vide**
+  ou un tableau de bord figé. On **remplit intelligemment** l'espace (ce que KAI
+  sait, ce qui a changé) plutôt que d'agrandir les titres.
+- **KAI est un compagnon**, pas un chatbot : il connaît l'environnement, sait ce
+  qui s'est passé, **anticipe** et **propose** naturellement des actions.
+- Le premier écran **raconte une histoire** (salut contextuel → ce qui compte
+  aujourd'hui → puis la conversation), il ne liste pas des widgets.
+- Les **micro-interactions sont une signature** : halo/respiration discrète,
+  apparition progressive, réponses **écrites** progressivement, transitions
+  fluides. **Jamais** de mouvement brutal ni spectaculaire — inspiration Apple /
+  visionOS / Nothing OS, pas dashboard d'admin. Toujours **`prefers-reduced-motion`**.
+- **Filtre émotionnel** avant toute fonctionnalité : _« améliore-t-elle réellement
+  l'expérience ? »_ Sinon, elle attend. Mieux vaut **moins** de fonctionnalités,
+  mais un vrai effet « waouh ».
+
+**En pratique** : la boussole émotionnelle vit dans
+[`HOME_EXPERIENCE.md`](../HOME_EXPERIENCE.md). Le « vivant » se construit avec des
+données **honnêtes** (simulées tant que le Core n'est pas branché, jamais
+mensongères) et reste **calme** (Règle 4, ADR-0017 — le silence).
+
 ---
 
 ## Comment appliquer ces règles
@@ -168,5 +194,6 @@ Toute Pull Request, tout nouveau module, toute techno passe ce **filtre** :
 | 6   | Est-ce accessible depuis l'**interface unique** ?                              |
 | 7   | Est-ce **documenté** (ADR si structurant) ?                                    |
 | 8   | Est-ce un problème **déjà résolu** ? (si oui, on orchestre, on ne réécrit pas) |
+| 9   | Est-ce que ça rend KevinOS plus **vivant** (présence, jamais un écran vide) ?  |
 
 Une seule réponse « non » = on reconçoit avant d'avancer.
