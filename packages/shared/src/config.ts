@@ -34,6 +34,12 @@ export const configSchema = z.object({
 
   /** Modèle IA local par défaut (léger — voir ADR-0006). */
   aiModel: z.string().min(1).default('qwen2.5:3b'),
+
+  /**
+   * URL interne de l'API du moteur de photos (KOS Vision → Immich). Détail
+   * d'implémentation : jamais exposé à l'utilisateur ni au Dashboard.
+   */
+  immichBaseUrl: z.string().url().default('http://kos-vision-server:2283/api'),
 });
 
 /** Configuration validée et typée de KevinOS. */
@@ -56,5 +62,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): KevinConfig {
     aiProvider: env.KEVINOS_AI_PROVIDER,
     ollamaBaseUrl: env.KEVINOS_OLLAMA_BASE_URL,
     aiModel: env.KEVINOS_AI_MODEL,
+    immichBaseUrl: env.KEVINOS_IMMICH_BASE_URL,
   });
 }

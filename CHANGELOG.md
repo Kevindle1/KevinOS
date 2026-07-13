@@ -5,6 +5,27 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 📷 KOS Vision, premier module (backend de référence)
+
+- **Identité de marque `KOS <Nom>`** ([ADR-0012](docs/adr/ADR-0012-identite-modules-kos.md),
+  [doc 09](docs/09-identite-modules.md)) : Kevin Photos → **KOS Vision** (moteur
+  Immich, caché et remplaçable).
+- **Contrat agnostique** `PhotoLibrary` + DTO + **outils KAI** (`photoTools`) dans
+  `@kevinos/shared` — aucun détail Immich exposé (Règles 3 & 5).
+- **Adaptateur Immich** (seul code connaissant le moteur), **PhotoService**
+  (use-cases), **API v1** `/api/v1/photos/*` (browse, search, albums, people,
+  memories, map, usage, thumbnail proxy).
+- **Enregistrement** de KOS Vision dans le registre avec **garde de compatibilité**
+  (ADR-0008) + **readiness** ; module désactivé proprement si moteur absent.
+- **Overlay Immich** (`docker-compose.kos-vision.yml`, moteur isolé, secrets par
+  fichier) + **manifeste** `deploy/modules/kos-vision/module.yaml`.
+- **Doc du module de référence** ([doc 10](docs/10-module-reference.md)) : le patron
+  des 7 pièces réutilisable pour KOS Media, KOS Drive, etc.
+- Tests : 41 au total (23 shared, 18 core) ; toutes combinaisons Compose validées.
+
+> Suite : Dashboard (galerie/recherche via `/api/v1/photos`) + KOS Brain (KAI local
+> qui sélectionne les `photoTools`).
+
 ### Ajouté — Gouvernance du projet
 
 - **`PRODUCT_VISION.md`** : la boussole (pourquoi KevinOS existe, pour qui, ce

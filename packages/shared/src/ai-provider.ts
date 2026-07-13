@@ -8,6 +8,21 @@
  * par défaut — les ajouter plus tard ne modifie pas le cœur.
  */
 
+/**
+ * Définition d'un **outil** que KAI (KOS Brain) peut invoquer. Un outil est la
+ * traduction structurée et agnostique d'une intention utilisateur vers une
+ * action d'un module — jamais un appel direct à un moteur (Immich, Jellyfin…).
+ * KAI ne « connaît » que ces outils ; le Core route vers le bon adaptateur.
+ */
+export interface ToolDefinition {
+  /** Nom stable, ex. `photos.search`. */
+  name: string;
+  /** Description en langage naturel (aide le modèle à choisir l'outil). */
+  description: string;
+  /** Schéma JSON des paramètres (agnostique du moteur). */
+  parameters: Record<string, unknown>;
+}
+
 /** Capacités qu'un fournisseur IA déclare supporter. */
 export interface AICapabilities {
   chat: boolean;

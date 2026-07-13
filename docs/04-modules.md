@@ -7,6 +7,11 @@
 >
 > Statut : 🟢 Natif à construire · 🔵 Intégration existant · 🟡 Hybride ·
 > ⚪ Reporté (v2+)
+>
+> 🏷️ **Identité** : les modules portent désormais l'identité **`KOS <Nom>`**
+> ([ADR-0012](adr/ADR-0012-identite-modules-kos.md) · [doc 09](09-identite-modules.md)).
+> Ex. : Kevin Photos → **📷 KOS Vision** (moteur Immich, caché). Le premier module
+> livré, **KOS Vision**, est le **module de référence** ([doc 10](10-module-reference.md)).
 
 ---
 

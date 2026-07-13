@@ -44,6 +44,8 @@ réflexion est documentée ici :
 | 06  | [Roadmap](docs/06-roadmap.md)                       | Feuille de route par phases                             |
 | 07  | [Vision KAI](docs/07-vision-kai.md)                 | Le cerveau unique : « tout passe par KAI »              |
 | 08  | [Versioning](docs/08-versioning.md)                 | SemVer & compatibilité des modules/plugins              |
+| 09  | [Identité modules](docs/09-identite-modules.md)     | Convention `KOS <Nom>` (KOS Vision, Media, Drive…)      |
+| 10  | [Module de référence](docs/10-module-reference.md)  | 📷 KOS Vision, le patron de tout module                 |
 | —   | [Diagrammes](docs/diagrammes/)                      | Schémas Mermaid (contexte, conteneurs, réseau, données) |
 | —   | [Décisions (ADR)](docs/adr/)                        | Journal des décisions d'architecture                    |
 

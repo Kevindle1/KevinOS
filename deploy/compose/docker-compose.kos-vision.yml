@@ -1,0 +1,108 @@
+# KevinOS — overlay 📷 KOS Vision (photos). Moteur : Immich (caché, remplaçable).
+#
+# À combiner avec le socle :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.kos-vision.yml --env-file .env up -d
+#
+# Le moteur Immich n'est JAMAIS exposé directement : seul le Core l'appelle
+# (réseau `apps`), et l'utilisateur passe par l'API v1 du Core (/api/v1/photos).
+# Remplacer Immich = remplacer cet overlay + l'adaptateur, sans toucher au reste.
+#
+# ⚠️ Aligner les tags d'images sur la release Immich choisie.
+# ⚠️ La clé API (secret `immich_api_key`) se génère dans Immich après le 1er login,
+#    puis on la place dans deploy/secrets/immich_api_key et on redémarre `core`.
+
+name: kevinos
+
+networks:
+  apps:
+    external: true
+    name: kevinos_apps
+  kos_vision:
+    driver: bridge
+    internal: true # DB/redis/ML du moteur : isolés, jamais joignables de l'extérieur
+
+volumes:
+  kos_vision_upload:
+  kos_vision_db:
+  kos_vision_model_cache:
+
+secrets:
+  immich_api_key:
+    file: ../secrets/immich_api_key
+  immich_db_password:
+    file: ../secrets/immich_db_password
+
+services:
+  # Augmente le Core : il sait joindre le moteur photos (URL interne + clé API).
+  core:
+    environment:
+      KEVINOS_IMMICH_BASE_URL: http://kos-vision-server:2283/api
+      KEVINOS_IMMICH_API_KEY_FILE: /run/secrets/immich_api_key
+    secrets:
+      - immich_api_key
+
+  kos-vision-server:
+    image: ghcr.io/immich-app/immich-server:v1.119.0
+    restart: unless-stopped
+    environment:
+      DB_HOSTNAME: kos-vision-db
+      DB_USERNAME: immich
+      DB_DATABASE_NAME: immich
+      DB_PASSWORD_FILE: /run/secrets/immich_db_password
+      REDIS_HOSTNAME: kos-vision-redis
+    networks:
+      - apps # joint par le Core
+      - kos_vision
+    depends_on:
+      - kos-vision-db
+      - kos-vision-redis
+    volumes:
+      - kos_vision_upload:/usr/src/app/upload
+    secrets:
+      - immich_db_password
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  kos-vision-ml:
+    image: ghcr.io/immich-app/immich-machine-learning:v1.119.0
+    restart: unless-stopped
+    networks:
+      - kos_vision
+    volumes:
+      - kos_vision_model_cache:/cache
+    deploy:
+      resources:
+        limits:
+          # Lourd (recherche sémantique, visages). Désactivable si RAM tendue.
+          memory: 3G
+
+  kos-vision-redis:
+    image: docker.io/valkey/valkey:8-bookworm
+    restart: unless-stopped
+    networks:
+      - kos_vision
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  kos-vision-db:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: immich
+      POSTGRES_DB: immich
+      POSTGRES_PASSWORD_FILE: /run/secrets/immich_db_password
+    networks:
+      - kos_vision
+    volumes:
+      - kos_vision_db:/var/lib/postgresql/data
+    secrets:
+      - immich_db_password
+    deploy:
+      resources:
+        limits:
+          memory: 1G

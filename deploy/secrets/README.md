@@ -39,15 +39,21 @@ chmod 600 *            # lisibles par le seul propriétaire
 
 ## Fichiers attendus
 
-| Fichier                           | Utilisé par      | Rôle                                   |
-| --------------------------------- | ---------------- | -------------------------------------- |
-| `authelia_jwt_secret`             | Authelia         | signature des JWT d'identité           |
-| `authelia_session_secret`         | Authelia         | chiffrement des sessions               |
-| `authelia_storage_encryption_key` | Authelia         | chiffrement de la base Authelia        |
-| `postgres_password`               | PostgreSQL, Core | mot de passe de la base                |
-| `redis_password`                  | Redis, Authelia  | mot de passe du cache/sessions         |
-| `restic_password`                 | Restic           | **clé de chiffrement des sauvegardes** |
-| `grafana_admin_password`          | Grafana          | mot de passe admin du monitoring       |
+| Fichier                           | Utilisé par       | Rôle                                               |
+| --------------------------------- | ----------------- | -------------------------------------------------- |
+| `authelia_jwt_secret`             | Authelia          | signature des JWT d'identité                       |
+| `authelia_session_secret`         | Authelia          | chiffrement des sessions                           |
+| `authelia_storage_encryption_key` | Authelia          | chiffrement de la base Authelia                    |
+| `postgres_password`               | PostgreSQL, Core  | mot de passe de la base                            |
+| `redis_password`                  | Redis, Authelia   | mot de passe du cache/sessions                     |
+| `restic_password`                 | Restic            | **clé de chiffrement des sauvegardes**             |
+| `grafana_admin_password`          | Grafana           | mot de passe admin du monitoring                   |
+| `immich_db_password`              | KOS Vision (DB)   | mot de passe de la base du moteur photos           |
+| `immich_api_key`                  | Core (KOS Vision) | clé API du moteur photos (générée après 1er login) |
+
+> **`immich_api_key`** se génère **dans l'interface du moteur** après la première
+> connexion, puis se colle dans `deploy/secrets/immich_api_key` ; redémarrer le
+> service `core`. Les autres secrets se génèrent avec `openssl rand -base64 48`.
 
 ## Rotation
 

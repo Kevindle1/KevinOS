@@ -3,20 +3,30 @@ import { pinoHttp } from 'pino-http';
 import type { Logger } from '@kevinos/shared';
 import type { HealthService } from '../../application/health-service.js';
 import type { ModuleRegistry } from '../../application/module-registry.js';
+import type { PhotoService } from '../../application/photo-service.js';
+import type { PhotoThumbnails } from '../../domain/photo-thumbnails.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
+import { photosRoutes } from './routes/photos.routes.js';
 
 export interface AppDependencies {
   logger: Logger;
   healthService: HealthService;
   moduleRegistry: ModuleRegistry;
+  /** KOS Vision — présent quand le module photos est activé. */
+  photos?: { service: PhotoService; thumbnails: PhotoThumbnails };
 }
 
 /**
  * Construit l'application Express du Core à partir de ses dépendances
  * (injection explicite — testable sans démarrer de serveur ni de réseau).
  */
-export function createApp({ logger, healthService, moduleRegistry }: AppDependencies): Express {
+export function createApp({
+  logger,
+  healthService,
+  moduleRegistry,
+  photos,
+}: AppDependencies): Express {
   const app = express();
 
   // Journalisation structurée de chaque requête (corrélée dans Loki).
@@ -28,6 +38,11 @@ export function createApp({ logger, healthService, moduleRegistry }: AppDependen
 
   // Registre de modules & versions de contrat.
   app.use(modulesRoutes(moduleRegistry));
+
+  // API v1 des modules. KOS Vision (photos) si activé.
+  if (photos) {
+    app.use('/api/v1/photos', photosRoutes(photos.service, photos.thumbnails));
+  }
 
   // Racine : identité du service (utile au diagnostic).
   app.get('/', (_req, res) => {

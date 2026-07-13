@@ -1,0 +1,15 @@
+# Manifeste du module 📷 KOS Vision (photos).
+# Conforme au contrat de module (@kevinos/shared → moduleManifestSchema, ADR-0005)
+# et au versioning (ADR-0008). Le moteur (Immich) est un détail caché/remplaçable.
+
+id: kos-vision
+name: KOS Vision
+version: 1.0.0 # Module Photos v1
+compat:
+  pluginApi: '^1.0.0' # compatible avec le Plugin Interface 1.x de l'hôte
+implementation: immich # moteur actuel (remplaçable sans changer id/nom/contrat)
+capabilities: [photos]
+internalUrl: http://kos-vision-server:2283/api
+healthPath: /server/ping
+requiredAccess: member
+enabled: true
