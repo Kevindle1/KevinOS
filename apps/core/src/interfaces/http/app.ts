@@ -7,6 +7,7 @@ import type { PhotoService } from '../../application/photo-service.js';
 import type { PhotoThumbnails } from '../../domain/photo-thumbnails.js';
 import type { MediaService } from '../../application/media-service.js';
 import type { MediaImages } from '../../domain/media-images.js';
+import type { MediaStreaming } from '../../domain/media-streaming.js';
 import type { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
@@ -23,7 +24,7 @@ export interface AppDependencies {
   /** KOS Vision — présent quand le module photos est activé. */
   photos?: { service: PhotoService; thumbnails: PhotoThumbnails };
   /** KOS Media — présent quand le module média est activé. */
-  media?: { service: MediaService; images: MediaImages };
+  media?: { service: MediaService; images: MediaImages; streaming: MediaStreaming };
 }
 
 /**
@@ -60,7 +61,7 @@ export function createApp({
 
   // KOS Media (films & séries) si activé.
   if (media) {
-    app.use('/api/v1/media', mediaRoutes(media.service, media.images));
+    app.use('/api/v1/media', mediaRoutes(media.service, media.images, media.streaming));
   }
 
   // Racine : identité du service (utile au diagnostic).

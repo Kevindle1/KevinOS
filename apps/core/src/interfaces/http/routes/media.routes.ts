@@ -1,13 +1,20 @@
 import { Router } from 'express';
+import { Readable } from 'node:stream';
 import type { MediaKind } from '@kevinos/shared';
 import type { MediaService } from '../../../application/media-service.js';
 import type { MediaImages } from '../../../domain/media-images.js';
+import type { MediaStreaming } from '../../../domain/media-streaming.js';
 
 /**
  * API v1 de KOS Media — `/api/v1/media/*` (API-first, Règle 3). **Même patron**
- * que `/api/v1/photos/*`. Aucune mention de Jellyfin n'y transparaît.
+ * que `/api/v1/photos/*`. Aucune mention de Jellyfin n'y transparaît : même le
+ * flux vidéo est **proxifié** par le Core.
  */
-export function mediaRoutes(service: MediaService, images: MediaImages): Router {
+export function mediaRoutes(
+  service: MediaService,
+  images: MediaImages,
+  streaming: MediaStreaming,
+): Router {
   const router = Router();
 
   router.get('/', async (req, res, next) => {
@@ -86,6 +93,44 @@ export function mediaRoutes(service: MediaService, images: MediaImages): Router 
   router.get('/series/:id', async (req, res, next) => {
     try {
       res.json(await service.getSeries(req.params.id));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // Infos de flux (URL Core + reprise KevinOS + pistes).
+  router.get('/:id/stream-info', async (req, res, next) => {
+    try {
+      res.json(await service.getStream(req.params.id));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // Progression — **possédée par KevinOS**. Sauvegarde immédiate.
+  router.post('/:id/progress', async (req, res, next) => {
+    try {
+      const { positionSec, durationSec } = req.body ?? {};
+      if (typeof positionSec !== 'number' || typeof durationSec !== 'number') {
+        res.status(400).json({ error: 'progression_invalide' });
+        return;
+      }
+      res.json(service.saveProgress(req.params.id, positionSec, durationSec));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // Flux vidéo proxifié (Range) : le lecteur ne joint jamais le moteur.
+  router.get('/:id/stream', async (req, res, next) => {
+    try {
+      const range = typeof req.headers.range === 'string' ? req.headers.range : undefined;
+      const { status, headers, body } = await streaming.fetchStream(req.params.id, range);
+      res.status(status);
+      for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
+      if (!res.getHeader('accept-ranges')) res.setHeader('accept-ranges', 'bytes');
+      if (body) Readable.fromWeb(body).pipe(res);
+      else res.end();
     } catch (err) {
       next(err);
     }

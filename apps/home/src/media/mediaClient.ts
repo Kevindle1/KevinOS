@@ -5,6 +5,7 @@ import type {
   MovieDetail,
   SeriesDetail,
   MediaKind,
+  MediaStream,
 } from '@kevinos/shared';
 import {
   mockContinue,
@@ -13,7 +14,9 @@ import {
   mockCollections,
   mockMovie,
   mockSeries,
+  mockStream,
 } from './mock.js';
+import { setLocalProgress } from './localProgress.js';
 
 /**
  * Client **KOS Media** — Home ne connaît que le **contrat** (`/api/v1/media*` du
@@ -71,4 +74,36 @@ export async function loadMovie(id: string): Promise<MovieDetail> {
 }
 export async function loadSeries(id: string): Promise<SeriesDetail> {
   return (await getJson<SeriesDetail>(`/api/v1/media/series/${id}`)) ?? mockSeries(id);
+}
+export async function loadStream(id: string): Promise<MediaStream> {
+  return (await getJson<MediaStream>(`/api/v1/media/${id}/stream-info`)) ?? mockStream(id);
+}
+
+/**
+ * Sauvegarde immédiate de la progression — **possédée par KevinOS**. Avec un
+ * Core, POST vers le `PlaybackStore` ; sinon, repli localStorage (Preview) pour
+ * que la reprise reste démontrable.
+ */
+export async function saveProgress(
+  id: string,
+  positionSec: number,
+  durationSec: number,
+): Promise<void> {
+  if (backend !== false) {
+    try {
+      const res = await fetch(`/api/v1/media/${id}/progress`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ positionSec, durationSec }),
+      });
+      if (res.ok) {
+        backend = true;
+        return;
+      }
+      backend = false;
+    } catch {
+      backend = false;
+    }
+  }
+  setLocalProgress(id, positionSec, durationSec);
 }

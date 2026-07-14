@@ -74,3 +74,55 @@ describe('compétence Media (🎬 → KOS Media)', () => {
     expect(q?.text).toMatch(/inception/i);
   });
 });
+
+describe('télécommande KAI (contrôle du lecteur)', () => {
+  it('« mets en pause » → pause', () => {
+    expect(action('mets en pause')).toEqual({ type: 'control_player', command: 'pause' });
+  });
+
+  it('« recule de 30 secondes » → seekBy -30', () => {
+    expect(action('Recule de 30 secondes')).toEqual({
+      type: 'control_player',
+      command: 'seekBy',
+      amountSec: -30,
+    });
+  });
+
+  it('« avance de deux minutes » → seekBy +120', () => {
+    expect(action('Avance de deux minutes')).toEqual({
+      type: 'control_player',
+      command: 'seekBy',
+      amountSec: 120,
+    });
+  });
+
+  it('« sous-titres français » → subtitles fr', () => {
+    expect(action('Sous-titres français')).toEqual({
+      type: 'control_player',
+      command: 'subtitles',
+      lang: 'fr',
+    });
+  });
+
+  it('« passe en VO » → audio en', () => {
+    expect(action('Passe en VO')).toEqual({ type: 'control_player', command: 'audio', lang: 'en' });
+  });
+
+  it('« plein écran » → fullscreen', () => {
+    expect(action('Active le plein écran')).toEqual({
+      type: 'control_player',
+      command: 'fullscreen',
+    });
+  });
+
+  it('« ferme le lecteur » → close', () => {
+    expect(action('Ferme le lecteur')).toEqual({ type: 'control_player', command: 'close' });
+  });
+
+  it('« passe au prochain épisode » → nextEpisode', () => {
+    expect(action('Passe au prochain épisode')).toEqual({
+      type: 'control_player',
+      command: 'nextEpisode',
+    });
+  });
+});

@@ -168,19 +168,28 @@ chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
 > Vision** (contrat `MediaLibrary`, moteur Jellyfin caché) — « continue mon film »,
 > médiathèque, fiche + reprise, **sans toucher au cœur de KAI** (preuve de
 > modularité). Surface assemblée **sans nouveau composant** `@kevinos/ui`.
+>
+> **Lecteur officiel (2026-07-14)** : le premier **composant `@kevinos/ui` propre à
+> Media** — **`MediaPlayer`**, le lecteur **unique** de tout KevinOS. Reprise
+> **possédée par KevinOS** (ports `PlaybackStore` + `MediaStreaming`, flux relayé
+> par le Core), **fiche immersive**, et **KAI télécommande** (`control_player`).
+> Jellyfin disparaît **jusqu'à la lecture**. Voir
+> [ADR-0021](docs/adr/ADR-0021-lecteur-officiel-mediaplayer.md).
 
-| Composant        | Statut | Description                                     | Modules          |
-| ---------------- | :----: | ----------------------------------------------- | ---------------- |
-| MovieCard        |   ⬜   | Affiche de film (extraire de la surface Media)  | Media            |
-| SeriesCard       |   ⬜   | Affiche de série                                | Media            |
-| EpisodeCard      |   ⬜   | Épisode (progression)                           | Media            |
-| PlayerOverlay    |   ⬜   | Contrôles de lecture (lecteur — étape suivante) | Media            |
-| ContinueWatching |   ⬜   | Reprendre la lecture                            | Media, Dashboard |
-| CollectionCard   |   ⬜   | Collection / genre                              | Media            |
-| MediaInfo        |   ⬜   | Fiche détaillée                                 | Media            |
+| Composant        | Statut | Description                                          | Modules          |
+| ---------------- | :----: | ---------------------------------------------------- | ---------------- |
+| **MediaPlayer**  |   ✅   | **Lecteur officiel** (HTML5, sous-titres, PiP, KAI)  | Media (tous)     |
+| MovieCard        |   ⬜   | Affiche de film (extraire de la surface Media)       | Media            |
+| SeriesCard       |   ⬜   | Affiche de série                                     | Media            |
+| EpisodeCard      |   ⬜   | Épisode (progression)                                | Media            |
+| ContinueWatching |   ⬜   | Reprendre la lecture                                 | Media, Dashboard |
+| CollectionCard   |   ⬜   | Collection / genre                                   | Media            |
+| MediaInfo        |   ⬜   | Fiche détaillée (assemblée dans `MediaDetail`, Home) | Media            |
 
-**Résultat concret** : **KOS Media** — « continue mon film », médiathèque
-(films/séries/collections/reprise), fiche + progression ; moteur Jellyfin caché.
+**Résultat concret** : **KOS Media** — « continue mon film » → fiche immersive →
+**le lecteur officiel KevinOS** démarre, reprend exactement où l'on s'était arrêté,
+sous-titres/plein écran/PiP, **KAI télécommande** ; à l'arrêt KevinOS **sauve la
+progression** et la propose plus tard. Moteur Jellyfin **invisible de bout en bout**.
 
 ---
 

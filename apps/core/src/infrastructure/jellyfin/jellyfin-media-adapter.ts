@@ -9,8 +9,10 @@ import type {
   SeriesDetail,
   Collection,
   PlaybackProgress,
+  MediaStream,
 } from '@kevinos/shared';
 import type { MediaImages } from '../../domain/media-images.js';
+import type { MediaStreaming } from '../../domain/media-streaming.js';
 
 /** Fonction `fetch` (injectable pour les tests). */
 export type FetchFn = typeof fetch;
@@ -55,7 +57,7 @@ interface JfItem {
  * (`/api/v1/media/:id/poster`), jamais vers Jellyfin. Remplacer Jellyfin =
  * remplacer CE fichier — KAI, Home et le reste ne bougent pas.
  */
-export class JellyfinMediaAdapter implements MediaLibrary, MediaImages {
+export class JellyfinMediaAdapter implements MediaLibrary, MediaImages, MediaStreaming {
   private readonly baseUrl: string;
   private readonly apiKey: string;
   private readonly fetchFn: FetchFn;
@@ -206,7 +208,26 @@ export class JellyfinMediaAdapter implements MediaLibrary, MediaImages {
     const seasons: Season[] = [...bySeason.entries()]
       .sort((a, b) => a[0] - b[0])
       .map(([season, episodes]) => ({ season, episodes }));
-    return { media: this.toMedia(item), seasons };
+
+    const all = seasons.flatMap((s) => s.episodes);
+    const watched = (e: Episode) =>
+      !!e.progress &&
+      e.progress.durationSec > 0 &&
+      e.progress.positionSec / e.progress.durationSec >= 0.9;
+    const watchedCount = all.filter(watched).length;
+    const nextEpisode = all.find((e) => !watched(e)) ?? null;
+    const remainingMin = all
+      .filter((e) => !watched(e))
+      .reduce((sum, e) => sum + (e.runtimeMin ?? 0), 0);
+
+    return {
+      media: this.toMedia(item),
+      seasons,
+      nextEpisode,
+      episodeCount: all.length,
+      watchedCount,
+      remainingMin: remainingMin || null,
+    };
   }
 
   async listCollections(signal?: AbortSignal): Promise<Collection[]> {
@@ -239,6 +260,46 @@ export class JellyfinMediaAdapter implements MediaLibrary, MediaImages {
       signal,
     );
     return (data.Items ?? []).map((i) => this.toMedia(i));
+  }
+
+  async getStream(id: string, signal?: AbortSignal): Promise<MediaStream> {
+    // Le lecteur reçoit une URL **du Core**, jamais de Jellyfin. Les pistes
+    // sous-titres/audio détaillées (MediaStreams) sont une étape suivante ; le
+    // contrat les prévoit déjà.
+    void signal;
+    return {
+      url: `/api/v1/media/${id}/stream`,
+      mimeType: 'video/mp4',
+      subtitles: [],
+      audioTracks: [],
+      startAtSec: 0,
+    };
+  }
+
+  /** Proxifie le flux Jellyfin (Range) — le client ne joint jamais le moteur. */
+  async fetchStream(
+    itemId: string,
+    range: string | undefined,
+    signal?: AbortSignal,
+  ): Promise<{
+    status: number;
+    headers: Record<string, string>;
+    body: ReadableStream<Uint8Array> | null;
+  }> {
+    const res = await this.fetchFn(
+      `${this.baseUrl}/Videos/${encodeURIComponent(itemId)}/stream?static=true&api_key=${encodeURIComponent(this.apiKey)}`,
+      { headers: range ? { Range: range } : {}, ...(signal ? { signal } : {}) },
+    );
+    const headers: Record<string, string> = {};
+    for (const h of ['content-type', 'content-length', 'content-range', 'accept-ranges']) {
+      const v = res.headers.get(h);
+      if (v) headers[h] = v;
+    }
+    return {
+      status: res.status,
+      headers,
+      body: res.body as ReadableStream<Uint8Array> | null,
+    };
   }
 
   async fetchPoster(

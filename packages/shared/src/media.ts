@@ -46,14 +46,78 @@ export interface Season {
   episodes: Episode[];
 }
 
+/** Piste de sous-titres (servie par le Core, jamais par le moteur). */
+export interface SubtitleTrack {
+  id: string;
+  lang: string;
+  label: string;
+  url: string;
+}
+
+/** Piste audio sélectionnable. */
+export interface AudioTrack {
+  id: string;
+  lang: string;
+  label: string;
+}
+
+/**
+ * Flux de lecture — **agnostique du moteur**. L'URL pointe vers le **Core**
+ * (`/api/v1/media/:id/stream`), qui proxifie Jellyfin : le lecteur KevinOS ne
+ * connaît jamais le moteur. `startAtSec` = reprise, **possédée par KevinOS**.
+ */
+export interface MediaStream {
+  url: string;
+  mimeType: string;
+  subtitles: SubtitleTrack[];
+  audioTracks: AudioTrack[];
+  startAtSec: number;
+}
+
+export type RatingSource = 'tmdb' | 'imdb' | 'rotten' | 'metacritic';
+export interface Rating {
+  source: RatingSource;
+  /** Ex. « 8.8 », « 87 % ». */
+  score: string;
+}
+export interface CastMember {
+  name: string;
+  role: string | null;
+}
+
+/**
+ * Enrichissement d'une fiche (facultatif) — affiche HD, bande-annonce, notes,
+ * casting, similaires… Rempli par le moteur et/ou un enrichisseur (TMDB) ; **le
+ * lecteur et Home restent agnostiques**.
+ */
+export interface MediaEnrichment {
+  backdropUrl?: string;
+  trailerUrl?: string;
+  tagline?: string;
+  ratings?: Rating[];
+  director?: string;
+  cast?: CastMember[];
+  country?: string;
+  awards?: string;
+  similar?: MediaItem[];
+}
+
 export interface MovieDetail {
   media: MediaItem;
   progress: PlaybackProgress | null;
+  enrichment?: MediaEnrichment;
 }
 
 export interface SeriesDetail {
   media: MediaItem;
   seasons: Season[];
+  /** Épisode à reprendre / prochain à voir. */
+  nextEpisode: Episode | null;
+  episodeCount: number;
+  watchedCount: number;
+  /** Minutes restantes pour terminer la série. */
+  remainingMin: number | null;
+  enrichment?: MediaEnrichment;
 }
 
 export interface Collection {
@@ -92,6 +156,9 @@ export interface MediaLibrary {
 
   getMovie(id: string, signal?: AbortSignal): Promise<MovieDetail>;
   getSeries(id: string, signal?: AbortSignal): Promise<SeriesDetail>;
+
+  /** Flux de lecture (URL Core-proxifiée + pistes). Jamais l'URL du moteur. */
+  getStream(id: string, signal?: AbortSignal): Promise<MediaStream>;
 
   listCollections(signal?: AbortSignal): Promise<Collection[]>;
   favorites(signal?: AbortSignal): Promise<MediaItem[]>;

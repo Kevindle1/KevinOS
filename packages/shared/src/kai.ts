@@ -35,11 +35,10 @@ export interface KaiMediaQuery {
 }
 
 /**
- * Action **structurée** décidée par KAI (jamais un appel direct à un moteur).
- * KAI propose d'**ouvrir une compétence**, éventuellement paramétrée ; Home la
- * présente sans quitter l'expérience.
+ * Ouvre une **compétence**, éventuellement paramétrée ; Home la présente sans
+ * quitter l'expérience.
  */
-export interface KaiAction {
+export interface KaiOpenSkillAction {
   type: 'open_skill';
   skill: KaiSkillId;
   /** Libellé présenté à l'utilisateur. */
@@ -48,6 +47,118 @@ export interface KaiAction {
   photoQuery?: KaiPhotoQuery;
   /** Paramètres de la compétence média (si `skill = 'media'`). */
   mediaQuery?: KaiMediaQuery;
+}
+
+/** Commandes du lecteur — **KAI devient la télécommande universelle**. */
+export type KaiPlayerCommandType =
+  | 'play'
+  | 'pause'
+  | 'toggle'
+  | 'seekBy'
+  | 'nextEpisode'
+  | 'prevEpisode'
+  | 'skipIntro'
+  | 'subtitles'
+  | 'audio'
+  | 'volumeUp'
+  | 'volumeDown'
+  | 'mute'
+  | 'fullscreen'
+  | 'close';
+
+/** Pilotage du lecteur KevinOS en langage naturel (jamais manipulé à la main). */
+export interface KaiControlPlayerAction {
+  type: 'control_player';
+  command: KaiPlayerCommandType;
+  /** Secondes pour `seekBy` (négatif = recul). */
+  amountSec?: number;
+  /** Langue pour `subtitles` / `audio` (`fr`, `en`/`vo`, `off`). */
+  lang?: string;
+}
+
+/** Action structurée décidée par KAI (jamais un appel direct à un moteur). */
+export type KaiAction = KaiOpenSkillAction | KaiControlPlayerAction;
+
+const NUMBER_WORDS: Record<string, number> = {
+  une: 1,
+  un: 1,
+  deux: 2,
+  trois: 3,
+  quatre: 4,
+  cinq: 5,
+  dix: 10,
+  quinze: 15,
+  vingt: 20,
+  trente: 30,
+  quarante: 40,
+  cinquante: 50,
+  soixante: 60,
+};
+
+function amountFrom(message: string): number | undefined {
+  const digit = message.match(/(\d+)\s*(min|minute|m|sec|seconde|s)?/i);
+  let n: number | undefined;
+  let unit = '';
+  if (digit) {
+    n = Number(digit[1]);
+    unit = (digit[2] ?? '').toLowerCase();
+  } else {
+    for (const [word, value] of Object.entries(NUMBER_WORDS)) {
+      if (new RegExp(`\\b${word}\\b`, 'i').test(message)) {
+        n = value;
+        break;
+      }
+    }
+    if (/\bminute/i.test(message)) unit = 'min';
+  }
+  if (n == null) return undefined;
+  return unit.startsWith('m') && unit !== 'sec' ? n * 60 : n;
+}
+
+/**
+ * Analyse une **commande de lecteur** (déterministe, hors ligne). `null` si le
+ * message ne pilote pas la lecture. Partagée par le Core et le repli de Home.
+ */
+export function parsePlayerCommand(message: string): KaiControlPlayerAction | null {
+  const m = message.toLowerCase();
+
+  if (
+    /\b(ferme|quitte|arrête|arrete|stop)\b.*\b(lecteur|vidéo|video|lecture|film|là|ça)\b/.test(m) ||
+    /\bferme le lecteur\b/.test(m)
+  )
+    return { type: 'control_player', command: 'close' };
+  if (/\b(recule|reviens|retour|arrière|arriere|reculer)\b/.test(m))
+    return { type: 'control_player', command: 'seekBy', amountSec: -(amountFrom(m) ?? 10) };
+  if (/\b(avance|saute|avancer)\b/.test(m))
+    return { type: 'control_player', command: 'seekBy', amountSec: amountFrom(m) ?? 10 };
+  if (/\bpause\b|\bmets? en pause\b/.test(m)) return { type: 'control_player', command: 'pause' };
+  if (/\b(reprends|continue|joue|lance|play)\b.*\blecture\b|\blecture\b.*\breprends\b/.test(m))
+    return { type: 'control_player', command: 'play' };
+  if (/\b(prochain|suivant)\b.*\b[ée]pisode\b|[ée]pisode\s+suivant|passe au prochain/.test(m))
+    return { type: 'control_player', command: 'nextEpisode' };
+  if (/[ée]pisode\s+pr[ée]c[ée]dent|\bpr[ée]c[ée]dent\b.*[ée]pisode/.test(m))
+    return { type: 'control_player', command: 'prevEpisode' };
+  if (/passe l['e]?\s*intro|passe l'introduction|skip.*intro|passer l'intro/.test(m))
+    return { type: 'control_player', command: 'skipIntro' };
+  if (/sous-?titres?/.test(m)) {
+    const off = /d[ée]sactive|coupe|sans|off|aucun/.test(m);
+    const lang = off ? 'off' : /anglais|english/.test(m) ? 'en' : 'fr';
+    return { type: 'control_player', command: 'subtitles', lang };
+  }
+  if (/\b(vo|version originale)\b|passe en vo/.test(m))
+    return { type: 'control_player', command: 'audio', lang: 'en' };
+  if (/piste audio|\baudio\b.*(français|francais|anglais)/.test(m))
+    return { type: 'control_player', command: 'audio', lang: /anglais/.test(m) ? 'en' : 'fr' };
+  if (/\b(augmente|monte|plus fort)\b.*\b(son|volume)\b|monte le volume/.test(m))
+    return { type: 'control_player', command: 'volumeUp' };
+  if (/\b(baisse|diminue|moins fort)\b.*\b(son|volume)\b/.test(m))
+    return { type: 'control_player', command: 'volumeDown' };
+  if (/\b(coupe|muet|silence)\b.*\b(son|volume)?\b|\bmute\b/.test(m))
+    return { type: 'control_player', command: 'mute' };
+  if (/plein[- ]?[ée]cran|fullscreen/.test(m))
+    return { type: 'control_player', command: 'fullscreen' };
+
+  return null;
 }
 
 /**

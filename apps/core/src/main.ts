@@ -17,6 +17,7 @@ import type { KaiModuleInfo } from './domain/kai/capabilities.js';
 import type { ReadinessCheck } from './domain/readiness.js';
 import { ImmichPhotoAdapter } from './infrastructure/immich/immich-photo-adapter.js';
 import { JellyfinMediaAdapter } from './infrastructure/jellyfin/jellyfin-media-adapter.js';
+import { FilePlaybackStore } from './infrastructure/playback/file-playback-store.js';
 import { createAIProvider } from './infrastructure/ai/provider-factory.js';
 import { createApp, type AppDependencies } from './interfaces/http/app.js';
 
@@ -138,8 +139,12 @@ function buildMedia(
     return null;
   }
 
+  // Progression **possédée par KevinOS** (fichier JSON — offline-first).
+  const dataDir = process.env.KEVINOS_DATA_DIR ?? './data';
+  const store = new FilePlaybackStore(`${dataDir}/playback.json`);
+
   return {
-    deps: { service: new MediaService(adapter), images: adapter },
+    deps: { service: new MediaService(adapter, store), images: adapter, streaming: adapter },
     readiness: { name: 'kos-media', check: (signal) => adapter.isAvailable(signal) },
   };
 }

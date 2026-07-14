@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Phase 3 — KOS Media, deuxième compétence',
+  label: 'Le lecteur officiel KevinOS',
   items: [
-    'Dis « continue mon film » → KAI ouvre la fiche et la reprise de lecture',
-    '« Montre-moi mes films / mes séries » → une vraie médiathèque, dans Home',
-    'Continuer la lecture, récents, collections, recherche, fiche + progression',
-    'KOS Media a été calqué sur KOS Vision — sans toucher au cœur de KAI',
-    'Photos et Média fonctionnent ensemble ; ici tout est en démo (sans backend)',
+    'Dis « continue mon film » → fiche immersive, puis le lecteur KevinOS démarre',
+    'Le lecteur officiel : lecture, sous-titres, vitesse, plein écran, PiP, clavier',
+    'La reprise appartient à KevinOS — tu reprends exactement où tu t’étais arrêté',
+    'KAI télécommande : « recule de 30 secondes », « sous-titres français », « ferme »',
+    'Aucune trace du moteur : jamais d’onglet, jamais d’interface Jellyfin',
   ],
 };

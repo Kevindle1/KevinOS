@@ -67,3 +67,11 @@ export {
   type InsightAccent,
 } from './components/InsightCard.js';
 export { TypingText, type TypingTextProps } from './components/TypingText.js';
+
+// Vague 6 — KOS Media (le lecteur officiel)
+export {
+  MediaPlayer,
+  type MediaPlayerProps,
+  type MediaPlayerHandle,
+  type MediaPlayerSubtitle,
+} from './components/media/MediaPlayer.js';

@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { SearchInput, Spinner, Badge, Banner, Button, Progress } from '@kevinos/ui';
+import { SearchInput, Spinner, Badge } from '@kevinos/ui';
 import type {
   KaiMediaQuery,
   MediaItem,
   ContinueItem,
   Collection,
-  MovieDetail,
-  SeriesDetail,
   PlaybackProgress,
 } from '@kevinos/shared';
 import { KaiPresence } from '../kai/KaiPresence.js';
@@ -16,16 +14,13 @@ import {
   loadLibrary,
   searchMedia,
   loadCollections,
-  loadMovie,
-  loadSeries,
 } from './mediaClient.js';
+import { MediaDetail, type DetailRef, type PlayTarget } from './MediaDetail.js';
 
 function pct(p: PlaybackProgress | null | undefined): number {
   if (!p || !p.durationSec) return 0;
   return Math.min(100, Math.round((p.positionSec / p.durationSec) * 100));
 }
-
-type DetailRef = { kind: 'movie' | 'series'; id: string };
 
 function PosterCard({
   item,
@@ -72,115 +67,22 @@ function Row({ title, children }: { title: string; children: React.ReactNode }) 
   );
 }
 
-/** Fiche détaillée d'un film / d'une série + reprise de lecture. */
-function DetailView({ detail, onBack }: { detail: DetailRef; onBack: () => void }) {
-  const [movie, setMovie] = useState<MovieDetail | null>(null);
-  const [series, setSeries] = useState<SeriesDetail | null>(null);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    setMovie(null);
-    setSeries(null);
-    setPlaying(false);
-    if (detail.kind === 'movie') void loadMovie(detail.id).then(setMovie);
-    else void loadSeries(detail.id).then(setSeries);
-  }, [detail]);
-
-  const media = movie?.media ?? series?.media;
-  const progress = movie?.progress ?? null;
-  if (!media) {
-    return (
-      <div className="flex justify-center py-16 text-accent">
-        <Spinner size="lg" label="Chargement" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="animate-fade">
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-3 rounded-full px-2.5 py-1.5 text-sm text-text-muted transition duration-fast ease-out hover:bg-hover hover:text-text focus-visible:shadow-focus focus-visible:outline-none"
-      >
-        <span aria-hidden="true">←</span> Retour
-      </button>
-
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <img
-          src={media.posterUrl}
-          alt=""
-          className="aspect-[2/3] w-32 shrink-0 rounded-lg object-cover"
-        />
-        <div className="min-w-0 flex-1 space-y-3">
-          <div>
-            <h1 className="text-2xl font-semibold text-text">{media.title}</h1>
-            <p className="text-sm text-text-muted">
-              {[media.year, media.genres[0], media.runtimeMin ? `${media.runtimeMin} min` : null]
-                .filter(Boolean)
-                .join(' · ')}
-            </p>
-          </div>
-          {media.overview ? <p className="text-sm text-text-secondary">{media.overview}</p> : null}
-
-          {progress && progress.positionSec > 0 ? (
-            <div className="space-y-1">
-              <Progress value={pct(progress)} />
-              <p className="text-xs text-text-muted">
-                Repris à {Math.floor(progress.positionSec / 60)} min sur{' '}
-                {Math.floor(progress.durationSec / 60)} min
-              </p>
-            </div>
-          ) : null}
-
-          <div className="flex gap-2">
-            <Button variant="primary" onClick={() => setPlaying(true)}>
-              {progress && progress.positionSec > 0 ? '▶ Reprendre' : '▶ Lire'}
-            </Button>
-          </div>
-
-          {playing ? (
-            <Banner tone="info" onDismiss={() => setPlaying(false)}>
-              Lecture de « {media.title} » — le lecteur vidéo arrive dans une prochaine étape.
-            </Banner>
-          ) : null}
-        </div>
-      </div>
-
-      {series && series.seasons.length > 0 ? (
-        <section className="mt-6 space-y-3">
-          {series.seasons.map((s) => (
-            <div key={s.season} className="space-y-1.5">
-              <h2 className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                Saison {s.season}
-              </h2>
-              {s.episodes.map((ep) => (
-                <div
-                  key={ep.id}
-                  className="flex items-center justify-between rounded-lg border border-border bg-surface px-3 py-2"
-                >
-                  <span className="min-w-0 truncate text-sm text-text">
-                    {ep.episode}. {ep.title}
-                  </span>
-                  <span className="ml-3 shrink-0 text-xs text-text-muted">
-                    {ep.progress ? `${pct(ep.progress)} %` : (ep.runtimeMin ?? '')}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </section>
-      ) : null}
-    </div>
-  );
-}
-
 /**
- * 🎬 **KOS Media** — la compétence Media, ouverte **dans** Home (comme KOS
- * Vision). KAI t'y amène ; tu retrouves ta lecture, ta bibliothèque, une fiche.
- * Home ne connaît que le contrat (`/api/v1/media*`) — jamais Jellyfin.
+ * 🎬 **KOS Media** — la compétence Media, ouverte **dans** Home. KAI t'y amène ;
+ * tu retrouves ta lecture, ta bibliothèque, une fiche immersive, et le lecteur
+ * officiel KevinOS. Home ne connaît que le contrat (`/api/v1/media*`).
  */
-export function MediaSurface({ query, onClose }: { query: KaiMediaQuery; onClose: () => void }) {
+export function MediaSurface({
+  query,
+  onClose,
+  onPlay,
+  onSuggest,
+}: {
+  query: KaiMediaQuery;
+  onClose: () => void;
+  onPlay: (target: PlayTarget) => void;
+  onSuggest: (prompt: string) => void;
+}) {
   const [cont, setCont] = useState<ContinueItem[]>([]);
   const [recent, setRecent] = useState<MediaItem[]>([]);
   const [items, setItems] = useState<MediaItem[] | null>(null);
@@ -188,7 +90,6 @@ export function MediaSurface({ query, onClose }: { query: KaiMediaQuery; onClose
   const [live, setLive] = useState(true);
   const [text, setText] = useState(query.kind === 'search' ? (query.text ?? '') : '');
   const [detail, setDetail] = useState<DetailRef | null>(null);
-  // La fiche de reprise ramène-t-elle à la bibliothèque ou à l'accueil ?
   const [directDetail, setDirectDetail] = useState(false);
 
   useEffect(() => {
@@ -197,7 +98,6 @@ export function MediaSurface({ query, onClose }: { query: KaiMediaQuery; onClose
       const c = await loadContinue();
       if (cancelled) return;
       setCont(c.items);
-      // « Continue mon film » → on ouvre directement la fiche du média en cours.
       if (query.kind === 'continue' && c.items[0]) {
         setDirectDetail(true);
         setDetail({ kind: c.items[0].media.kind, id: c.items[0].media.id });
@@ -223,12 +123,15 @@ export function MediaSurface({ query, onClose }: { query: KaiMediaQuery; onClose
   if (detail) {
     return (
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <DetailView
+        <MediaDetail
           detail={detail}
-          onBack={() => {
-            if (directDetail) onClose();
-            else setDetail(null);
+          onBack={() => (directDetail ? onClose() : setDetail(null))}
+          onOpen={(ref) => {
+            setDirectDetail(false);
+            setDetail(ref);
           }}
+          onPlay={onPlay}
+          onSuggest={onSuggest}
         />
       </div>
     );

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { KaiAction } from '@kevinos/shared';
 import { askKai } from './client.js';
-import { detectPhotoIntent, detectMediaIntent } from './intent.js';
+import { detectPhotoIntent, detectMediaIntent, detectPlayerCommand } from './intent.js';
 import { simulatedReply, type Message } from './simulate.js';
 
 /** Durée minimale de « réflexion » — garde un rythme naturel même en repli. */
@@ -28,6 +28,27 @@ async function respond(text: string, turn: number): Promise<Reply> {
       : { text: real.text.trim() };
   }
   // Repli hors-ligne (Preview sans Core) : on détecte quand même les compétences.
+  const player = detectPlayerCommand(text);
+  if (player) {
+    const acks: Record<string, string> = {
+      close: 'Je ferme le lecteur.',
+      pause: 'En pause.',
+      play: 'Je reprends la lecture.',
+      fullscreen: 'Plein écran.',
+      mute: 'Son coupé.',
+      volumeUp: "J'augmente le volume.",
+      volumeDown: 'Je baisse le volume.',
+      nextEpisode: 'Épisode suivant.',
+      skipIntro: "Je passe l'introduction.",
+      subtitles: player.lang === 'off' ? 'Sous-titres désactivés.' : 'Sous-titres activés.',
+      audio: 'Piste audio changée.',
+      seekBy:
+        (player.amountSec ?? 0) < 0
+          ? `Je recule de ${Math.abs(player.amountSec ?? 0)} s.`
+          : `J'avance de ${player.amountSec ?? 0} s.`,
+    };
+    return { text: acks[player.command] ?? "C'est fait.", actions: [player] };
+  }
   const photo = detectPhotoIntent(text);
   if (photo) {
     return {

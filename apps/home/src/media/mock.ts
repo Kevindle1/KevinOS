@@ -4,7 +4,19 @@ import type {
   Collection,
   MovieDetail,
   SeriesDetail,
+  MediaStream,
+  MediaEnrichment,
 } from '@kevinos/shared';
+import { getLocalProgress } from './localProgress.js';
+
+/** Vidéo d'exemple (démo Preview) — libre de droits, CORS ouvert. */
+const SAMPLE_VIDEO =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const SAMPLE_VTT =
+  'data:text/vtt,' +
+  encodeURIComponent(
+    'WEBVTT\n\n00:00:01.000 --> 00:00:06.000\nDémonstration KevinOS — sous-titres.\n',
+  );
 
 /**
  * Médiathèque **simulée** — uniquement quand aucun Core n'est joignable (Preview).
@@ -118,41 +130,84 @@ export function mockCollections(): Collection[] {
     { id: 'col-2', title: 'Science-fiction', itemCount: 27, posterUrl: null },
   ];
 }
+function enrichmentFor(media: MediaItem): MediaEnrichment {
+  return {
+    tagline: 'Une expérience KevinOS.',
+    ratings: [
+      { source: 'tmdb', score: '8.2' },
+      { source: 'imdb', score: '7.9' },
+      { source: 'rotten', score: '91 %' },
+    ],
+    director: 'C. Réalisateur',
+    cast: [
+      { name: 'A. Comédienne', role: 'Elle' },
+      { name: 'B. Comédien', role: 'Lui' },
+      { name: 'C. Invité', role: 'Le mystère' },
+    ],
+    country: 'France',
+    similar: [...MOVIES, ...SERIES].filter((m) => m.id !== media.id).slice(0, 4),
+  };
+}
+
 export function mockMovie(id: string): MovieDetail {
   const media = [...MOVIES, ...SERIES].find((m) => m.id === id) ?? (MOVIES[0] as MediaItem);
   const cont = mockContinue()[0];
-  return { media, progress: media.id === cont?.media.id ? cont.progress : null };
+  const stored = getLocalProgress(id);
+  const progress = stored ?? (media.id === cont?.media.id ? cont.progress : null);
+  return { media, progress, enrichment: enrichmentFor(media) };
 }
+
+/** Flux de démo : Big Buck Bunny + une piste de sous-titres + reprise locale. */
+export function mockStream(id: string): MediaStream {
+  const stored = getLocalProgress(id);
+  const cont = mockContinue()[0];
+  return {
+    url: SAMPLE_VIDEO,
+    mimeType: 'video/mp4',
+    subtitles: [{ id: 'fr', lang: 'fr', label: 'Français', url: SAMPLE_VTT }],
+    audioTracks: [],
+    startAtSec:
+      stored?.positionSec ?? (id === cont?.media.id ? (cont?.progress.positionSec ?? 0) : 0),
+  };
+}
+
 export function mockSeries(id: string): SeriesDetail {
   const media = SERIES.find((m) => m.id === id) ?? (SERIES[0] as MediaItem);
+  const nextEpisode = {
+    id: `${id}-e2`,
+    seriesId: id,
+    season: 1,
+    episode: 2,
+    title: 'La faille',
+    overview: null,
+    runtimeMin: 49,
+    progress: null,
+  };
+  const seasons = [
+    {
+      season: 1,
+      episodes: [
+        {
+          id: `${id}-e1`,
+          seriesId: id,
+          season: 1,
+          episode: 1,
+          title: 'Pilote',
+          overview: null,
+          runtimeMin: 52,
+          progress: { positionSec: 1200, durationSec: 3120, updatedAt: '2026-07-12T21:00:00Z' },
+        },
+        nextEpisode,
+      ],
+    },
+  ];
   return {
     media,
-    seasons: [
-      {
-        season: 1,
-        episodes: [
-          {
-            id: `${id}-e1`,
-            seriesId: id,
-            season: 1,
-            episode: 1,
-            title: 'Pilote',
-            overview: null,
-            runtimeMin: 52,
-            progress: { positionSec: 1200, durationSec: 3120, updatedAt: '2026-07-12T21:00:00Z' },
-          },
-          {
-            id: `${id}-e2`,
-            seriesId: id,
-            season: 1,
-            episode: 2,
-            title: 'La faille',
-            overview: null,
-            runtimeMin: 49,
-            progress: null,
-          },
-        ],
-      },
-    ],
+    seasons,
+    nextEpisode,
+    episodeCount: 2,
+    watchedCount: 0,
+    remainingMin: 101,
+    enrichment: enrichmentFor(media),
   };
 }

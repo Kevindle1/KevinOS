@@ -5,6 +5,40 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — ▶️ Le lecteur officiel KevinOS (MediaPlayer), la reprise possédée, KAI télécommande
+
+Jellyfin **disparaît jusqu'à la lecture**. Une seule application : KevinOS.
+Voir [ADR-0021](docs/adr/ADR-0021-lecteur-officiel-mediaplayer.md).
+
+- **`MediaPlayer`** — le lecteur **officiel et unique** de KevinOS, composant
+  `@kevinos/ui` (films, séries, vidéos perso, caméras, archives…). HTML5,
+  contrôles **auto-masqués** (Apple TV / visionOS), clavier (espace, ←/→, f, m,
+  ↑/↓), barre de progression, temps restant, vitesse, volume, **sous-titres**,
+  **plein écran**, **Picture-in-Picture**. Agnostique du moteur : il ne reçoit
+  qu'une `src` servie par le Core.
+- **Fiche intelligente immersive** (Home) avant de lancer : affiche/backdrop,
+  notes, année, genres, réalisateur, casting, durée, qualité, **progression**,
+  résumé, similaires ; pour les séries : saisons/épisodes, **prochain épisode**,
+  vus/non-vus, temps restant. Bouton **Reprendre / Lire**.
+- **La reprise appartient à KevinOS** (pas au moteur) : ports `PlaybackStore`
+  (JSON aujourd'hui) + `MediaStreaming`. Le `MediaService` **croise** la
+  progression et fait **primer** celle de KevinOS. À l'arrêt →
+  `POST /api/v1/media/:id/progress` (sauvegarde immédiate) ; le lendemain, la
+  reprise nourrit « Continuer la lecture » et la fiche.
+- **Le flux ne révèle jamais le moteur** : `getStream` renvoie une **URL du
+  Core** (`/api/v1/media/:id/stream`) que le Core **relaie** (proxy `Range`).
+  Aucune URL/entête/sous-titre ne rappelle Jellyfin.
+- **KAI = télécommande universelle** : nouvelle action `control_player` (à côté
+  d'`open_skill`). « Mets en pause », « recule de 30 secondes », « avance de deux
+  minutes », « sous-titres français », « passe en VO », « plein écran », « passe
+  au prochain épisode », « ferme le lecteur » → interprétation **déterministe**
+  (`parsePlayerCommand`), appliquée à l'API impérative du lecteur
+  (`MediaPlayerHandle`). **KAI ne touche jamais le DOM** ; il émet une intention.
+- **Design Lab** : story `MediaPlayer`. **Tests** : Core **58** (télécommande KAI :
+  8 commandes ; reprise possédée : `MediaService` × store) ; `@kevinos/ui` (rendu
+  des contrôles, `onClose`, API impérative). Repli **honnête** en Preview
+  (localStorage pour la reprise, badge « démo »).
+
 ### Ajouté — 🎬 Phase 3 : KOS Media, deuxième compétence (preuve de modularité)
 
 Deuxième compétence réelle, **développée en recopiant la structure de KOS

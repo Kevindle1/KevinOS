@@ -27,6 +27,7 @@ import {
   ScrollArea,
   InsightCard,
   TypingText,
+  MediaPlayer,
 } from '@kevinos/ui';
 
 export interface Story {
@@ -519,5 +520,29 @@ export const stories: Story[] = [
     name: 'TypingText',
     group: 'Home (vivant)',
     render: () => <TypingDemo />,
+  },
+
+  {
+    id: 'mediaplayer',
+    name: 'MediaPlayer',
+    group: 'KOS Media',
+    render: () => (
+      <div className="max-w-3xl overflow-hidden rounded-xl bg-[rgba(0,0,0,0.9)]">
+        <MediaPlayer
+          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          title="Big Buck Bunny"
+          startAt={12}
+          subtitles={[
+            {
+              id: 'fr',
+              lang: 'fr',
+              label: 'Français',
+              url: 'data:text/vtt,WEBVTT%0A%0A00:00.000%20--%3E%2000:05.000%0ASous-titres%20KevinOS',
+            },
+          ]}
+          className="w-full"
+        />
+      </div>
+    ),
   },
 ];
