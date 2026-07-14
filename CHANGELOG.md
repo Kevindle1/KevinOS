@@ -5,6 +5,29 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 🧠 Phase KAI : une vraie IA (orchestrateur + Ollama + providers)
+
+Bascule du KAI **simulé** vers le **vrai KAI** — offline-first, IA locale,
+fournisseurs interchangeables, KAI comme **unique point d'entrée** (Règle 5).
+
+- **Contrat public** (`@kevinos/shared`) : `KaiReply` / `KaiAction` +
+  `POST /api/v1/kai/message` (API-first). Consommé identiquement par Home, mobile
+  ou une API publique.
+- **Orchestrateur KAI** (Core, [ADR-0019](docs/adr/ADR-0019-kai-orchestrateur.md)) :
+  1. **capacités déterministes locales, hors ligne, sans modèle** — bonjour,
+     heure, date, état système, **ouvrir un module** (action structurée) ;
+  2. sinon **fournisseur IA** ; 3) **repli honnête** si l'IA est absente. KAI ne
+     plante jamais.
+- **Fournisseurs interchangeables** : `OllamaProvider` (local, packagé) + fabrique
+  `createAIProvider(config)` ; OpenAI/Claude/Gemini restent des adaptateurs futurs.
+  Modèle léger par défaut `qwen2.5:3b` (16 Go, sans GPU).
+- **Home** connecté au vrai KAI (proxy Vite en dev) avec **repli simulé** quand
+  aucun Core n'est joignable (Preview statique) — l'expérience ne casse jamais.
+- **Infra** : overlay `docker-compose.kai.yml` (Ollama, réseau `apps`, jamais
+  exposé), validé en CI.
+- **Tests** : Core **31** (capacités, orchestrateur, route KAI) ; vérifié en réel
+  (heure/date/système/ouvrir/repli via `curl`).
+
 ### Changé — 🎯 Home itération 3 : la curation (« l'essentiel, maintenant »)
 
 - **Minimalisme radical** : KAI ne montre plus tout. Il **choisit** — **au plus

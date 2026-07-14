@@ -31,5 +31,12 @@ export default defineConfig({
   define: {
     __KOS_BUILD__: JSON.stringify(build),
   },
-  server: { port: 5175 },
+  server: {
+    port: 5175,
+    // En dev, on parle au vrai KAI (le Core) en même origine, sans CORS.
+    // Cible surchargeable : KAI_PROXY=http://mon-core:8080
+    proxy: {
+      '/api': { target: env.KAI_PROXY || 'http://localhost:8080', changeOrigin: true },
+    },
+  },
 });

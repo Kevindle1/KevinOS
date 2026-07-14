@@ -1,11 +1,23 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import type { Express } from 'express';
-import { createLogger, moduleManifestSchema } from '@kevinos/shared';
+import { createLogger, moduleManifestSchema, type AIProvider } from '@kevinos/shared';
 import { HealthService } from '../../application/health-service.js';
 import { ModuleRegistry } from '../../application/module-registry.js';
+import { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import type { ReadinessCheck } from '../../domain/readiness.js';
 import { createApp } from './app.js';
+
+/** Fournisseur IA de test — jamais joignable (force le mode capacités/repli). */
+const offlineProvider: AIProvider = {
+  id: 'test',
+  capabilities: { chat: false, embeddings: false, tools: false, vision: false },
+  isAvailable: async () => false,
+  // eslint-disable-next-line require-yield
+  async *chat() {
+    throw new Error('offline');
+  },
+};
 
 function buildApp(checks: ReadinessCheck[] = [], registry = new ModuleRegistry()): Express {
   const logger = createLogger({ serviceName: 'core-test', level: 'silent' });
@@ -14,7 +26,20 @@ function buildApp(checks: ReadinessCheck[] = [], registry = new ModuleRegistry()
     version: '0.0.0-test',
     checks,
   });
-  return createApp({ logger, healthService, moduleRegistry: registry });
+  const kai = new KaiOrchestrator({
+    provider: offlineProvider,
+    logger,
+    context: () => ({
+      now: new Date('2026-07-14T20:30:00'),
+      system: { version: '0.0.0-test', startedAt: Date.now() - 60_000 },
+      modules: registry.list().map((m) => ({
+        id: m.manifest.id,
+        name: m.manifest.name,
+        keywords: [m.manifest.name.toLowerCase()],
+      })),
+    }),
+  });
+  return createApp({ logger, healthService, moduleRegistry: registry, kai });
 }
 
 describe('KevinOS Core — HTTP', () => {
@@ -42,6 +67,28 @@ describe('KevinOS Core — HTTP', () => {
     expect(res.status).toBe(503);
     expect(res.body.status).toBe('degraded');
     expect(res.body.checks.postgres).toBe('down');
+  });
+
+  it('POST /api/v1/kai/message répond à une capacité locale (heure)', async () => {
+    const res = await request(app)
+      .post('/api/v1/kai/message')
+      .send({ message: 'Quelle heure est-il ?' });
+    expect(res.status).toBe(200);
+    expect(res.body.source).toBe('capability');
+    expect(res.body.text).toMatch(/il est/i);
+  });
+
+  it('POST /api/v1/kai/message rejette une requête vide (400)', async () => {
+    const res = await request(app).post('/api/v1/kai/message').send({ message: '' });
+    expect(res.status).toBe(400);
+  });
+
+  it('POST /api/v1/kai/message : sans modèle joignable, repli honnête', async () => {
+    const res = await request(app)
+      .post('/api/v1/kai/message')
+      .send({ message: 'Raconte-moi une histoire' });
+    expect(res.status).toBe(200);
+    expect(res.body.source).toBe('fallback');
   });
 
   it('renvoie 404 JSON sur une route inconnue', async () => {

@@ -94,6 +94,9 @@ importers:
 
   apps/home:
     dependencies:
+      '@kevinos/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@kevinos/ui':
         specifier: workspace:*
         version: link:../../packages/ui

@@ -5,14 +5,18 @@ import type { HealthService } from '../../application/health-service.js';
 import type { ModuleRegistry } from '../../application/module-registry.js';
 import type { PhotoService } from '../../application/photo-service.js';
 import type { PhotoThumbnails } from '../../domain/photo-thumbnails.js';
+import type { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
 import { photosRoutes } from './routes/photos.routes.js';
+import { kaiRoutes } from './routes/kai.routes.js';
 
 export interface AppDependencies {
   logger: Logger;
   healthService: HealthService;
   moduleRegistry: ModuleRegistry;
+  /** KAI — le point d'entrée unique (toujours présent). */
+  kai: KaiOrchestrator;
   /** KOS Vision — présent quand le module photos est activé. */
   photos?: { service: PhotoService; thumbnails: PhotoThumbnails };
 }
@@ -25,6 +29,7 @@ export function createApp({
   logger,
   healthService,
   moduleRegistry,
+  kai,
   photos,
 }: AppDependencies): Express {
   const app = express();
@@ -38,6 +43,9 @@ export function createApp({
 
   // Registre de modules & versions de contrat.
   app.use(modulesRoutes(moduleRegistry));
+
+  // KAI — point d'entrée unique (toujours actif, même sans modèle IA).
+  app.use('/api/v1/kai', kaiRoutes(kai));
 
   // API v1 des modules. KOS Vision (photos) si activé.
   if (photos) {

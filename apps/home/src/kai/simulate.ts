@@ -1,5 +1,3 @@
-import { useCallback, useRef, useState } from 'react';
-
 export type Role = 'user' | 'kai';
 
 export interface Message {
@@ -9,10 +7,12 @@ export interface Message {
 }
 
 /**
- * KAI simulé — **compagnon** (Règle 9), pas chatbot. Ses réponses s'appuient sur
- * l'environnement simulé : il donne l'impression de **connaître** la journée de
- * Kevin. KAI n'est pas encore développé (Vague 4) ; le vrai KAI se branchera au
- * même endroit (`send`), sans toucher à Home.
+ * **Repli simulé** de KAI — utilisé uniquement quand le **vrai KAI** (le Core)
+ * n'est pas joignable (ex. la Preview statique sur Vercel, sans backend). Dès
+ * qu'un Core tourne, c'est le KAI réel qui répond (voir `useKai`).
+ *
+ * Les réponses restent honnêtes : elles n'affirment jamais avoir agi sur un
+ * module. C'est un filet de sécurité pour que l'expérience ne casse jamais.
  */
 interface Rule {
   match: RegExp;
@@ -62,49 +62,9 @@ const FALLBACKS: readonly string[] = [
   'Je m’en occuperai avec plaisir dès que le module concerné sera actif. En attendant, tout ce que je t’affiche est déjà là pour te donner une vue d’ensemble.',
 ];
 
-function replyTo(text: string, turn: number): string {
+/** Réponse simulée, contextuelle si possible. */
+export function simulatedReply(text: string, turn: number): string {
   const rule = RULES.find((r) => r.match.test(text));
   if (rule) return rule.reply;
   return FALLBACKS[turn % FALLBACKS.length] as string;
-}
-
-let seq = 0;
-function uid(): string {
-  seq += 1;
-  return `m${seq}`;
-}
-
-export interface KaiState {
-  messages: Message[];
-  thinking: boolean;
-  send: (text: string) => void;
-  reset: () => void;
-}
-
-export function useSimulatedKai(): KaiState {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [thinking, setThinking] = useState(false);
-  const turn = useRef(0);
-  const timer = useRef<number | undefined>(undefined);
-
-  const send = useCallback((text: string) => {
-    setMessages((m) => [...m, { id: uid(), role: 'user', text }]);
-    setThinking(true);
-    const reply = replyTo(text, turn.current);
-    turn.current += 1;
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => {
-      setMessages((m) => [...m, { id: uid(), role: 'kai', text: reply }]);
-      setThinking(false);
-    }, 800);
-  }, []);
-
-  const reset = useCallback(() => {
-    window.clearTimeout(timer.current);
-    setMessages([]);
-    setThinking(false);
-    turn.current = 0;
-  }, []);
-
-  return { messages, thinking, send, reset };
 }

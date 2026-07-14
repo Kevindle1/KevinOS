@@ -42,6 +42,25 @@ itération**, avec le filtre produit (valeur · cohérence · pertinence · simp
 - Thème clair / sombre / système.
 - Composant créé à la demande pour cette itération : **`PromptInput`**.
 
+## Se connecter au vrai KAI
+
+Home appelle le **vrai KAI** (le Core) sur `POST /api/v1/kai/message` et **retombe**
+sur un KAI simulé si aucun Core n'est joignable (cas de la Preview statique) — voir
+[ADR-0019](../../docs/adr/ADR-0019-kai-orchestrateur.md).
+
+```bash
+# 1) démarrer le Core (dans un autre terminal)
+pnpm --filter @kevinos/core dev            # écoute sur :8080
+
+# 2) Home : le proxy Vite envoie /api → le Core (même origine, sans CORS)
+pnpm --filter @kevinos/home dev            # http://localhost:5175
+#   Core ailleurs ? KAI_PROXY=http://mon-core:8080 pnpm --filter @kevinos/home dev
+```
+
+Dès qu'un Core répond, KAI sait déjà (100 % local, hors ligne) : **bonjour, heure,
+date, état du système, ouvrir un module**. Le reste part vers **Ollama** si présent
+(sinon un repli honnête). Rien à changer dans Home quand KAI gagne des capacités.
+
 ### À venir (prochaines itérations)
 
 Activité récente · dernières photos · reprendre un média · état du système ·

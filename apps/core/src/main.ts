@@ -11,12 +11,31 @@ import {
 import { HealthService } from './application/health-service.js';
 import { ModuleRegistry } from './application/module-registry.js';
 import { PhotoService } from './application/photo-service.js';
+import { KaiOrchestrator } from './application/kai-orchestrator.js';
+import type { KaiModuleInfo } from './domain/kai/capabilities.js';
 import type { ReadinessCheck } from './domain/readiness.js';
 import { ImmichPhotoAdapter } from './infrastructure/immich/immich-photo-adapter.js';
+import { createAIProvider } from './infrastructure/ai/provider-factory.js';
 import { createApp, type AppDependencies } from './interfaces/http/app.js';
 
 /** Version applicative (alignée sur le package). */
 const KEVINOS_VERSION = '0.1.0';
+
+/** Mots-clés d'ouverture par module (pour la capacité « ouvrir un module »). */
+const MODULE_KEYWORDS: Record<string, string[]> = {
+  'kos-vision': ['photo', 'photos', 'vision', 'image', 'images', 'album', 'albums'],
+  'kos-media': ['film', 'films', 'série', 'series', 'média', 'media', 'regarder'],
+  'kos-drive': ['fichier', 'fichiers', 'document', 'documents', 'drive'],
+  'kos-home': ['maison', 'domotique', 'appareil', 'appareils', 'lumière', 'caméra'],
+};
+
+function moduleInfos(registry: ModuleRegistry): KaiModuleInfo[] {
+  return registry.list().map((m) => ({
+    id: m.manifest.id,
+    name: m.manifest.name,
+    keywords: MODULE_KEYWORDS[m.manifest.id] ?? [m.manifest.name.toLowerCase()],
+  }));
+}
 
 /** Lit un secret depuis un fichier (`*_FILE`) ou une variable directe. */
 function readSecret(fileVar?: string, directVar?: string): string | null {
@@ -81,6 +100,7 @@ function main(): void {
   const config = loadConfig();
   const logger = createLogger({ serviceName: config.serviceName, level: config.logLevel });
 
+  const startedAt = Date.now();
   const moduleRegistry = new ModuleRegistry();
   const photos = buildPhotos(config, moduleRegistry, logger);
 
@@ -90,10 +110,23 @@ function main(): void {
     checks: photos ? [photos.readiness] : [],
   });
 
+  // KAI — cerveau et point d'entrée unique. Fournisseur IA interchangeable
+  // (local/Ollama par défaut) ; les capacités déterministes marchent sans modèle.
+  const kai = new KaiOrchestrator({
+    provider: createAIProvider(config),
+    logger,
+    context: () => ({
+      now: new Date(),
+      system: { version: KEVINOS_VERSION, startedAt },
+      modules: moduleInfos(moduleRegistry),
+    }),
+  });
+
   const app = createApp({
     logger,
     healthService,
     moduleRegistry,
+    kai,
     ...(photos ? { photos: photos.deps } : {}),
   });
   const server = createServer(app);

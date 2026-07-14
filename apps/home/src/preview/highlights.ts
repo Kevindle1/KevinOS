@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Itération 3 — l’essentiel, maintenant',
+  label: 'Phase KAI — une vraie IA commence',
   items: [
-    'KAI ne montre que ce qui compte maintenant — au plus 3 cartes, jamais un mur',
-    'L’accueil évolue selon le moment (matin, après-midi, soir, nuit)',
-    'Système d’importance : une alerte remonte et remplace une carte',
-    'Respiration : très calme, puis KevinOS « prend la parole »',
-    'Mémoire : KAI se souvient (« hier tu avais commencé… »)',
+    'Le vrai KAI arrive côté serveur : heure, date, état système, ouvrir un module',
+    'IA 100 % locale (Ollama), fournisseurs interchangeables, offline-first',
+    'Home se connecte au vrai KAI quand un Core tourne',
+    'Cette Preview reste simulée (pas de backend) — mais l’architecture est réelle',
+    'Accueil « curation » figé : l’essentiel, maintenant',
   ],
 };

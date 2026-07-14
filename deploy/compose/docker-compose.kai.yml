@@ -1,0 +1,55 @@
+# KevinOS — overlay 🧠 KAI (IA locale, moteur : Ollama). Offline-first (Règle 2).
+#
+# À combiner avec le socle :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.kai.yml --env-file .env up -d
+#
+# Puis télécharger le modèle léger (une fois) — voir ADR-0006 (16 Go, sans GPU) :
+#   docker compose -f compose/docker-compose.yml -f compose/docker-compose.kai.yml \
+#     --env-file .env exec kai-ollama ollama pull qwen2.5:3b
+#
+# Le moteur Ollama n'est JAMAIS exposé : seul le Core le joint (réseau `apps`),
+# via le port AIProvider. Le remplacer (autre runtime, API externe) = changer cet
+# overlay + la config `KEVINOS_AI_PROVIDER`, sans toucher à KAI ni aux modules.
+
+name: kevinos
+
+networks:
+  apps:
+    external: true
+    name: kevinos_apps
+
+volumes:
+  # Poids des modèles téléchargés (persistant — évite de re-télécharger).
+  kai_ollama_models:
+
+services:
+  # Augmente le Core : KAI parle au fournisseur IA local.
+  core:
+    environment:
+      KEVINOS_AI_PROVIDER: local
+      KEVINOS_OLLAMA_BASE_URL: http://kai-ollama:11434
+      KEVINOS_AI_MODEL: qwen2.5:3b
+    depends_on:
+      kai-ollama:
+        condition: service_healthy
+
+  kai-ollama:
+    image: ollama/ollama:0.5.4
+    restart: unless-stopped
+    networks:
+      - apps # joint uniquement par le Core
+    volumes:
+      - kai_ollama_models:/root/.ollama
+    healthcheck:
+      test: ['CMD-SHELL', 'ollama list || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          # Un modèle 3B tient large sous cette limite ; adapter selon la RAM
+          # disponible (contrainte 16 Go — voir docs/06-roadmap.md). GPU non requis.
+          memory: 6G

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSimulatedKai } from './simulate.js';
+import { useKai } from './useKai.js';
 import { curateHome } from './environment.js';
 import { LivingHome } from './LivingHome.js';
 import { Conversation } from './Conversation.js';
@@ -13,7 +13,7 @@ import { Conversation } from './Conversation.js';
 export function Home() {
   // Curation figée pour la session (l'accueil ne « saute » pas d'un rendu à l'autre).
   const [state] = useState(curateHome);
-  const { messages, thinking, send, reset } = useSimulatedKai();
+  const { messages, thinking, send, reset } = useKai();
 
   if (messages.length === 0) {
     return <LivingHome state={state} onSend={send} busy={thinking} />;
