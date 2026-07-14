@@ -193,7 +193,31 @@ progression** et la propose plus tard. Moteur Jellyfin **invisible de bout en bo
 
 ---
 
-## Vague 7 — KOS Home (domotique) ⬜
+## Vague 7 — KOS Drive (documents) 🟡 (compétence documentaire réelle livrée)
+
+> **Phase 4 (2026-07-14)** : troisième **compétence** réelle, sur le patron
+> Vision/Media (contrat `DriveLibrary`, moteur **système de fichiers local**
+> caché) — **sans toucher au cœur de KAI**. Pas un explorateur : on **retrouve
+> une information** en langage naturel. Voir
+> [ADR-0022](docs/adr/ADR-0022-kos-drive-documentaire.md).
+
+| Composant           | Statut | Description                                              | Modules      |
+| ------------------- | :----: | -------------------------------------------------------- | ------------ |
+| **DocumentPreview** |   ✅   | **Aperçu officiel** (PDF, image, texte, md, CSV, code)   | Drive (tous) |
+| DriveItemRow        |   ⬜   | Ligne document / dossier (assemblée dans `DriveSurface`) | Drive        |
+| Breadcrumb          |   ⬜   | Fil d'Ariane de navigation                               | Drive        |
+| TagChips            |   ⬜   | Étiquettes                                               | Drive        |
+| UploadZone          |   ⬜   | Dépôt de fichiers                                        | Drive        |
+
+**Résultat concret** : **KOS Drive** — « ouvre mon bail » → KAI retrouve le
+document et **l'ouvre dans KevinOS** ; recherche par nom **et contenu**, récents,
+favoris, volumineux ; **renommer / déplacer / télécharger** — sans jamais quitter
+l'expérience, sans explorateur système. Moteur (système de fichiers, Nextcloud)
+**invisible** ; identifiants opaques, aperçu proxifié par le Core.
+
+---
+
+## Vague 8 — KOS Home (domotique) ⬜
 
 | Composant      | Statut | Description                    | Modules         |
 | -------------- | :----: | ------------------------------ | --------------- |

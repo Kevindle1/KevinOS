@@ -75,3 +75,12 @@ export {
   type MediaPlayerHandle,
   type MediaPlayerSubtitle,
 } from './components/media/MediaPlayer.js';
+
+// Vague 7 — KOS Drive (l'aperçu documentaire officiel)
+export {
+  DocumentPreview,
+  documentIcon,
+  type DocumentPreviewProps,
+  type DocumentPreviewKind,
+  type DocumentPreviewMode,
+} from './components/drive/DocumentPreview.js';

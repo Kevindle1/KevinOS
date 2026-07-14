@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { DocKind } from './drive.js';
 
 /**
  * Contrats publics de **KAI** — le point d'entrée unique de KevinOS (Règle 5,
@@ -35,6 +36,20 @@ export interface KaiMediaQuery {
 }
 
 /**
+ * Intention documentaire structurée (KOS Drive). L'utilisateur ne navigue pas :
+ * il **retrouve une information**. `find` = ouvrir **le** document trouvé
+ * (« ouvre mon bail ») ; `search` = présenter une **liste** ; `recent` = dernier
+ * document ; `largest` = fichiers les plus volumineux ; `favorites` / `library`.
+ */
+export interface KaiDriveQuery {
+  kind: 'find' | 'search' | 'recent' | 'largest' | 'favorites' | 'library';
+  /** Texte (nom / contenu). */
+  text?: string;
+  /** Filtre par nature de document (si exprimé : « les PDF… »). */
+  docKind?: DocKind;
+}
+
+/**
  * Ouvre une **compétence**, éventuellement paramétrée ; Home la présente sans
  * quitter l'expérience.
  */
@@ -47,6 +62,8 @@ export interface KaiOpenSkillAction {
   photoQuery?: KaiPhotoQuery;
   /** Paramètres de la compétence média (si `skill = 'media'`). */
   mediaQuery?: KaiMediaQuery;
+  /** Paramètres de la compétence documents (si `skill = 'drive'`). */
+  driveQuery?: KaiDriveQuery;
 }
 
 /** Commandes du lecteur — **KAI devient la télécommande universelle**. */
@@ -209,6 +226,93 @@ export function parseMediaIntent(message: string): KaiMediaQuery | null {
     .replace(/\s+/g, ' ')
     .trim();
   return text.length >= 2 ? { kind: 'search', text } : { kind: 'library' };
+}
+
+/** Natures de documents détectables dans le langage naturel. */
+const DOC_KIND_WORDS: Array<[RegExp, DocKind]> = [
+  [/\bpdf\b/i, 'pdf'],
+  [/\b(word|docx?|traitement de texte)\b/i, 'word'],
+  [/\b(excel|tableur|xlsx?|feuille de calcul)\b/i, 'excel'],
+  [/\b(powerpoint|pptx?|présentation|presentation|diaporama)\b/i, 'powerpoint'],
+  [/\b(image|images|photo scann[ée]e?|scan)\b/i, 'image'],
+  [/\b(csv|tableau)\b/i, 'csv'],
+  [/\b(markdown|\.md)\b/i, 'markdown'],
+];
+
+/** Mots qui **déclenchent** la compétence documents (au-delà de « document »). */
+const DRIVE_TRIGGER =
+  /\b(document|documents|fichier|fichiers|dossier|dossiers|drive|pdf|word|excel|powerpoint|tableur|bail|facture|factures|contrat|contrats|cv|relev[ée]|attestation|quittance|devis|bulletin|fiche de paie|imp[ôo]ts?|assurance|justificatif|mandat|avis)\b/i;
+
+/**
+ * Analyse une intention **documentaire** (déterministe, hors ligne). `null` si
+ * le message ne concerne pas les documents. Partagée par le Core (compétence
+ * KAI) et le repli hors-ligne de Home. Ne surtout pas voler « ouvre mon film » :
+ * les compétences média/photos passent **avant** dans l'ordre des skills.
+ */
+export function parseDriveIntent(message: string): KaiDriveQuery | null {
+  if (!DRIVE_TRIGGER.test(message)) return null;
+  const m = message.toLowerCase();
+
+  const docKind = DOC_KIND_WORDS.find(([re]) => re.test(message))?.[1];
+
+  // Vues et tris explicites d'abord.
+  if (/\b(volumineux|volumineuses|gros|grosses|lourds?|lourdes?|plus grand|plus gros)\b/.test(m)) {
+    return docKind ? { kind: 'largest', docKind } : { kind: 'largest' };
+  }
+  if (/\bfavoris?\b|favories?/.test(m)) return { kind: 'favorites' };
+  if (
+    /\b(dernier|derni[èe]re|derniers|derni[èe]res|plus r[ée]cent(?:e|s|es)?)\b/.test(m) &&
+    !/contenant|concernant|parlent|parle/.test(m)
+  ) {
+    return { kind: 'recent' };
+  }
+
+  const text = extractDriveText(message);
+
+  // « recherche / tous les / quels / contenant / concernant » → liste.
+  const wantsList =
+    /\b(recherche|cherche|liste|tous|toutes|quels|quelles|montre-moi tous|montre-moi toutes)\b/.test(
+      m,
+    ) ||
+    /contenant|concernant|parlent de|parle de|qui parlent|qui parle/.test(m) ||
+    /\bdocuments\b|\bfichiers\b/.test(m);
+
+  if (wantsList) {
+    const q: KaiDriveQuery = { kind: 'search' };
+    if (text) q.text = text;
+    if (docKind) q.docKind = docKind;
+    // Liste sans critère → bibliothèque.
+    if (!q.text && !q.docKind) return { kind: 'library' };
+    return q;
+  }
+
+  // Sinon : retrouver **le** document et l'ouvrir (« ouvre mon bail »).
+  if (!text && !docKind) return { kind: 'library' };
+  const found: KaiDriveQuery = { kind: 'find' };
+  if (text) found.text = text;
+  if (docKind) found.docKind = docKind;
+  return found;
+}
+
+/** Extrait le cœur de la requête documentaire (retire verbes, articles, bruit). */
+function extractDriveText(message: string): string {
+  return message
+    .replace(
+      /montre(?:-moi)?|affiche|recherche|cherche|retrouve|trouve|ouvre|donne(?:-moi)?|o[uù] est|o[uù] sont|quels?|quelles?|liste/gi,
+      ' ',
+    )
+    .replace(
+      /contenant|concernant|qui parlent de|qui parle de|parlent de|parle de|au sujet de/gi,
+      ' ',
+    )
+    .replace(/\b(le|la|les|un|une|des|du|de|mon|ma|mes|tous|toutes|ce|cette|mien|the)\b/gi, ' ')
+    .replace(
+      /\b(document|documents|fichier|fichiers|dossier|dossiers|drive|pdf|concernent|concerne)\b/gi,
+      ' ',
+    )
+    .replace(/[?!.]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Un tour de conversation entrant. */

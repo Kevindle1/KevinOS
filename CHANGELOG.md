@@ -5,6 +5,43 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 📁 Phase 4 : KOS Drive, une expérience documentaire pilotée par KAI
+
+**Troisième compétence** réelle, sur le patron Vision/Media — **sans toucher au
+cœur de KAI** (une ligne dans `SKILLS`). Pas un explorateur de fichiers : on
+**retrouve une information** en langage naturel. Voir
+[ADR-0022](docs/adr/ADR-0022-kos-drive-documentaire.md).
+
+- **Contrat `DriveLibrary`** (`@kevinos/shared`) : dossiers, fichiers, favoris,
+  récents, volumineux, corbeille, étiquettes, **recherche** (nom / contenu / type
+  / date / taille), **aperçu**, renommer, déplacer, copier, supprimer, restaurer,
+  historique. `docKind` + `excerpt` **préparent l'OCR** (images/PDF scannés).
+- **Compétence Drive** (Core) : « ouvre mon bail », « retrouve ma facture EDF »,
+  « les documents contenant Crédit Agricole », « tous les PDF de juillet »,
+  « mon dernier document », « les fichiers les plus volumineux » → intention
+  structurée (`parseDriveIntent`) → action `open_skill`. KAI parle **uniquement**
+  au contrat — **jamais** au système de fichiers ni à Nextcloud.
+- **Moteur V1 = système de fichiers local**, **caché** derrière `DriveLibrary`
+  (`LocalFsDriveAdapter`). Identifiants **opaques** (jamais un chemin disque),
+  résolution **bornée à la racine** (anti-traversée). Remplaçable par Nextcloud
+  sans toucher à KAI ni à Home. Config `KEVINOS_DRIVE_ROOT`.
+- **Favoris & étiquettes possédés par KevinOS** (`DriveMetadataStore`, fichier
+  JSON) — ils **suivent le fichier** au renommage/déplacement.
+- **`DocumentPreview`** (`@kevinos/ui`) : l'aperçu **officiel**. On **reste dans
+  KevinOS** — PDF, images, texte, markdown, CSV, JSON, code s'affichent
+  directement ; Word/Excel/PowerPoint retombent sur un téléchargement. Le contenu
+  est **proxifié** par le Core (`/api/v1/drive/:id/raw`, `Range`) — aucune URL du
+  moteur.
+- **Surface KOS Drive dans Home** : recherche, récents, favoris, volumineux,
+  navigation, aperçu inline, **renommer / déplacer / favori / télécharger /
+  corbeille** — sans jamais quitter l'expérience. Repli mock **mutable** et
+  honnête (badge « démo ») en Preview.
+- **Design Lab** : story `DocumentPreview`. **Tests** : Core **77** (compétence
+  Drive : 8 ; `LocalFsDriveAdapter` : 11 — recherche contenu, preview, renommer,
+  déplacer, corbeille, Range, anti-traversée) ; `@kevinos/ui` `DocumentPreview`.
+  Vérifié en réel via `curl` (KAI → intents ; recherche par contenu ; aperçu ;
+  renommer/déplacer **persistent sur disque** ; aucun chemin disque ne fuit).
+
 ### Ajouté — ▶️ Le lecteur officiel KevinOS (MediaPlayer), la reprise possédée, KAI télécommande
 
 Jellyfin **disparaît jusqu'à la lecture**. Une seule application : KevinOS.

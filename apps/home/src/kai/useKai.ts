@@ -1,7 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import type { KaiAction } from '@kevinos/shared';
 import { askKai } from './client.js';
-import { detectPhotoIntent, detectMediaIntent, detectPlayerCommand } from './intent.js';
+import {
+  detectPhotoIntent,
+  detectMediaIntent,
+  detectDriveIntent,
+  detectPlayerCommand,
+} from './intent.js';
 import { simulatedReply, type Message } from './simulate.js';
 
 /** Durée minimale de « réflexion » — garde un rythme naturel même en repli. */
@@ -72,6 +77,25 @@ async function respond(text: string, turn: number): Promise<Reply> {
     return {
       text: label,
       actions: [{ type: 'open_skill', skill: 'media', label: 'KOS Media', mediaQuery: media }],
+    };
+  }
+  const drive = detectDriveIntent(text);
+  if (drive) {
+    const label =
+      drive.kind === 'find'
+        ? `Je retrouve ton document : « ${drive.text} ».`
+        : drive.kind === 'recent'
+          ? 'Voici tes documents récents.'
+          : drive.kind === 'largest'
+            ? 'Voici tes fichiers les plus volumineux.'
+            : drive.kind === 'favorites'
+              ? 'Voici tes documents favoris.'
+              : drive.kind === 'search'
+                ? `Je cherche : « ${drive.text ?? drive.docKind ?? ''} ».`
+                : 'Voici tes documents.';
+    return {
+      text: label,
+      actions: [{ type: 'open_skill', skill: 'drive', label: 'KOS Drive', driveQuery: drive }],
     };
   }
   return { text: simulatedReply(text, turn) };

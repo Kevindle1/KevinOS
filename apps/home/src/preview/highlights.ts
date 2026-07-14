@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Le lecteur officiel KevinOS',
+  label: 'KOS Drive — retrouve, n’explore plus',
   items: [
-    'Dis « continue mon film » → fiche immersive, puis le lecteur KevinOS démarre',
-    'Le lecteur officiel : lecture, sous-titres, vitesse, plein écran, PiP, clavier',
-    'La reprise appartient à KevinOS — tu reprends exactement où tu t’étais arrêté',
-    'KAI télécommande : « recule de 30 secondes », « sous-titres français », « ferme »',
-    'Aucune trace du moteur : jamais d’onglet, jamais d’interface Jellyfin',
+    'Dis « ouvre mon bail » → KAI retrouve le document et l’ouvre dans KevinOS',
+    '« Les documents contenant Crédit Agricole » → recherche par contenu',
+    'Aperçu direct : PDF, images, texte, markdown, CSV — sans quitter KevinOS',
+    'Renommer, déplacer, télécharger, mettre en favori — sans explorateur système',
+    'Le moteur reste caché : ni Nextcloud, ni système de fichiers visibles',
   ],
 };

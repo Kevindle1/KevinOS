@@ -1,0 +1,30 @@
+# KevinOS — overlay 📁 KOS Drive (documents). Moteur V1 : **système de fichiers
+# local** (caché derrière le contrat `DriveLibrary`, remplaçable par Nextcloud).
+# **Même patron que les overlays KOS Vision / KOS Media**, mais sans serveur
+# externe : le « moteur » est simplement un dossier monté dans le Core.
+#
+# À combiner avec le socle :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.kos-drive.yml --env-file .env up -d
+#
+# L'utilisateur passe par l'API v1 du Core (/api/v1/drive) ; il ne voit jamais le
+# chemin disque (identifiants opaques). Remplacer le disque par Nextcloud =
+# remplacer l'adaptateur + cet overlay, sans toucher à KAI ni à Home.
+
+name: kevinos
+
+volumes:
+  # Favoris / étiquettes / corbeille **possédés par KevinOS** (hors moteur).
+  kos_drive_metadata:
+
+services:
+  # Augmente le Core : il sait où trouver la racine documentaire.
+  core:
+    environment:
+      # Racine documentaire (le « moteur ». À adapter au disque de Kevin).
+      KEVINOS_DRIVE_ROOT: /data/kos-drive
+      KEVINOS_DATA_DIR: /data/kevinos
+    volumes:
+      # Les documents de Kevin (à adapter). Lecture-écriture : renommer/déplacer.
+      # - /chemin/vers/mes-documents:/data/kos-drive
+      - kos_drive_metadata:/data/kevinos

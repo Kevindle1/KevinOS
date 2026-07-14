@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import {
   loadConfig,
   createLogger,
@@ -12,12 +12,15 @@ import { HealthService } from './application/health-service.js';
 import { ModuleRegistry } from './application/module-registry.js';
 import { PhotoService } from './application/photo-service.js';
 import { MediaService } from './application/media-service.js';
+import { DriveService } from './application/drive-service.js';
 import { KaiOrchestrator } from './application/kai-orchestrator.js';
 import type { KaiModuleInfo } from './domain/kai/capabilities.js';
 import type { ReadinessCheck } from './domain/readiness.js';
 import { ImmichPhotoAdapter } from './infrastructure/immich/immich-photo-adapter.js';
 import { JellyfinMediaAdapter } from './infrastructure/jellyfin/jellyfin-media-adapter.js';
 import { FilePlaybackStore } from './infrastructure/playback/file-playback-store.js';
+import { LocalFsDriveAdapter } from './infrastructure/drive/local-fs-drive-adapter.js';
+import { FileDriveMetadataStore } from './infrastructure/drive/file-drive-metadata-store.js';
 import { createAIProvider } from './infrastructure/ai/provider-factory.js';
 import { createApp, type AppDependencies } from './interfaces/http/app.js';
 
@@ -150,6 +153,56 @@ function buildMedia(
 }
 
 /**
+ * Assemble KOS Drive (documents) si une racine documentaire existe. **Même
+ * patron que `buildMedia`** : le moteur V1 est le **système de fichiers local**
+ * (`config.driveRoot`), caché derrière `DriveLibrary`. Sans dossier accessible,
+ * le module reste désactivé — le reste de KevinOS fonctionne (mode dégradé). Les
+ * favoris/étiquettes sont **possédés par KevinOS** (fichier JSON, hors moteur).
+ */
+function buildDrive(
+  config: KevinConfig,
+  registry: ModuleRegistry,
+  logger: Logger,
+): { deps: NonNullable<AppDependencies['drive']>; readiness: ReadinessCheck } | null {
+  // Le « moteur » est un dossier accessible. Absent → module désactivé (mode
+  // dégradé), comme KOS Media sans clé d'API.
+  try {
+    if (!statSync(config.driveRoot).isDirectory()) throw new Error('pas un dossier');
+  } catch {
+    logger.warn(
+      { driveRoot: config.driveRoot },
+      'KOS Drive désactivé : racine documentaire inaccessible (KEVINOS_DRIVE_ROOT)',
+    );
+    return null;
+  }
+
+  const dataDir = process.env.KEVINOS_DATA_DIR ?? './data';
+  const metadata = new FileDriveMetadataStore(`${dataDir}/drive-metadata.json`);
+  const adapter = new LocalFsDriveAdapter({ root: config.driveRoot, metadata });
+
+  const manifest = moduleManifestSchema.parse({
+    id: 'kos-drive',
+    name: 'KOS Drive',
+    version: '1.0.0',
+    implementation: 'local-fs',
+    capabilities: ['files'],
+    internalUrl: 'file://local',
+    healthPath: '/',
+    enabled: true,
+  });
+  const result = registry.register(manifest);
+  if (!result.ok) {
+    logger.error({ reasons: result.reasons }, 'KOS Drive refusé par le registre');
+    return null;
+  }
+
+  return {
+    deps: { service: new DriveService(adapter), content: adapter },
+    readiness: { name: 'kos-drive', check: () => adapter.isAvailable() },
+  };
+}
+
+/**
  * Point d'entrée / racine de composition du Core.
  * Fail-fast : une configuration invalide arrête le processus immédiatement.
  */
@@ -161,11 +214,16 @@ function main(): void {
   const moduleRegistry = new ModuleRegistry();
   const photos = buildPhotos(config, moduleRegistry, logger);
   const media = buildMedia(config, moduleRegistry, logger);
+  const drive = buildDrive(config, moduleRegistry, logger);
 
   const healthService = new HealthService({
     serviceName: config.serviceName,
     version: KEVINOS_VERSION,
-    checks: [...(photos ? [photos.readiness] : []), ...(media ? [media.readiness] : [])],
+    checks: [
+      ...(photos ? [photos.readiness] : []),
+      ...(media ? [media.readiness] : []),
+      ...(drive ? [drive.readiness] : []),
+    ],
   });
 
   // KAI — cerveau et point d'entrée unique. Fournisseur IA interchangeable
@@ -187,6 +245,7 @@ function main(): void {
     kai,
     ...(photos ? { photos: photos.deps } : {}),
     ...(media ? { media: media.deps } : {}),
+    ...(drive ? { drive: drive.deps } : {}),
   });
   const server = createServer(app);
 

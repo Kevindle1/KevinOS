@@ -1,9 +1,11 @@
 import {
   parsePhotoIntent,
   parseMediaIntent,
+  parseDriveIntent,
   parsePlayerCommand,
   type KaiReply,
   type KaiControlPlayerAction,
+  type KaiDriveQuery,
 } from '@kevinos/shared';
 import type { KaiContext } from './capabilities.js';
 
@@ -108,7 +110,43 @@ const mediaSkill: Skill = {
   },
 };
 
-export const SKILLS: Skill[] = [playerSkill, photosSkill, mediaSkill];
+/** Formule la réponse de KAI pour une intention documentaire. */
+function ackDrive(query: KaiDriveQuery): string {
+  switch (query.kind) {
+    case 'find':
+      return `Je retrouve ton document : « ${query.text} ».`;
+    case 'search':
+      return query.text
+        ? `Je cherche les documents : « ${query.text} ».`
+        : query.docKind
+          ? `Voici tes documents ${query.docKind.toUpperCase()}.`
+          : 'Voici tes documents.';
+    case 'recent':
+      return 'Voici tes documents récents.';
+    case 'largest':
+      return 'Voici tes fichiers les plus volumineux.';
+    case 'favorites':
+      return 'Voici tes documents favoris.';
+    default:
+      return 'Voici tes documents.';
+  }
+}
+
+/** 📁 Drive → KOS Drive. Même patron que `mediaSkill` (preuve de modularité). */
+const driveSkill: Skill = {
+  id: 'drive',
+  handle(message) {
+    const query = parseDriveIntent(message);
+    if (!query) return null;
+    return {
+      text: ackDrive(query),
+      source: 'capability',
+      actions: [{ type: 'open_skill', skill: 'drive', label: 'KOS Drive', driveQuery: query }],
+    };
+  },
+};
+
+export const SKILLS: Skill[] = [playerSkill, photosSkill, mediaSkill, driveSkill];
 
 /** Première compétence qui répond, sinon `null` (→ capacités puis modèle). */
 export function runSkills(message: string, ctx: KaiContext): KaiReply | null {

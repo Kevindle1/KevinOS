@@ -28,6 +28,7 @@ import {
   InsightCard,
   TypingText,
   MediaPlayer,
+  DocumentPreview,
 } from '@kevinos/ui';
 
 export interface Story {
@@ -541,6 +542,33 @@ export const stories: Story[] = [
             },
           ]}
           className="w-full"
+        />
+      </div>
+    ),
+  },
+
+  {
+    id: 'documentpreview',
+    name: 'DocumentPreview',
+    group: 'KOS Drive',
+    render: () => (
+      <div className="grid max-w-4xl gap-4 sm:grid-cols-2">
+        <DocumentPreview
+          name="notes-kevinos.md"
+          kind="markdown"
+          mode="text"
+          text={
+            '# Notes KevinOS\n\nKevinOS doit devenir mon système d’exploitation personnel.\nChaque compétence doit être réellement utilisable au quotidien.'
+          }
+          onDownload={() => {}}
+          className="h-72"
+        />
+        <DocumentPreview
+          name="budget-2026.xlsx"
+          kind="excel"
+          mode="download"
+          onDownload={() => {}}
+          className="h-72"
         />
       </div>
     ),

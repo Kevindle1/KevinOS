@@ -75,6 +75,54 @@ describe('compétence Media (🎬 → KOS Media)', () => {
   });
 });
 
+describe('compétence Drive (📁 → KOS Drive)', () => {
+  it('« ouvre mon bail » → retrouve le document (find)', () => {
+    expect(action('Ouvre mon bail')).toEqual({
+      type: 'open_skill',
+      skill: 'drive',
+      label: 'KOS Drive',
+      driveQuery: { kind: 'find', text: 'bail' },
+    });
+  });
+
+  it('« retrouve ma facture EDF » → find « facture edf »', () => {
+    const q = action('Retrouve ma facture EDF')?.driveQuery;
+    expect(q?.kind).toBe('find');
+    expect(q?.text).toMatch(/facture edf/i);
+  });
+
+  it('« recherche les documents contenant Crédit Agricole » → search', () => {
+    const q = action('Recherche les documents contenant Crédit Agricole')?.driveQuery;
+    expect(q?.kind).toBe('search');
+    expect(q?.text).toMatch(/cr[ée]dit agricole/i);
+  });
+
+  it('« montre-moi tous les PDF de juillet » → search + docKind pdf', () => {
+    const q = action('Montre-moi tous les PDF de juillet')?.driveQuery;
+    expect(q?.kind).toBe('search');
+    expect(q?.docKind).toBe('pdf');
+    expect(q?.text).toMatch(/juillet/i);
+  });
+
+  it('« ouvre mon dernier document » → recent', () => {
+    expect(action('Ouvre mon dernier document')?.driveQuery).toEqual({ kind: 'recent' });
+  });
+
+  it('« quels sont les fichiers les plus volumineux ? » → largest', () => {
+    expect(action('Quels sont les fichiers les plus volumineux ?')?.driveQuery).toEqual({
+      kind: 'largest',
+    });
+  });
+
+  it('« montre-moi mes documents » → bibliothèque', () => {
+    expect(action('Montre-moi mes documents')?.driveQuery).toEqual({ kind: 'library' });
+  });
+
+  it('ce qui ne parle pas de documents → null (délégué)', () => {
+    expect(runSkills('Quelle heure est-il ?', ctx)).toBeNull();
+  });
+});
+
 describe('télécommande KAI (contrôle du lecteur)', () => {
   it('« mets en pause » → pause', () => {
     expect(action('mets en pause')).toEqual({ type: 'control_player', command: 'pause' });

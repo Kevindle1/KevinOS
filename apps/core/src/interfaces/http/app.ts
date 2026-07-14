@@ -8,11 +8,14 @@ import type { PhotoThumbnails } from '../../domain/photo-thumbnails.js';
 import type { MediaService } from '../../application/media-service.js';
 import type { MediaImages } from '../../domain/media-images.js';
 import type { MediaStreaming } from '../../domain/media-streaming.js';
+import type { DriveService } from '../../application/drive-service.js';
+import type { DriveContent } from '../../domain/drive-content.js';
 import type { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
 import { photosRoutes } from './routes/photos.routes.js';
 import { mediaRoutes } from './routes/media.routes.js';
+import { driveRoutes } from './routes/drive.routes.js';
 import { kaiRoutes } from './routes/kai.routes.js';
 
 export interface AppDependencies {
@@ -25,6 +28,8 @@ export interface AppDependencies {
   photos?: { service: PhotoService; thumbnails: PhotoThumbnails };
   /** KOS Media — présent quand le module média est activé. */
   media?: { service: MediaService; images: MediaImages; streaming: MediaStreaming };
+  /** KOS Drive — présent quand le module documents est activé. */
+  drive?: { service: DriveService; content: DriveContent };
 }
 
 /**
@@ -38,6 +43,7 @@ export function createApp({
   kai,
   photos,
   media,
+  drive,
 }: AppDependencies): Express {
   const app = express();
 
@@ -62,6 +68,11 @@ export function createApp({
   // KOS Media (films & séries) si activé.
   if (media) {
     app.use('/api/v1/media', mediaRoutes(media.service, media.images, media.streaming));
+  }
+
+  // KOS Drive (documents) si activé.
+  if (drive) {
+    app.use('/api/v1/drive', driveRoutes(drive.service, drive.content));
   }
 
   // Racine : identité du service (utile au diagnostic).

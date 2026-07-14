@@ -1,4 +1,10 @@
-import type { KaiPhotoQuery, KaiMediaQuery, KaiControlPlayerAction } from '@kevinos/shared';
+import type {
+  KaiPhotoQuery,
+  KaiMediaQuery,
+  KaiDriveQuery,
+  KaiControlPlayerAction,
+  DocKind,
+} from '@kevinos/shared';
 
 /**
  * Détecteur d'intention **photo** côté Home — **uniquement** pour le repli
@@ -42,6 +48,69 @@ export function detectMediaIntent(message: string): KaiMediaQuery | null {
     .replace(/\s+/g, ' ')
     .trim();
   return text.length >= 2 ? { kind: 'search', text } : { kind: 'library' };
+}
+
+const DRIVE_TRIGGER =
+  /\b(document|documents|fichier|fichiers|dossier|dossiers|drive|pdf|word|excel|powerpoint|tableur|bail|facture|factures|contrat|contrats|cv|relev[ée]|attestation|quittance|devis|bulletin|fiche de paie|imp[ôo]ts?|assurance|justificatif|mandat|avis)\b/i;
+const DOC_KIND_WORDS: Array<[RegExp, DocKind]> = [
+  [/\bpdf\b/i, 'pdf'],
+  [/\b(word|docx?|traitement de texte)\b/i, 'word'],
+  [/\b(excel|tableur|xlsx?|feuille de calcul)\b/i, 'excel'],
+  [/\b(powerpoint|pptx?|présentation|presentation|diaporama)\b/i, 'powerpoint'],
+  [/\b(image|images|scan)\b/i, 'image'],
+  [/\bcsv\b/i, 'csv'],
+];
+
+/** Miroir hors-ligne de `parseDriveIntent` (Core = source de vérité). */
+export function detectDriveIntent(message: string): KaiDriveQuery | null {
+  if (!DRIVE_TRIGGER.test(message)) return null;
+  const m = message.toLowerCase();
+  const docKind = DOC_KIND_WORDS.find(([re]) => re.test(message))?.[1];
+
+  if (/\b(volumineux|volumineuses|gros|grosses|lourds?|lourdes?|plus gros|plus grand)\b/.test(m))
+    return docKind ? { kind: 'largest', docKind } : { kind: 'largest' };
+  if (/\bfavoris?\b|favories?/.test(m)) return { kind: 'favorites' };
+  if (
+    /\b(dernier|derni[èe]re|derniers|derni[èe]res|plus r[ée]cent(?:e|s|es)?)\b/.test(m) &&
+    !/contenant|concernant|parlent|parle/.test(m)
+  )
+    return { kind: 'recent' };
+
+  const text = message
+    .replace(
+      /montre(?:-moi)?|affiche|recherche|cherche|retrouve|trouve|ouvre|donne(?:-moi)?|o[uù] est|o[uù] sont|quels?|quelles?|liste/gi,
+      ' ',
+    )
+    .replace(
+      /contenant|concernant|qui parlent de|qui parle de|parlent de|parle de|au sujet de/gi,
+      ' ',
+    )
+    .replace(/\b(le|la|les|un|une|des|du|de|mon|ma|mes|tous|toutes|ce|cette)\b/gi, ' ')
+    .replace(
+      /\b(document|documents|fichier|fichiers|dossier|dossiers|drive|pdf|concernent|concerne)\b/gi,
+      ' ',
+    )
+    .replace(/[?!.]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const wantsList =
+    /\b(recherche|cherche|liste|tous|toutes|quels|quelles)\b/.test(m) ||
+    /contenant|concernant|parlent|parle/.test(m) ||
+    /\bdocuments\b|\bfichiers\b/.test(m);
+
+  if (wantsList) {
+    if (!text && !docKind) return { kind: 'library' };
+    const q: KaiDriveQuery = { kind: 'search' };
+    if (text) q.text = text;
+    if (docKind) q.docKind = docKind;
+    return q;
+  }
+  if (!text && !docKind) return { kind: 'library' };
+  const found: KaiDriveQuery = { kind: 'find' };
+  if (text) found.text = text;
+  if (docKind) found.docKind = docKind;
+  return found;
 }
 
 const NUMBER_WORDS: Record<string, number> = {

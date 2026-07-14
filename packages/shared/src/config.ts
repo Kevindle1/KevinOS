@@ -46,6 +46,13 @@ export const configSchema = z.object({
    * jamais exposé à l'utilisateur ni au Dashboard.
    */
   jellyfinBaseUrl: z.string().url().default('http://kos-media-server:8096'),
+
+  /**
+   * Racine documentaire du moteur KOS Drive (V1 : système de fichiers local,
+   * caché derrière `DriveLibrary`). Détail d'implémentation : ni l'utilisateur
+   * ni KAI ne connaissent ce chemin. Demain, un moteur Nextcloud le remplace.
+   */
+  driveRoot: z.string().min(1).default('/data/kos-drive'),
 });
 
 /** Configuration validée et typée de KevinOS. */
@@ -70,5 +77,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): KevinConfig {
     aiModel: env.KEVINOS_AI_MODEL,
     immichBaseUrl: env.KEVINOS_IMMICH_BASE_URL,
     jellyfinBaseUrl: env.KEVINOS_JELLYFIN_BASE_URL,
+    driveRoot: env.KEVINOS_DRIVE_ROOT,
   });
 }
