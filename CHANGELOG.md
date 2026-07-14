@@ -5,6 +5,43 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 🏠 Phase 5 : KOS Home, la maison orchestrée par KAI (Ambiances)
+
+**Quatrième compétence** réelle — le dernier des quatre piliers du quotidien
+(Photos, Médias, Documents, **Maison**). Sur le patron Vision/Media/Drive,
+**sans toucher au cœur de KAI**. Pas un clone de Home Assistant : on **parle à
+KAI**, KAI orchestre la maison. Voir
+[ADR-0023](docs/adr/ADR-0023-kos-home-domotique.md).
+
+- **Contrat `HomeProvider`** (`@kevinos/shared`) : lumières, prises, thermostats,
+  températures, **caméras**, portes/portail, volets, capteurs, **énergie**,
+  **présence**, **Ambiances** (scènes). DTO agnostiques du moteur.
+- **Compétence Home** (Core) — deux formes d'intention (`parseHomeIntent`) :
+  - **Pilotage** (`control_home`, comme la télécommande du lecteur) : « allume la
+    lumière du salon », « éteins toutes les lumières », « ferme les volets »,
+    « ouvre le portail », « active le mode cinéma ».
+  - **Question** (`open_skill` + `homeQuery`) : « quelle est la température du
+    salon ? », « qui est à la maison ? », « montre-moi la caméra du garage »,
+    « ma consommation », « ai-je laissé une lumière allumée ? ».
+- **Les Ambiances** — la notion clé : 🎬 Cinéma · 📖 Lecture · 🌙 Bonne nuit ·
+  ☀️ Bonjour · 🏡 Je rentre · 🚗 Je pars · 💻 Travail · 🍽 Dîner. Une intention
+  pilote plusieurs appareils d'un coup. **Le mode cinéma baisse les volets,
+  tamise les lumières, allume le téléviseur — puis ouvre KOS Media** (première
+  **collaboration inter-compétences**).
+- **Moteur V1 = maison simulée stateful** (`InMemoryHomeAdapter`), **toujours
+  active**, sans dépendance : allumer une lumière change l'état, l'interroger le
+  reflète. Remplaçable par **Home Assistant / Frigate** sans toucher à KAI ni à
+  Home. Instantanés caméra générés/proxifiés par le **Core** (`/api/v1/home/*`).
+- **Surface KOS Home dans Home** : statut (présence, énergie), **Ambiances**,
+  pièces & appareils (interrupteurs, volets, thermostats), caméras + événements,
+  consommation par pièce, présence. Repli mock **stateful** et honnête (badge
+  « démo ») en Preview.
+- **Design Lab** : story « Ambiances (KOS Home) ». **Tests** : Core **97**
+  (compétence Home : 11 ; `InMemoryHomeAdapter` : 9 — pilotage, ambiance cinéma →
+  KOS Media, climat, énergie, présence, événements). Vérifié en réel via `curl` :
+  « active le mode cinéma » pilote les appareils **et** enchaîne « continue mon
+  film » ; aucun protocole domotique n'apparaît.
+
 ### Ajouté — 📁 Phase 4 : KOS Drive, une expérience documentaire pilotée par KAI
 
 **Troisième compétence** réelle, sur le patron Vision/Media — **sans toucher au

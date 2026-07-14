@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'KOS Drive — retrouve, n’explore plus',
+  label: 'KOS Home — la maison orchestrée par KAI',
   items: [
-    'Dis « ouvre mon bail » → KAI retrouve le document et l’ouvre dans KevinOS',
-    '« Les documents contenant Crédit Agricole » → recherche par contenu',
-    'Aperçu direct : PDF, images, texte, markdown, CSV — sans quitter KevinOS',
-    'Renommer, déplacer, télécharger, mettre en favori — sans explorateur système',
-    'Le moteur reste caché : ni Nextcloud, ni système de fichiers visibles',
+    'Dis « active le mode cinéma » → volets baissés, lumières tamisées, TV allumée',
+    '…puis « continue mon film » → KOS Media reprend (les compétences collaborent)',
+    '« Allume la lumière du salon », « ferme les volets », « ouvre le portail »',
+    '« Quelle est la température ? », « qui est à la maison ? », « ma consommation »',
+    'Ambiances, caméras, énergie, présence — sans tableau de bord technique',
   ],
 };

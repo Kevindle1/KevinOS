@@ -573,4 +573,48 @@ export const stories: Story[] = [
       </div>
     ),
   },
+
+  {
+    id: 'ambiances',
+    name: 'Ambiances (KOS Home)',
+    group: 'KOS Home',
+    render: () => (
+      <div className="max-w-xl space-y-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            ['🎬', 'Cinéma'],
+            ['📖', 'Lecture'],
+            ['🌙', 'Bonne nuit'],
+            ['☀️', 'Bonjour'],
+            ['🏡', 'Je rentre'],
+            ['🚗', 'Je pars'],
+            ['💻', 'Travail'],
+            ['🍽', 'Dîner'],
+          ].map(([icon, name]) => (
+            <button
+              key={name}
+              type="button"
+              className="flex flex-col items-start gap-1 rounded-xl border border-border bg-surface p-3 text-left transition hover:border-accent hover:bg-hover"
+            >
+              <span className="text-2xl" aria-hidden="true">
+                {icon}
+              </span>
+              <span className="text-sm font-medium text-text">{name}</span>
+            </button>
+          ))}
+        </div>
+        <Card className="p-3">
+          <div className="pb-1 text-sm font-medium text-text">Salon</div>
+          <div className="flex items-center gap-3 py-2">
+            <span className="flex-1 text-sm text-text">Plafond salon</span>
+            <Switch defaultChecked ariaLabel="Plafond salon" />
+          </div>
+          <div className="flex items-center gap-3 py-2">
+            <span className="flex-1 text-sm text-text">Volet salon</span>
+            <span className="text-xs text-text-muted">100 %</span>
+          </div>
+        </Card>
+      </div>
+    ),
+  },
 ];

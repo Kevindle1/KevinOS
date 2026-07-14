@@ -3,6 +3,7 @@ import type {
   KaiPhotoQuery,
   KaiMediaQuery,
   KaiDriveQuery,
+  KaiHomeQuery,
   KaiControlPlayerAction,
 } from '@kevinos/shared';
 import type { MediaPlayerHandle } from '@kevinos/ui';
@@ -14,6 +15,8 @@ import { PhotosSurface } from '../photos/PhotosSurface.js';
 import { MediaSurface } from '../media/MediaSurface.js';
 import { PlayerOverlay } from '../media/PlayerOverlay.js';
 import { DriveSurface } from '../drive/DriveSurface.js';
+import { HomeSurface } from '../home/HomeSurface.js';
+import { executeHome } from '../home/homeClient.js';
 import type { PlayTarget } from '../media/MediaDetail.js';
 
 /** Applique une commande de KAI au lecteur (best-effort selon la commande). */
@@ -65,6 +68,7 @@ export function Home() {
   const [photos, setPhotos] = useState<KaiPhotoQuery | null>(null);
   const [media, setMedia] = useState<KaiMediaQuery | null>(null);
   const [drive, setDrive] = useState<KaiDriveQuery | null>(null);
+  const [home, setHome] = useState<KaiHomeQuery | null>(null);
   const [playing, setPlaying] = useState<PlayTarget | null>(null);
   const playerRef = useRef<MediaPlayerHandle | null>(null);
 
@@ -75,10 +79,19 @@ export function Home() {
         else if (playerRef.current) applyPlayerCommand(playerRef.current, action);
         return;
       }
+      if (action.type === 'control_home') {
+        // KAI pilote la maison. Le mode cinéma **ouvre KOS Media** (collaboration).
+        void executeHome(action).then((eff) => {
+          if (eff.opens === 'media') setMedia({ kind: 'library' });
+          else setHome({ kind: 'overview' });
+        });
+        return;
+      }
       if (action.type === 'open_skill') {
         if (action.skill === 'photos') setPhotos(action.photoQuery ?? { kind: 'timeline' });
         else if (action.skill === 'media') setMedia(action.mediaQuery ?? { kind: 'library' });
         else if (action.skill === 'drive') setDrive(action.driveQuery ?? { kind: 'library' });
+        else if (action.skill === 'home') setHome(action.homeQuery ?? { kind: 'overview' });
       }
     },
   });
@@ -94,6 +107,12 @@ export function Home() {
     />
   ) : drive ? (
     <DriveSurface query={drive} onClose={() => setDrive(null)} />
+  ) : home ? (
+    <HomeSurface
+      query={home}
+      onClose={() => setHome(null)}
+      onOpenMedia={() => setMedia({ kind: 'library' })}
+    />
   ) : messages.length === 0 ? (
     <LivingHome state={state} onSend={send} busy={thinking} />
   ) : (

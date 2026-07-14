@@ -217,15 +217,29 @@ l'expérience, sans explorateur système. Moteur (système de fichiers, Nextclou
 
 ---
 
-## Vague 8 — KOS Home (domotique) ⬜
+## Vague 8 — KOS Home (domotique) 🟡 (compétence maison réelle livrée)
 
-| Composant      | Statut | Description                    | Modules         |
-| -------------- | :----: | ------------------------------ | --------------- |
-| DeviceCard     |   ⬜   | Appareil (état, action)        | Home            |
-| CameraCard     |   ⬜   | Flux caméra                    | Home            |
-| RoomCard       |   ⬜   | Pièce (regroupe des appareils) | Home            |
-| AutomationCard |   ⬜   | Scénario d'automatisation      | Home            |
-| EnergyCard     |   ⬜   | Consommation d'énergie         | Home, Dashboard |
+> **Phase 5 (2026-07-14)** : quatrième **compétence** réelle — le dernier des
+> quatre piliers du quotidien. Sur le patron Vision/Media/Drive (contrat
+> `HomeProvider`, moteur **maison simulée** caché), **sans toucher au cœur de
+> KAI**. Pas un clone de Home Assistant : on **parle à KAI**. **Première
+> collaboration inter-compétences** (mode cinéma → KOS Media). Voir
+> [ADR-0023](docs/adr/ADR-0023-kos-home-domotique.md). Surface assemblée **sans
+> nouveau composant** `@kevinos/ui` (Switch, Card, Badge…).
+
+| Composant     | Statut | Description                                               | Modules         |
+| ------------- | :----: | --------------------------------------------------------- | --------------- |
+| DeviceControl |   🟡   | Appareil + commande adaptée (assemblé dans `HomeSurface`) | Home            |
+| AmbianceTile  |   🟡   | Ambiance / scène (assemblée dans `HomeSurface`)           | Home            |
+| CameraCard    |   ⬜   | Flux / instantané caméra                                  | Home            |
+| RoomCard      |   ⬜   | Pièce (regroupe des appareils)                            | Home            |
+| EnergyCard    |   ⬜   | Consommation d'énergie                                    | Home, Dashboard |
+
+**Résultat concret** : **KOS Home** — « active le mode cinéma » → volets baissés,
+lumières tamisées, téléviseur allumé → **KOS Media s'ouvre** → « continue mon
+film » reprend ; « allume la lumière du salon », « quelle est la température ? »,
+« qui est à la maison ? », caméras, énergie, présence — **sans tableau de bord
+technique**. Moteur (Home Assistant, Frigate) **invisible** ; toujours actif.
 
 ---
 

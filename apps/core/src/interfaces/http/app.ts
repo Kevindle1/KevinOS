@@ -10,12 +10,14 @@ import type { MediaImages } from '../../domain/media-images.js';
 import type { MediaStreaming } from '../../domain/media-streaming.js';
 import type { DriveService } from '../../application/drive-service.js';
 import type { DriveContent } from '../../domain/drive-content.js';
+import type { HomeService } from '../../application/home-service.js';
 import type { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
 import { photosRoutes } from './routes/photos.routes.js';
 import { mediaRoutes } from './routes/media.routes.js';
 import { driveRoutes } from './routes/drive.routes.js';
+import { homeRoutes } from './routes/home.routes.js';
 import { kaiRoutes } from './routes/kai.routes.js';
 
 export interface AppDependencies {
@@ -30,6 +32,8 @@ export interface AppDependencies {
   media?: { service: MediaService; images: MediaImages; streaming: MediaStreaming };
   /** KOS Drive — présent quand le module documents est activé. */
   drive?: { service: DriveService; content: DriveContent };
+  /** KOS Home — présent quand le module maison est activé. */
+  home?: { service: HomeService };
 }
 
 /**
@@ -44,6 +48,7 @@ export function createApp({
   photos,
   media,
   drive,
+  home,
 }: AppDependencies): Express {
   const app = express();
 
@@ -73,6 +78,11 @@ export function createApp({
   // KOS Drive (documents) si activé.
   if (drive) {
     app.use('/api/v1/drive', driveRoutes(drive.service, drive.content));
+  }
+
+  // KOS Home (maison) si activé.
+  if (home) {
+    app.use('/api/v1/home', homeRoutes(home.service));
   }
 
   // Racine : identité du service (utile au diagnostic).

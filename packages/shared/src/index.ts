@@ -6,4 +6,5 @@ export * from './ai-provider.js';
 export * from './photos.js';
 export * from './media.js';
 export * from './drive.js';
+export * from './home.js';
 export * from './kai.js';

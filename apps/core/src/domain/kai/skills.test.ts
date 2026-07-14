@@ -174,3 +174,84 @@ describe('télécommande KAI (contrôle du lecteur)', () => {
     });
   });
 });
+
+describe('compétence Home (🏠 → KOS Home)', () => {
+  it('« allume la lumière du salon » → control_home turn_on light Salon', () => {
+    expect(action('Allume la lumière du salon')).toEqual({
+      type: 'control_home',
+      command: 'turn_on',
+      deviceKind: 'light',
+      room: 'Salon',
+    });
+  });
+
+  it('« éteins toutes les lumières » → turn_off light (toute la maison)', () => {
+    expect(action('Éteins toutes les lumières')).toEqual({
+      type: 'control_home',
+      command: 'turn_off',
+      deviceKind: 'light',
+    });
+  });
+
+  it('« ferme les volets » → close cover', () => {
+    expect(action('Ferme les volets')).toEqual({
+      type: 'control_home',
+      command: 'close',
+      deviceKind: 'cover',
+    });
+  });
+
+  it('« ouvre le portail » → open door', () => {
+    expect(action('Ouvre le portail')).toEqual({
+      type: 'control_home',
+      command: 'open',
+      deviceKind: 'door',
+    });
+  });
+
+  it('« active le mode cinéma » → activate_scene cinema (pas une recherche de film)', () => {
+    expect(action('Active le mode cinéma')).toEqual({
+      type: 'control_home',
+      command: 'activate_scene',
+      scene: 'cinema',
+    });
+  });
+
+  it('« bonne nuit » → activate_scene bonne_nuit', () => {
+    expect(action('Bonne nuit')).toEqual({
+      type: 'control_home',
+      command: 'activate_scene',
+      scene: 'bonne_nuit',
+    });
+  });
+
+  it('« quelle est la température du salon ? » → ouvre home (climate)', () => {
+    expect(action('Quelle est la température du salon ?')).toEqual({
+      type: 'open_skill',
+      skill: 'home',
+      label: 'KOS Home',
+      homeQuery: { kind: 'climate', room: 'Salon' },
+    });
+  });
+
+  it('« qui est à la maison ? » → presence', () => {
+    expect(action('Qui est à la maison ?')?.homeQuery).toEqual({ kind: 'presence' });
+  });
+
+  it('« montre-moi la caméra du garage » → cameras (Garage)', () => {
+    expect(action('Montre-moi la caméra du garage')?.homeQuery).toEqual({
+      kind: 'cameras',
+      room: 'Garage',
+    });
+  });
+
+  it('« quelle est ma consommation aujourd’hui ? » → energy', () => {
+    expect(action('Quelle est ma consommation aujourd’hui ?')?.homeQuery).toEqual({
+      kind: 'energy',
+    });
+  });
+
+  it('« ai-je laissé une lumière allumée ? » → lights', () => {
+    expect(action('Ai-je laissé une lumière allumée ?')?.homeQuery).toEqual({ kind: 'lights' });
+  });
+});

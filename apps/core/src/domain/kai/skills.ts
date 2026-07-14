@@ -2,10 +2,13 @@ import {
   parsePhotoIntent,
   parseMediaIntent,
   parseDriveIntent,
+  parseHomeIntent,
   parsePlayerCommand,
   type KaiReply,
   type KaiControlPlayerAction,
   type KaiDriveQuery,
+  type KaiControlHomeAction,
+  type KaiHomeQuery,
 } from '@kevinos/shared';
 import type { KaiContext } from './capabilities.js';
 
@@ -146,7 +149,86 @@ const driveSkill: Skill = {
   },
 };
 
-export const SKILLS: Skill[] = [playerSkill, photosSkill, mediaSkill, driveSkill];
+const SCENE_NAMES: Record<string, string> = {
+  cinema: 'Cinéma',
+  lecture: 'Lecture',
+  bonne_nuit: 'Bonne nuit',
+  bonjour: 'Bonjour',
+  je_rentre: 'Je rentre',
+  je_pars: 'Je pars',
+  travail: 'Travail',
+  diner: 'Dîner',
+};
+
+/** Réponse de KAI pour un **pilotage** de la maison. */
+function ackHomeControl(a: KaiControlHomeAction): string {
+  const where = a.room ? ` du ${a.room.toLowerCase()}` : '';
+  const all = a.room ? '' : ' toutes';
+  switch (a.command) {
+    case 'activate_scene':
+      return `J'active l'ambiance ${SCENE_NAMES[a.scene ?? ''] ?? a.scene}.`;
+    case 'turn_on':
+      return `J'allume${all} les lumières${where}.`;
+    case 'turn_off':
+      return `J'éteins${all} les lumières${where}.`;
+    case 'set_brightness':
+      return `Je règle les lumières${where} à ${a.value ?? 50} %.`;
+    case 'open':
+      return a.deviceKind === 'door'
+        ? `J'ouvre${where || ' le portail'}.`
+        : `J'ouvre les volets${where}.`;
+    case 'close':
+      return a.deviceKind === 'door'
+        ? `Je ferme${where || ' le portail'}.`
+        : `Je ferme les volets${where}.`;
+    case 'set_temperature':
+      return a.value != null
+        ? `Je règle le chauffage${where} à ${a.value} °C.`
+        : `Je monte le chauffage${where}.`;
+    default:
+      return "C'est fait.";
+  }
+}
+
+/** Réponse de KAI pour une **question** sur la maison. */
+function ackHomeView(q: KaiHomeQuery): string {
+  const where = q.room ? ` du ${q.room.toLowerCase()}` : '';
+  switch (q.kind) {
+    case 'climate':
+      return `Voici la température${where}.`;
+    case 'presence':
+      return 'Voici qui est à la maison.';
+    case 'cameras':
+      return q.room ? `Voici la caméra${where}.` : 'Voici tes caméras.';
+    case 'energy':
+      return 'Voici ta consommation.';
+    case 'lights':
+      return 'Voici tes lumières.';
+    case 'room':
+      return `Voici ${q.room}.`;
+    default:
+      return 'Voici ta maison.';
+  }
+}
+
+/** 🏠 Home → KOS Home. Pilote la maison (control_home) ou l'affiche (open_skill). */
+const homeSkill: Skill = {
+  id: 'home',
+  handle(message) {
+    const r = parseHomeIntent(message);
+    if (!r) return null;
+    if ('control' in r) {
+      return { text: ackHomeControl(r.control), source: 'capability', actions: [r.control] };
+    }
+    return {
+      text: ackHomeView(r.view),
+      source: 'capability',
+      actions: [{ type: 'open_skill', skill: 'home', label: 'KOS Home', homeQuery: r.view }],
+    };
+  },
+};
+
+export const SKILLS: Skill[] = [playerSkill, photosSkill, mediaSkill, driveSkill, homeSkill];
 
 /** Première compétence qui répond, sinon `null` (→ capacités puis modèle). */
 export function runSkills(message: string, ctx: KaiContext): KaiReply | null {

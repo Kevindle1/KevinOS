@@ -1,0 +1,42 @@
+# KevinOS — overlay 🏠 KOS Home (maison). Moteur V1 : **maison simulée en
+# mémoire**, intégrée au Core (aucun serveur requis) — KOS Home est donc
+# **actif par défaut**, sans cet overlay.
+#
+# Cet overlay prépare le **moteur réel** (Home Assistant), qui remplacera la
+# maison simulée sans toucher à KAI ni à Home (il suffira d'un
+# `HomeAssistantAdapter implements HomeProvider`). Frigate viendra de même pour
+# la détection caméra. Tant que l'adaptateur réel n'est pas branché, ce fichier
+# sert de **référence de déploiement** (à activer plus tard).
+#
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.kos-home.yml --env-file .env up -d
+#
+# L'utilisateur passe toujours par l'API v1 du Core (/api/v1/home) ; il ne voit
+# jamais Home Assistant. Remplacer le moteur = remplacer l'adaptateur, pas KAI.
+
+name: kevinos
+
+networks:
+  apps:
+    external: true
+    name: kevinos_apps
+
+volumes:
+  kos_home_config:
+
+services:
+  # Augmentera le Core quand l'adaptateur Home Assistant sera branché.
+  # core:
+  #   environment:
+  #     KEVINOS_HOME_ENGINE: home-assistant
+  #     KEVINOS_HOME_ASSISTANT_BASE_URL: http://kos-home-server:8123
+  #     KEVINOS_HOME_ASSISTANT_TOKEN_FILE: /run/secrets/home_assistant_token
+
+  kos-home-server:
+    image: ghcr.io/home-assistant/home-assistant:2025.7
+    restart: unless-stopped
+    networks:
+      - apps # joint uniquement par le Core
+    volumes:
+      - kos_home_config:/config
+    # Jamais exposé directement : seul le Core l'appelle.

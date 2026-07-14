@@ -13,6 +13,7 @@ import { ModuleRegistry } from './application/module-registry.js';
 import { PhotoService } from './application/photo-service.js';
 import { MediaService } from './application/media-service.js';
 import { DriveService } from './application/drive-service.js';
+import { HomeService } from './application/home-service.js';
 import { KaiOrchestrator } from './application/kai-orchestrator.js';
 import type { KaiModuleInfo } from './domain/kai/capabilities.js';
 import type { ReadinessCheck } from './domain/readiness.js';
@@ -21,6 +22,7 @@ import { JellyfinMediaAdapter } from './infrastructure/jellyfin/jellyfin-media-a
 import { FilePlaybackStore } from './infrastructure/playback/file-playback-store.js';
 import { LocalFsDriveAdapter } from './infrastructure/drive/local-fs-drive-adapter.js';
 import { FileDriveMetadataStore } from './infrastructure/drive/file-drive-metadata-store.js';
+import { InMemoryHomeAdapter } from './infrastructure/home/in-memory-home-adapter.js';
 import { createAIProvider } from './infrastructure/ai/provider-factory.js';
 import { createApp, type AppDependencies } from './interfaces/http/app.js';
 
@@ -203,6 +205,41 @@ function buildDrive(
 }
 
 /**
+ * Assemble KOS Home (maison). **Toujours actif** : le moteur V1 est une **maison
+ * simulée en mémoire** (aucune configuration requise), remplaçable par Home
+ * Assistant / Frigate sans toucher à KAI ni à Home. C'est la même architecture
+ * que Vision/Media/Drive, avec un moteur intégré au lieu d'un serveur externe.
+ */
+function buildHome(
+  registry: ModuleRegistry,
+  logger: Logger,
+  startedAtIso: string,
+): { deps: NonNullable<AppDependencies['home']>; readiness: ReadinessCheck } | null {
+  const adapter = new InMemoryHomeAdapter(startedAtIso);
+
+  const manifest = moduleManifestSchema.parse({
+    id: 'kos-home',
+    name: 'KOS Home',
+    version: '1.0.0',
+    implementation: 'in-memory',
+    capabilities: ['home'],
+    internalUrl: 'memory://home',
+    healthPath: '/',
+    enabled: true,
+  });
+  const result = registry.register(manifest);
+  if (!result.ok) {
+    logger.error({ reasons: result.reasons }, 'KOS Home refusé par le registre');
+    return null;
+  }
+
+  return {
+    deps: { service: new HomeService(adapter) },
+    readiness: { name: 'kos-home', check: () => adapter.isAvailable() },
+  };
+}
+
+/**
  * Point d'entrée / racine de composition du Core.
  * Fail-fast : une configuration invalide arrête le processus immédiatement.
  */
@@ -215,6 +252,7 @@ function main(): void {
   const photos = buildPhotos(config, moduleRegistry, logger);
   const media = buildMedia(config, moduleRegistry, logger);
   const drive = buildDrive(config, moduleRegistry, logger);
+  const home = buildHome(moduleRegistry, logger, new Date(startedAt).toISOString());
 
   const healthService = new HealthService({
     serviceName: config.serviceName,
@@ -223,6 +261,7 @@ function main(): void {
       ...(photos ? [photos.readiness] : []),
       ...(media ? [media.readiness] : []),
       ...(drive ? [drive.readiness] : []),
+      ...(home ? [home.readiness] : []),
     ],
   });
 
@@ -246,6 +285,7 @@ function main(): void {
     ...(photos ? { photos: photos.deps } : {}),
     ...(media ? { media: media.deps } : {}),
     ...(drive ? { drive: drive.deps } : {}),
+    ...(home ? { home: home.deps } : {}),
   });
   const server = createServer(app);
 

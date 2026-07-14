@@ -30,6 +30,7 @@ Format : Contexte → Options → Décision → Conséquences.
 | [0020](ADR-0020-competences-skills.md)              | Les compétences (Skills), vocabulaire de KAI                                   | ✅ Acceptée |
 | [0021](ADR-0021-lecteur-officiel-mediaplayer.md)    | Lecteur officiel (MediaPlayer), reprise possédée par KevinOS, KAI télécommande | ✅ Acceptée |
 | [0022](ADR-0022-kos-drive-documentaire.md)          | KOS Drive : expérience documentaire pilotée par KAI (moteur caché)             | ✅ Acceptée |
+| [0023](ADR-0023-kos-home-domotique.md)              | KOS Home : la maison orchestrée par KAI (Ambiances, moteur caché)              | ✅ Acceptée |
 
 > Statuts possibles : Proposée · Acceptée · Remplacée · Dépréciée.
 > **Toutes les ADR ci-dessus ont été validées par le propriétaire.**
