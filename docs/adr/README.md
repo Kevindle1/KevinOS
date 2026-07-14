@@ -27,6 +27,7 @@ Format : Contexte → Options → Décision → Conséquences.
 | [0017](ADR-0017-principes-conception-composants.md) | Principes de conception + API formulaires + « Home »                     | ✅ Acceptée |
 | [0018](ADR-0018-ne-pas-reinventer.md)               | Ne pas réinventer un problème résolu (Floating UI positionnement)        | ✅ Acceptée |
 | [0019](ADR-0019-kai-orchestrateur.md)               | Orchestrateur KAI : capacités locales + fournisseurs IA interchangeables | ✅ Acceptée |
+| [0020](ADR-0020-competences-skills.md)              | Les compétences (Skills), vocabulaire de KAI                             | ✅ Acceptée |
 
 > Statuts possibles : Proposée · Acceptée · Remplacée · Dépréciée.
 > **Toutes les ADR ci-dessus ont été validées par le propriétaire.**

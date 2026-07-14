@@ -94,28 +94,29 @@ const system: Capability = {
   },
 };
 
-const openModule: Capability = {
-  id: 'open-module',
-  handle(message, ctx) {
-    if (
-      !/\b(ouvre|ouvrir|lance|lancer|montre|montrer|affiche|afficher|va dans|accède)\b/i.test(
-        message,
-      )
-    )
-      return null;
-    const lower = message.toLowerCase();
-    const target = ctx.modules.find((m) => m.keywords.some((k) => lower.includes(k)));
-    if (!target) return null;
-    return {
-      text: `J'ouvre ${target.name}.`,
-      source: 'capability',
-      actions: [{ type: 'open_module', moduleId: target.id, label: target.name }],
-    };
+/**
+ * Compétences pas encore disponibles : KAI est **honnête** (Règle 9) — il ne
+ * prétend jamais agir sur un module absent. (Les photos, elles, sont réelles :
+ * gérées par la compétence `photos` — voir `skills.ts`.)
+ */
+const comingSoon: Capability = {
+  id: 'coming-soon',
+  handle(message) {
+    if (/\b(film|films|série|series|média|media|regarder)\b/i.test(message))
+      return {
+        text: '🎬 KOS Media n’est pas encore disponible — j’y travaille.',
+        source: 'capability',
+      };
+    if (/\b(fichier|fichiers|document|documents|drive)\b/i.test(message))
+      return { text: '📁 KOS Drive arrive bientôt.', source: 'capability' };
+    if (/\b(maison|domotique|lumière|lumiere|caméra|camera|volet)\b/i.test(message))
+      return { text: '🏠 KOS Home arrive bientôt.', source: 'capability' };
+    return null;
   },
 };
 
 /** Ordre d'évaluation : le plus spécifique gagne. */
-export const CAPABILITIES: Capability[] = [openModule, time, date, system, greeting];
+export const CAPABILITIES: Capability[] = [time, date, system, greeting, comingSoon];
 
 /** Première capacité qui répond, sinon `null` (→ délégué au modèle IA). */
 export function runCapabilities(message: string, ctx: KaiContext): KaiReply | null {

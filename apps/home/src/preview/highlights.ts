@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Phase KAI — une vraie IA commence',
+  label: 'Phase 2 — KOS Vision, la première compétence',
   items: [
-    'Le vrai KAI arrive côté serveur : heure, date, état système, ouvrir un module',
-    'IA 100 % locale (Ollama), fournisseurs interchangeables, offline-first',
-    'Home se connecte au vrai KAI quand un Core tourne',
-    'Cette Preview reste simulée (pas de backend) — mais l’architecture est réelle',
-    'Accueil « curation » figé : l’essentiel, maintenant',
+    'Demande « montre-moi mes photos » → KAI ouvre la galerie, dans Home',
+    'Recherche en langage naturel : « photos de juillet », « à la montagne »…',
+    'Ouvre une photo en plein écran (visionneuse), reviens naturellement',
+    'KAI pense en compétences (Skills), pas en applications',
+    'Ici la galerie est simulée (démo) ; connecté à un Core, ce sont tes vraies photos',
   ],
 };

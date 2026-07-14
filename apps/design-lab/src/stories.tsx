@@ -20,6 +20,7 @@ import {
   ButtonGroup,
   Tooltip,
   Popover,
+  Lightbox,
   Avatar,
   IconButton,
   Divider,
@@ -131,6 +132,25 @@ function TypingDemo() {
         (S’affiche instantanément si « réduire les animations » est activé.)
       </p>
     </Stack>
+  );
+}
+
+function LightboxDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Ouvrir la visionneuse</Button>
+      <Lightbox
+        open={open}
+        onClose={() => setOpen(false)}
+        caption="Une belle image · 14 juillet 2026"
+      >
+        <div
+          className="h-72 w-96 max-w-full rounded-lg"
+          style={{ background: 'linear-gradient(135deg,#2FBEB4,#5b7cfa)' }}
+        />
+      </Lightbox>
+    </div>
   );
 }
 
@@ -394,6 +414,12 @@ export const stories: Story[] = [
         <Button>Ouvrir le panneau</Button>
       </Popover>
     ),
+  },
+  {
+    id: 'lightbox',
+    name: 'Lightbox',
+    group: 'Surfaces',
+    render: () => <LightboxDemo />,
   },
   {
     id: 'avatar',

@@ -5,6 +5,27 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 📷 Phase 2 : KOS Vision, la première compétence réelle (Skills)
+
+KevinOS gagne sa **première compétence utilisable** : demander ses photos en
+langage naturel et **voir une vraie galerie**, sans quitter Home.
+
+- **Vocabulaire Skills** ([ADR-0020](docs/adr/ADR-0020-competences-skills.md)) :
+  KAI n'ouvre plus des « modules » mais **invoque des compétences** (📷 photos →
+  KOS Vision). L'action `open_module` devient `open_skill`.
+- **Compétence Photos** (Core) : KAI comprend « montre-moi mes photos »,
+  « …de juillet », « …à la montagne », « …où apparaît mon chien » → intention
+  structurée (`parsePhotoIntent`, testé) → action `open_skill`. KAI parle
+  **uniquement** au contrat `PhotoLibrary` — **jamais** à Immich (Règle 5).
+- **Galerie dans Home** (`apps/home`) : la surface **KOS Vision** s'ouvre **dans**
+  Home (transition naturelle, retour naturel) — vraies miniatures via
+  `/api/v1/photos*`, recherche, albums, **Lightbox** pour ouvrir une photo. Repli
+  **mock** honnête (badge « démo ») quand aucun Core n'est joignable (Preview).
+- **`@kevinos/ui`** : `Lightbox` (visionneuse plein écran, focus/Échap/flèches,
+  a11y) — doc, tests, story. Tests UI : **50**.
+- **Tests** : Core **36** (compétence photos + intentions) ; vérifié en réel via
+  `curl` (intentions → actions structurées).
+
 ### Ajouté — 🧠 Phase KAI : une vraie IA (orchestrateur + Ollama + providers)
 
 Bascule du KAI **simulé** vers le **vrai KAI** — offline-first, IA locale,

@@ -141,20 +141,24 @@ chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
 
 ---
 
-## Vague 5 — KOS Vision (photos) ⬜
+## Vague 5 — KOS Vision (photos) 🟡 (compétence photos réelle livrée)
 
-| Composant    | Statut | Description                        | Modules       |
-| ------------ | :----: | ---------------------------------- | ------------- |
-| PhotoCard    |   ⬜   | Vignette photo (favori, sélection) | Vision        |
-| AlbumCard    |   ⬜   | Couverture d'album                 | Vision        |
-| Timeline     |   ⬜   | Grille chronologique (par mois)    | Vision        |
-| Viewer       |   ⬜   | Visionneuse plein écran            | Vision        |
-| Lightbox     |   ⬜   | Overlay média (swipe, infos)       | Vision, Media |
-| MapViewer    |   ⬜   | Carte des photos géolocalisées     | Vision        |
-| FaceCard     |   ⬜   | Personne reconnue                  | Vision        |
-| MemoriesCard |   ⬜   | Souvenir (« il y a un an »)        | Vision        |
+> **Phase 2 (2026-07-14)** : première **compétence** réelle — « montre-moi mes
+> photos » ouvre une vraie galerie **dans Home** (contrat `PhotoLibrary`, moteur
+> Immich caché ; repli mock en Preview). Vocabulaire **Skills** ([ADR-0020](docs/adr/ADR-0020-competences-skills.md)).
 
-**Résultat concret** : **KOS Vision** = assemblage de ces composants (moteur Immich caché).
+| Composant    | Statut | Description                                   | Modules       |
+| ------------ | :----: | --------------------------------------------- | ------------- |
+| Lightbox     |   ✅   | Visionneuse plein écran (Échap/flèches, a11y) | Vision, Media |
+| PhotoCard    |   ⬜   | Vignette photo (favori, sélection)            | Vision        |
+| AlbumCard    |   ⬜   | Couverture d'album                            | Vision        |
+| Timeline     |   ⬜   | Grille chronologique (par mois)               | Vision        |
+| MapViewer    |   ⬜   | Carte des photos géolocalisées                | Vision        |
+| FaceCard     |   ⬜   | Personne reconnue                             | Vision        |
+| MemoriesCard |   ⬜   | Souvenir (« il y a un an »)                   | Vision        |
+
+**Résultat concret** : **KOS Vision** — demander ses photos à KAI et les voir
+(galerie + recherche + visionneuse), moteur Immich caché.
 
 ---
 

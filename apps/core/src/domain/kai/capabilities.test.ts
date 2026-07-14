@@ -30,15 +30,6 @@ describe('capacités KAI (déterministes, hors ligne)', () => {
     expect(r?.text).toMatch(/KOS Vision/);
   });
 
-  it('ouvre un module avec une action structurée', () => {
-    const r = runCapabilities('Montre-moi mes photos', ctx);
-    expect(r?.actions?.[0]).toEqual({
-      type: 'open_module',
-      moduleId: 'kos-vision',
-      label: 'KOS Vision',
-    });
-  });
-
   it('délègue (null) ce qu’elle ne sait pas traiter', () => {
     expect(runCapabilities('Raconte-moi une histoire de dragons', ctx)).toBeNull();
   });

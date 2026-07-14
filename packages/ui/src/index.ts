@@ -49,6 +49,7 @@ export {
 // Vague 2 — Foundation : surfaces & primitives
 export { Tooltip, type TooltipProps } from './components/overlay/Tooltip.js';
 export { Popover, type PopoverProps } from './components/overlay/Popover.js';
+export { Lightbox, type LightboxProps } from './components/overlay/Lightbox.js';
 export { Avatar, type AvatarProps, type AvatarSize } from './components/Avatar.js';
 export {
   IconButton,

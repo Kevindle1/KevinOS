@@ -11,15 +11,55 @@ import { z } from 'zod';
 export type KaiReplySource = 'capability' | 'model' | 'fallback';
 
 /**
+ * Les **compétences** (Skills) de KAI. L'utilisateur ne manipule pas des
+ * « modules » : il demande à KAI d'accomplir une tâche, et KAI **invoque une
+ * compétence**. Chaque compétence s'appuie sur un module KOS (moteur caché,
+ * remplaçable) : 📷 photos → KOS Vision, 🎬 media → KOS Media, etc.
+ */
+export type KaiSkillId = 'photos' | 'media' | 'drive' | 'home';
+
+/** Intention photo structurée, extraite du langage naturel par KAI. */
+export interface KaiPhotoQuery {
+  /** `timeline` = dernières photos ; `search` = recherche par texte. */
+  kind: 'timeline' | 'search';
+  /** Texte de recherche (si `kind = 'search'`). */
+  text?: string;
+}
+
+/**
  * Action **structurée** décidée par KAI (jamais un appel direct à un moteur).
- * En V1, KAI sait proposer d'ouvrir un module KOS ; le Core/Home route ensuite.
+ * KAI propose d'**ouvrir une compétence**, éventuellement paramétrée ; Home la
+ * présente sans quitter l'expérience.
  */
 export interface KaiAction {
-  type: 'open_module';
-  /** Identifiant du module KOS, ex. `kos-vision`. */
-  moduleId: string;
+  type: 'open_skill';
+  skill: KaiSkillId;
   /** Libellé présenté à l'utilisateur. */
   label: string;
+  /** Paramètres de la compétence photos (si `skill = 'photos'`). */
+  photoQuery?: KaiPhotoQuery;
+}
+
+/**
+ * Analyse une intention **photo** en langage naturel (déterministe, hors ligne).
+ * Renvoie `null` si le message ne concerne pas les photos. Source de vérité
+ * partagée par le Core (compétence KAI) et le repli hors-ligne de Home.
+ */
+export function parsePhotoIntent(message: string): KaiPhotoQuery | null {
+  if (!/\b(photo|photos|image|images|album|albums|selfie|clich[ée]s?)\b/i.test(message)) {
+    return null;
+  }
+  if (/\b(derni[èe]re?s?|r[ée]cent(?:e|s|es)?|nouvelles?)\b/i.test(message)) {
+    return { kind: 'timeline' };
+  }
+  const text = message
+    .replace(/montre(?:-moi)?|affiche|recherche|cherche|trouve|ouvre|regarde|voir/gi, ' ')
+    .replace(/\b(les?|des?|du|mes|ma|mon|the|une?)\b/gi, ' ')
+    .replace(/\bphotos?\b|\bimages?\b|\balbums?\b|\bclich[ée]s?\b/gi, ' ')
+    .replace(/o[uù] appara[îi]t|qui appara[îi]t|avec|prises?|à la|à l'|au[xy]?|en |dans /gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length >= 2 ? { kind: 'search', text } : { kind: 'timeline' };
 }
 
 /** Un tour de conversation entrant. */

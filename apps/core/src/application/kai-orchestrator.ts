@@ -1,5 +1,6 @@
 import type { AIProvider, ChatMessage, KaiReply, Logger } from '@kevinos/shared';
 import { runCapabilities, type KaiContext } from '../domain/kai/capabilities.js';
+import { runSkills } from '../domain/kai/skills.js';
 
 /**
  * KAI — le **cerveau** et l'**unique point d'entrée** de KevinOS (Règle 5).
@@ -41,7 +42,11 @@ export class KaiOrchestrator {
   async handle(message: string): Promise<KaiReply> {
     const ctx = this.deps.context();
 
-    // 1. Capacités locales déterministes.
+    // 1. Compétences (Skills) — la plus haute valeur : elles agissent (photos…).
+    const skill = runSkills(message, ctx);
+    if (skill) return skill;
+
+    // 2. Capacités locales déterministes (bonjour, heure, date, système…).
     const capability = runCapabilities(message, ctx);
     if (capability) return capability;
 
