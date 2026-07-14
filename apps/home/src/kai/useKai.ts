@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { KaiAction } from '@kevinos/shared';
 import { askKai } from './client.js';
-import { detectPhotoIntent } from './intent.js';
+import { detectPhotoIntent, detectMediaIntent } from './intent.js';
 import { simulatedReply, type Message } from './simulate.js';
 
 /** Durée minimale de « réflexion » — garde un rythme naturel même en repli. */
@@ -27,7 +27,7 @@ async function respond(text: string, turn: number): Promise<Reply> {
       ? { text: real.text.trim(), actions: real.actions }
       : { text: real.text.trim() };
   }
-  // Repli hors-ligne (Preview sans Core) : on détecte quand même les photos.
+  // Repli hors-ligne (Preview sans Core) : on détecte quand même les compétences.
   const photo = detectPhotoIntent(text);
   if (photo) {
     return {
@@ -36,6 +36,21 @@ async function respond(text: string, turn: number): Promise<Reply> {
           ? 'Voici tes dernières photos.'
           : `Je te montre tes photos : « ${photo.text} ».`,
       actions: [{ type: 'open_skill', skill: 'photos', label: 'KOS Vision', photoQuery: photo }],
+    };
+  }
+  const media = detectMediaIntent(text);
+  if (media) {
+    const label =
+      media.kind === 'continue'
+        ? 'Je reprends ta lecture.'
+        : media.kind === 'series'
+          ? 'Voici tes séries.'
+          : media.kind === 'search'
+            ? `Je cherche : « ${media.text} ».`
+            : 'Voici tes films.';
+    return {
+      text: label,
+      actions: [{ type: 'open_skill', skill: 'media', label: 'KOS Media', mediaQuery: media }],
     };
   }
   return { text: simulatedReply(text, turn) };

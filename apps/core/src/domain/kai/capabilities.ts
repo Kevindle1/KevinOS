@@ -102,11 +102,6 @@ const system: Capability = {
 const comingSoon: Capability = {
   id: 'coming-soon',
   handle(message) {
-    if (/\b(film|films|série|series|média|media|regarder)\b/i.test(message))
-      return {
-        text: '🎬 KOS Media n’est pas encore disponible — j’y travaille.',
-        source: 'capability',
-      };
     if (/\b(fichier|fichiers|document|documents|drive)\b/i.test(message))
       return { text: '📁 KOS Drive arrive bientôt.', source: 'capability' };
     if (/\b(maison|domotique|lumière|lumiere|caméra|camera|volet)\b/i.test(message))

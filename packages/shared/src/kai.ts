@@ -26,6 +26,14 @@ export interface KaiPhotoQuery {
   text?: string;
 }
 
+/** Intention média structurée. */
+export interface KaiMediaQuery {
+  /** `continue` = reprendre ; `library` = films ; `series` ; `search`. */
+  kind: 'continue' | 'library' | 'series' | 'search';
+  /** Texte de recherche (si `kind = 'search'`). */
+  text?: string;
+}
+
 /**
  * Action **structurée** décidée par KAI (jamais un appel direct à un moteur).
  * KAI propose d'**ouvrir une compétence**, éventuellement paramétrée ; Home la
@@ -38,6 +46,8 @@ export interface KaiAction {
   label: string;
   /** Paramètres de la compétence photos (si `skill = 'photos'`). */
   photoQuery?: KaiPhotoQuery;
+  /** Paramètres de la compétence média (si `skill = 'media'`). */
+  mediaQuery?: KaiMediaQuery;
 }
 
 /**
@@ -60,6 +70,34 @@ export function parsePhotoIntent(message: string): KaiPhotoQuery | null {
     .replace(/\s+/g, ' ')
     .trim();
   return text.length >= 2 ? { kind: 'search', text } : { kind: 'timeline' };
+}
+
+/**
+ * Analyse une intention **média** (déterministe, hors ligne). `null` si le
+ * message ne concerne pas les films/séries. Partagée par le Core (compétence
+ * KAI) et le repli hors-ligne de Home.
+ */
+export function parseMediaIntent(message: string): KaiMediaQuery | null {
+  if (
+    !/\b(film|films|s[ée]rie|s[ée]ries|m[ée]dia|media|regarder|cin[ée]ma|[ée]pisode|saison|collection)\b/i.test(
+      message,
+    )
+  ) {
+    return null;
+  }
+  if (/\b(continue|continuer|reprend(?:re|s)?|reprise)\b/i.test(message)) {
+    return { kind: 'continue' };
+  }
+  if (/\bs[ée]ries?\b/i.test(message)) {
+    return { kind: 'series' };
+  }
+  const text = message
+    .replace(/montre(?:-moi)?|affiche|recherche|cherche|trouve|ouvre|regarde|lance|voir/gi, ' ')
+    .replace(/\b(les?|des?|du|mes|ma|mon|the|une?|le|la)\b/gi, ' ')
+    .replace(/\bfilms?\b|\bs[ée]ries?\b|\bm[ée]dias?\b|\bcin[ée]ma\b|\bcollections?\b/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length >= 2 ? { kind: 'search', text } : { kind: 'library' };
 }
 
 /** Un tour de conversation entrant. */

@@ -5,6 +5,32 @@ projet le [versionnement sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté — 🎬 Phase 3 : KOS Media, deuxième compétence (preuve de modularité)
+
+Deuxième compétence réelle, **développée en recopiant la structure de KOS
+Vision** — sans **aucune** modification du cœur de KAI (orchestrateur, providers).
+La preuve de modularité est faite.
+
+- **Contrat MediaLibrary** (`@kevinos/shared`) : Films, Séries, Saisons,
+  Épisodes, Collections, Favoris, Historique, **reprise de lecture** — calqué sur
+  `PhotoLibrary`.
+- **Compétence Media** (Core) : « continue mon film », « montre-moi mes films »,
+  « mes séries », « trouve le film … » → intention structurée (`parseMediaIntent`)
+  → action `open_skill`. **Ajoutée en une ligne dans `SKILLS`** ; l'orchestrateur
+  n'a pas bougé. KAI parle **uniquement** au contrat — **jamais** à Jellyfin.
+- **Adaptateur Jellyfin** (`JellyfinMediaAdapter`) + `MediaService` + routes
+  `/api/v1/media/*` — même patron qu'Immich/KOS Vision. Affiches proxifiées par le
+  Core. Testé (fetch mocké : mapping, reprise ticks→secondes, recherche).
+- **Surface KOS Media dans Home** : « Continuer la lecture », « Récemment
+  ajoutés », bibliothèque (films/séries), recherche, collections ; **fiche**
+  (métadonnées, **progression**, **Reprendre**) ; épisodes par saison. Repli mock
+  honnête (badge « démo ») en Preview. **Zéro nouveau composant `@kevinos/ui`**
+  (assemblage de l'existant : Progress, Button, SearchInput…).
+- **Infra** : overlay `docker-compose.kos-media.yml` (Jellyfin, jamais exposé) +
+  secret d'exemple, validé en CI. Config `KEVINOS_JELLYFIN_*`.
+- **Tests** : Core **44** (compétence media + adaptateur Jellyfin) ; vérifié en
+  réel via `curl` (les deux compétences coexistent, cœur inchangé).
+
 ### Ajouté — 📷 Phase 2 : KOS Vision, la première compétence réelle (Skills)
 
 KevinOS gagne sa **première compétence utilisable** : demander ses photos en

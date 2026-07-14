@@ -49,3 +49,28 @@ describe('compétence Photos (📷 → KOS Vision)', () => {
     expect(runSkills('Quelle heure est-il ?', ctx)).toBeNull();
   });
 });
+
+describe('compétence Media (🎬 → KOS Media)', () => {
+  it('« continue mon film » → ouvre media (reprise)', () => {
+    expect(action('Continue mon film')).toEqual({
+      type: 'open_skill',
+      skill: 'media',
+      label: 'KOS Media',
+      mediaQuery: { kind: 'continue' },
+    });
+  });
+
+  it('« montre-moi mes films » → bibliothèque films', () => {
+    expect(action('Montre-moi mes films')?.mediaQuery).toEqual({ kind: 'library' });
+  });
+
+  it('« montre-moi mes séries » → séries', () => {
+    expect(action('Montre-moi mes séries')?.mediaQuery).toEqual({ kind: 'series' });
+  });
+
+  it('« trouve le film Inception » → recherche', () => {
+    const q = action('Trouve le film Inception')?.mediaQuery;
+    expect(q?.kind).toBe('search');
+    expect(q?.text).toMatch(/inception/i);
+  });
+});

@@ -11,10 +11,12 @@ import {
 import { HealthService } from './application/health-service.js';
 import { ModuleRegistry } from './application/module-registry.js';
 import { PhotoService } from './application/photo-service.js';
+import { MediaService } from './application/media-service.js';
 import { KaiOrchestrator } from './application/kai-orchestrator.js';
 import type { KaiModuleInfo } from './domain/kai/capabilities.js';
 import type { ReadinessCheck } from './domain/readiness.js';
 import { ImmichPhotoAdapter } from './infrastructure/immich/immich-photo-adapter.js';
+import { JellyfinMediaAdapter } from './infrastructure/jellyfin/jellyfin-media-adapter.js';
 import { createAIProvider } from './infrastructure/ai/provider-factory.js';
 import { createApp, type AppDependencies } from './interfaces/http/app.js';
 
@@ -93,6 +95,56 @@ function buildPhotos(
 }
 
 /**
+ * Assemble KOS Media (films & séries) si le moteur est configuré. **Même patron
+ * que `buildPhotos`** : sans clé d'API, le module reste désactivé — le reste de
+ * KevinOS fonctionne (mode dégradé). C'est la preuve de la modularité : ajouter
+ * une compétence n'a demandé aucune modification du cœur (KAI, providers).
+ */
+function buildMedia(
+  config: KevinConfig,
+  registry: ModuleRegistry,
+  logger: Logger,
+): { deps: NonNullable<AppDependencies['media']>; readiness: ReadinessCheck } | null {
+  const apiKey = readSecret(
+    process.env.KEVINOS_JELLYFIN_API_KEY_FILE,
+    process.env.KEVINOS_JELLYFIN_API_KEY,
+  );
+  if (!apiKey) {
+    logger.warn('KOS Media désactivé : aucune clé API moteur média configurée');
+    return null;
+  }
+
+  const adapter = new JellyfinMediaAdapter({
+    baseUrl: config.jellyfinBaseUrl,
+    apiKey,
+    ...(process.env.KEVINOS_JELLYFIN_USER_ID
+      ? { userId: process.env.KEVINOS_JELLYFIN_USER_ID }
+      : {}),
+  });
+
+  const manifest = moduleManifestSchema.parse({
+    id: 'kos-media',
+    name: 'KOS Media',
+    version: '1.0.0',
+    implementation: 'jellyfin',
+    capabilities: ['media'],
+    internalUrl: config.jellyfinBaseUrl,
+    healthPath: '/System/Info/Public',
+    enabled: true,
+  });
+  const result = registry.register(manifest);
+  if (!result.ok) {
+    logger.error({ reasons: result.reasons }, 'KOS Media refusé par le registre');
+    return null;
+  }
+
+  return {
+    deps: { service: new MediaService(adapter), images: adapter },
+    readiness: { name: 'kos-media', check: (signal) => adapter.isAvailable(signal) },
+  };
+}
+
+/**
  * Point d'entrée / racine de composition du Core.
  * Fail-fast : une configuration invalide arrête le processus immédiatement.
  */
@@ -103,11 +155,12 @@ function main(): void {
   const startedAt = Date.now();
   const moduleRegistry = new ModuleRegistry();
   const photos = buildPhotos(config, moduleRegistry, logger);
+  const media = buildMedia(config, moduleRegistry, logger);
 
   const healthService = new HealthService({
     serviceName: config.serviceName,
     version: KEVINOS_VERSION,
-    checks: photos ? [photos.readiness] : [],
+    checks: [...(photos ? [photos.readiness] : []), ...(media ? [media.readiness] : [])],
   });
 
   // KAI — cerveau et point d'entrée unique. Fournisseur IA interchangeable
@@ -128,6 +181,7 @@ function main(): void {
     moduleRegistry,
     kai,
     ...(photos ? { photos: photos.deps } : {}),
+    ...(media ? { media: media.deps } : {}),
   });
   const server = createServer(app);
 

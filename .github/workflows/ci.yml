@@ -59,6 +59,7 @@ jobs:
           docker compose $BASE -f compose/docker-compose.backup.yml --env-file .env.ci config --quiet
           docker compose $BASE -f compose/docker-compose.observability.yml --env-file .env.ci config --quiet
           docker compose $BASE -f compose/docker-compose.kai.yml --env-file .env.ci config --quiet
+          docker compose $BASE -f compose/docker-compose.kos-media.yml --env-file .env.ci config --quiet
           docker compose $BASE \
             -f compose/docker-compose.backup.yml \
             -f compose/docker-compose.observability.yml \

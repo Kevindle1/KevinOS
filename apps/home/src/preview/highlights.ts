@@ -13,12 +13,12 @@ export interface PreviewHighlights {
 }
 
 export const PREVIEW_HIGHLIGHTS: PreviewHighlights = {
-  label: 'Phase 2 — KOS Vision, la première compétence',
+  label: 'Phase 3 — KOS Media, deuxième compétence',
   items: [
-    'Demande « montre-moi mes photos » → KAI ouvre la galerie, dans Home',
-    'Recherche en langage naturel : « photos de juillet », « à la montagne »…',
-    'Ouvre une photo en plein écran (visionneuse), reviens naturellement',
-    'KAI pense en compétences (Skills), pas en applications',
-    'Ici la galerie est simulée (démo) ; connecté à un Core, ce sont tes vraies photos',
+    'Dis « continue mon film » → KAI ouvre la fiche et la reprise de lecture',
+    '« Montre-moi mes films / mes séries » → une vraie médiathèque, dans Home',
+    'Continuer la lecture, récents, collections, recherche, fiche + progression',
+    'KOS Media a été calqué sur KOS Vision — sans toucher au cœur de KAI',
+    'Photos et Média fonctionnent ensemble ; ici tout est en démo (sans backend)',
   ],
 };

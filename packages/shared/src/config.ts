@@ -40,6 +40,12 @@ export const configSchema = z.object({
    * d'implémentation : jamais exposé à l'utilisateur ni au Dashboard.
    */
   immichBaseUrl: z.string().url().default('http://kos-vision-server:2283/api'),
+
+  /**
+   * URL interne du moteur média (KOS Media → Jellyfin). Détail d'implémentation :
+   * jamais exposé à l'utilisateur ni au Dashboard.
+   */
+  jellyfinBaseUrl: z.string().url().default('http://kos-media-server:8096'),
 });
 
 /** Configuration validée et typée de KevinOS. */
@@ -63,5 +69,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): KevinConfig {
     ollamaBaseUrl: env.KEVINOS_OLLAMA_BASE_URL,
     aiModel: env.KEVINOS_AI_MODEL,
     immichBaseUrl: env.KEVINOS_IMMICH_BASE_URL,
+    jellyfinBaseUrl: env.KEVINOS_JELLYFIN_BASE_URL,
   });
 }

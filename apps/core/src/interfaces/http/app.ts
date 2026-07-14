@@ -5,10 +5,13 @@ import type { HealthService } from '../../application/health-service.js';
 import type { ModuleRegistry } from '../../application/module-registry.js';
 import type { PhotoService } from '../../application/photo-service.js';
 import type { PhotoThumbnails } from '../../domain/photo-thumbnails.js';
+import type { MediaService } from '../../application/media-service.js';
+import type { MediaImages } from '../../domain/media-images.js';
 import type { KaiOrchestrator } from '../../application/kai-orchestrator.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { modulesRoutes } from './routes/modules.routes.js';
 import { photosRoutes } from './routes/photos.routes.js';
+import { mediaRoutes } from './routes/media.routes.js';
 import { kaiRoutes } from './routes/kai.routes.js';
 
 export interface AppDependencies {
@@ -19,6 +22,8 @@ export interface AppDependencies {
   kai: KaiOrchestrator;
   /** KOS Vision — présent quand le module photos est activé. */
   photos?: { service: PhotoService; thumbnails: PhotoThumbnails };
+  /** KOS Media — présent quand le module média est activé. */
+  media?: { service: MediaService; images: MediaImages };
 }
 
 /**
@@ -31,6 +36,7 @@ export function createApp({
   moduleRegistry,
   kai,
   photos,
+  media,
 }: AppDependencies): Express {
   const app = express();
 
@@ -50,6 +56,11 @@ export function createApp({
   // API v1 des modules. KOS Vision (photos) si activé.
   if (photos) {
     app.use('/api/v1/photos', photosRoutes(photos.service, photos.thumbnails));
+  }
+
+  // KOS Media (films & séries) si activé.
+  if (media) {
+    app.use('/api/v1/media', mediaRoutes(media.service, media.images));
   }
 
   // Racine : identité du service (utile au diagnostic).

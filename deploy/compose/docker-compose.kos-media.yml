@@ -1,0 +1,54 @@
+# KevinOS — overlay 🎬 KOS Media (films & séries). Moteur : Jellyfin (caché,
+# remplaçable). **Même patron que l'overlay KOS Vision.**
+#
+# À combiner avec le socle :
+#   docker compose -f compose/docker-compose.yml \
+#                  -f compose/docker-compose.kos-media.yml --env-file .env up -d
+#
+# Le moteur Jellyfin n'est JAMAIS exposé directement : seul le Core l'appelle
+# (réseau `apps`) ; l'utilisateur passe par l'API v1 du Core (/api/v1/media).
+# Remplacer Jellyfin = remplacer cet overlay + l'adaptateur, sans toucher au reste.
+#
+# ⚠️ La clé d'API (secret `jellyfin_api_key`) se génère dans Jellyfin après le
+#    premier login (Tableau de bord → Clés API), puis on la place dans
+#    deploy/secrets/jellyfin_api_key et on redémarre `core`.
+
+name: kevinos
+
+networks:
+  apps:
+    external: true
+    name: kevinos_apps
+
+volumes:
+  kos_media_config:
+  kos_media_cache:
+
+secrets:
+  jellyfin_api_key:
+    file: ../secrets/jellyfin_api_key
+
+services:
+  # Augmente le Core : il sait joindre le moteur média (URL interne + clé API).
+  core:
+    environment:
+      KEVINOS_JELLYFIN_BASE_URL: http://kos-media-server:8096
+      KEVINOS_JELLYFIN_API_KEY_FILE: /run/secrets/jellyfin_api_key
+    secrets:
+      - jellyfin_api_key
+
+  kos-media-server:
+    image: jellyfin/jellyfin:10.9.11
+    restart: unless-stopped
+    networks:
+      - apps # joint uniquement par le Core
+    volumes:
+      - kos_media_config:/config
+      - kos_media_cache:/cache
+      # Bibliothèque média (à adapter au disque de Kevin) — lecture seule.
+      # - /chemin/vers/films:/media/films:ro
+      # - /chemin/vers/series:/media/series:ro
+    deploy:
+      resources:
+        limits:
+          memory: 2G

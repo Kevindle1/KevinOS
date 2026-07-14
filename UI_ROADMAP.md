@@ -162,17 +162,25 @@ chacune n'ajoutant à `@kevinos/ui` que le strict nécessaire.
 
 ---
 
-## Vague 6 — KOS Media (films & séries) ⬜
+## Vague 6 — KOS Media (films & séries) 🟡 (compétence media réelle livrée)
 
-| Composant        | Statut | Description           | Modules          |
-| ---------------- | :----: | --------------------- | ---------------- |
-| MovieCard        |   ⬜   | Affiche de film       | Media            |
-| SeriesCard       |   ⬜   | Affiche de série      | Media            |
-| EpisodeCard      |   ⬜   | Épisode (progression) | Media            |
-| PlayerOverlay    |   ⬜   | Contrôles de lecture  | Media            |
-| ContinueWatching |   ⬜   | Reprendre la lecture  | Media, Dashboard |
-| CollectionCard   |   ⬜   | Collection / genre    | Media            |
-| MediaInfo        |   ⬜   | Fiche détaillée       | Media            |
+> **Phase 3 (2026-07-14)** : deuxième **compétence** réelle, **calquée sur KOS
+> Vision** (contrat `MediaLibrary`, moteur Jellyfin caché) — « continue mon film »,
+> médiathèque, fiche + reprise, **sans toucher au cœur de KAI** (preuve de
+> modularité). Surface assemblée **sans nouveau composant** `@kevinos/ui`.
+
+| Composant        | Statut | Description                                     | Modules          |
+| ---------------- | :----: | ----------------------------------------------- | ---------------- |
+| MovieCard        |   ⬜   | Affiche de film (extraire de la surface Media)  | Media            |
+| SeriesCard       |   ⬜   | Affiche de série                                | Media            |
+| EpisodeCard      |   ⬜   | Épisode (progression)                           | Media            |
+| PlayerOverlay    |   ⬜   | Contrôles de lecture (lecteur — étape suivante) | Media            |
+| ContinueWatching |   ⬜   | Reprendre la lecture                            | Media, Dashboard |
+| CollectionCard   |   ⬜   | Collection / genre                              | Media            |
+| MediaInfo        |   ⬜   | Fiche détaillée                                 | Media            |
+
+**Résultat concret** : **KOS Media** — « continue mon film », médiathèque
+(films/séries/collections/reprise), fiche + progression ; moteur Jellyfin caché.
 
 ---
 

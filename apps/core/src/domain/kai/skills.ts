@@ -1,4 +1,4 @@
-import { parsePhotoIntent, type KaiReply } from '@kevinos/shared';
+import { parsePhotoIntent, parseMediaIntent, type KaiReply } from '@kevinos/shared';
 import type { KaiContext } from './capabilities.js';
 
 /**
@@ -33,7 +33,29 @@ const photosSkill: Skill = {
   },
 };
 
-export const SKILLS: Skill[] = [photosSkill];
+/** 🎬 Media → KOS Media. Même patron que `photosSkill` (preuve de modularité). */
+const mediaSkill: Skill = {
+  id: 'media',
+  handle(message) {
+    const query = parseMediaIntent(message);
+    if (!query) return null;
+    const text =
+      query.kind === 'continue'
+        ? 'Je reprends ta lecture.'
+        : query.kind === 'series'
+          ? 'Voici tes séries.'
+          : query.kind === 'search'
+            ? `Je cherche : « ${query.text} ».`
+            : 'Voici tes films.';
+    return {
+      text,
+      source: 'capability',
+      actions: [{ type: 'open_skill', skill: 'media', label: 'KOS Media', mediaQuery: query }],
+    };
+  },
+};
+
+export const SKILLS: Skill[] = [photosSkill, mediaSkill];
 
 /** Première compétence qui répond, sinon `null` (→ capacités puis modèle). */
 export function runSkills(message: string, ctx: KaiContext): KaiReply | null {
